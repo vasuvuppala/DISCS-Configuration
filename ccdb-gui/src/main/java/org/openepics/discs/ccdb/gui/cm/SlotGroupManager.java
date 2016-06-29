@@ -119,6 +119,7 @@ public class SlotGroupManager implements Serializable {
                 entities.add(inputEntity);                
             } else {
                 lcEJB.saveSlotGroup(selectedEntity);
+                lcEJB.refreshVersion(SlotGroup.class, selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);

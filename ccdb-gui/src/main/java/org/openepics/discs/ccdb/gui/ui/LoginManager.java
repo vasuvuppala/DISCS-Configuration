@@ -53,6 +53,7 @@ public class LoginManager implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         String nextView = "";
+        String viewOptions = "?faces-redirect=true&includeViewParams=true";
 
         try {
             if (request.getUserPrincipal() == null) {
@@ -64,7 +65,7 @@ public class LoginManager implements Serializable {
                 showMessage(FacesMessage.SEVERITY_INFO, "Welcome " + userid, "");
                 // RequestContext.getCurrentInstance().update("@(.ui-panel)");
                 RequestContext.getCurrentInstance().addCallbackParam("loginSuccess", true); // To inform the login form
-                nextView = context.getViewRoot().getViewId() + "?faces-redirect=true"; // redirect to the current page
+                nextView = context.getViewRoot().getViewId() + viewOptions; // redirect to the current page
                 context.getExternalContext().getFlash().setKeepMessages(true); // Keep messages in Flash
             } else {
                 showMessage(FacesMessage.SEVERITY_INFO, "Strange, you are already logged in!", userid);
@@ -99,7 +100,8 @@ public class LoginManager implements Serializable {
     public String onLogout() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        String nextView = "logout?faces-redirect=true";
+        String viewOptions = "?faces-redirect=true&includeViewParams=true";
+        String nextView = "logout" + viewOptions;
 
         try {
             request.logout();
@@ -107,7 +109,7 @@ public class LoginManager implements Serializable {
             loggedin = false;
             userid = null;
             showMessage(FacesMessage.SEVERITY_INFO, "You have been logged out.", "Have a nice day!");
-            nextView = context.getViewRoot().getViewId() + "?faces-redirect=true"; // redirect to the current page
+            nextView = context.getViewRoot().getViewId() + viewOptions; // redirect to the current page
             context.getExternalContext().getFlash().setKeepMessages(true); // Keep messages in Flash
             context.getExternalContext().invalidateSession(); // invalidate session
         } catch (Exception e) {

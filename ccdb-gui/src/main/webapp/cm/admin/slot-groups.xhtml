@@ -28,9 +28,9 @@
                               filterBy="#{obj.description}" filterMatchMode="contains" >
                         <h:outputText value="#{obj.description}" styleClass="colCenter"/>
                     </p:column>
-                     <p:column headerText="Owner" sortBy="#{obj.owner}" 
-                              filterBy="#{obj.owner}" filterMatchMode="contains" >
-                        <h:outputText value="#{obj.owner}" styleClass="colCenter"/>
+                    <p:column headerText="Owner" sortBy="#{obj.owner.roleId}" 
+                              filterBy="#{obj.owner.roleId}" filterMatchMode="contains" >
+                        <h:outputText value="#{obj.owner.roleId}" styleClass="colCenter"/>
                     </p:column>
 
                     <f:facet name="footer">
@@ -87,7 +87,7 @@
                         </p:column>
                     </p:row>
 
-                    <p:row>
+                    <p:row rendered="false">
                         <p:column>
                             <p:outputLabel for="smeInp"  value="SME" />
                         </p:column>

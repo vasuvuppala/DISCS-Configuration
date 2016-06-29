@@ -224,6 +224,7 @@ public class AssignmentManager implements Serializable {
                 entities.add(inputEntity);
             } else {
                 lcEJB.saveAssignment(selectedEntity, inputApprovers);
+                lcEJB.refreshVersion(PhaseAssignment.class, selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);

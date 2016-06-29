@@ -66,6 +66,15 @@ public class ConfigurationEntity implements Serializable {
     protected Long version;
 
     /**
+     * Update the version with one from the given entity. 
+     * 
+     * @param current 
+     */
+    public void updateVersion(ConfigurationEntity current) {
+        this.version = current.version;
+    }
+    
+    /**
      * @return The database primary key of the configuration entity
      */
     public Long getId() {
@@ -100,6 +109,11 @@ public class ConfigurationEntity implements Serializable {
         this.modifiedBy = modifiedBy;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;

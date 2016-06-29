@@ -502,9 +502,10 @@ public class StatusPivotManager implements Serializable {
                             status.setModifiedBy(user.getUserId());
                             status.setStatus(inputStatus);
                             status.setComment(inputComment);
-                            status.setAssignedSME(inputSME);
-                            lcEJB.savePhaseStatus(status);
-                            status = lcEJB.findPhaseStatus(status.getId()); // ToDo: to update the version field
+                            status.setAssignedSME(inputSME);                           
+                            lcEJB.savePhaseStatus(status);                          
+                            lcEJB.refreshVersion(PhaseStatus.class, status); // ToDo: to update the version field
+                            // lcEJB.refreshVersion(status); // ToDo: to update the version field
                         }
                     }
                 }
@@ -512,13 +513,14 @@ public class StatusPivotManager implements Serializable {
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
                     "Update successful.");
+            resetInput();
         } catch (Exception e) {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Error. Could not update status.", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
 
         } finally {   
-            resetInput();
+//            resetInput();
         }
     }
 

@@ -125,14 +125,12 @@ public class CmSlotManager implements Serializable {
     
     public void saveEntity() {
         try {
-            Slot slot; 
             if (inputAction == InputAction.CREATE) {
                 slotEJB.save(inputEntity);
-                entities.add(inputEntity);
-                slot = inputEntity;
+                entities.add(inputEntity);            
             } else {
                 slotEJB.save(selectedEntity);
-                slot = selectedEntity;
+                lcEJB.refreshVersion(Slot.class, selectedEntity);             
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);

@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.User;
@@ -219,6 +220,7 @@ public class LifecycleEJB {
         } else {
             em.merge(assignment);
         }
+        em.refresh(assignment);
     }
 
     /**
@@ -628,9 +630,37 @@ public class LifecycleEJB {
         } else {
             em.merge(status);
         }
-        LOGGER.log(Level.FINE, "status  saved - {0}", status.getId());
+        // LOGGER.log(Level.FINE, "status  saved - {0}", status.getId());
     }
+    
+    /**
+     * ToDo: Make it generic. not straightforward due to em.find() will have to use DAO<T>. 
+     * 
+     * @param status 
+     */
+//    public void refreshVersion(PhaseStatus status) {
+//        if (status.getId() != null) {        
+//            PhaseStatus current = em.find(PhaseStatus.class, status.getId());
+//            status.updateVersion(current);
+//        }
+//        // LOGGER.log(Level.FINE, "version refreshed - {0}", status.getVersion());
+//    }
 
+    /**
+     * Update the version of the object
+     * 
+     * @param <T>
+     * @param entityClass
+     * @param status 
+     */
+    public <T extends ConfigurationEntity> void refreshVersion(Class<T> entityClass, T status) {
+        if (status.getId() != null) {        
+            T current = em.find(entityClass, status.getId());
+            status.updateVersion(current);
+        }
+        // LOGGER.log(Level.FINE, "version refreshed - {0}", status.getVersion());
+    }
+    
     /**
      * delete a given process
      *
