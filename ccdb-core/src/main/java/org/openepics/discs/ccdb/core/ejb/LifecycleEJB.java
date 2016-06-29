@@ -220,7 +220,6 @@ public class LifecycleEJB {
         } else {
             em.merge(assignment);
         }
-        em.refresh(assignment);
     }
 
     /**

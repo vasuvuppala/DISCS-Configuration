@@ -186,25 +186,25 @@ public class AssignmentManager implements Serializable {
     private boolean inputIsValid() {
         PhaseAssignment assignment = inputAction == InputAction.CREATE ? inputEntity : selectedEntity;
 
-        if (assignment.getDevice() == null && assignment.getSlotGroup() == null && assignment.getSlot() == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must specify a group, slot or a device", "");
-            return false;
-        }
-
-        if (assignment.getDevice() != null && assignment.getSlot() != null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a slot and a device", "");
-            return false;
-        }
-
-        if (assignment.getDevice() != null && assignment.getSlotGroup() != null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a group and a device", "");
-            return false;
-        }
-
-        if (assignment.getSlot() != null && assignment.getSlotGroup() != null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a group and a slot", "");
-            return false;
-        }
+//        if (assignment.getDevice() == null && assignment.getSlotGroup() == null && assignment.getSlot() == null) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must specify a group, slot or a device", "");
+//            return false;
+//        }
+//
+//        if (assignment.getDevice() != null && assignment.getSlot() != null) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a slot and a device", "");
+//            return false;
+//        }
+//
+//        if (assignment.getDevice() != null && assignment.getSlotGroup() != null) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a group and a device", "");
+//            return false;
+//        }
+//
+//        if (assignment.getSlot() != null && assignment.getSlotGroup() != null) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must not specify a group and a slot", "");
+//            return false;
+//        }
 
 //        if (inputApprovers == null || inputApprovers.isEmpty()) {
 //            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must specify a user", "");
