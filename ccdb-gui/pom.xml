@@ -47,12 +47,13 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>5.3</version>
+            <version>6.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ccdb-model</artifactId>
@@ -72,6 +73,16 @@
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>2.5.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.barcode4j</groupId>
+            <artifactId>barcode4j-light</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.glxn</groupId>
+            <artifactId>qrgen</artifactId>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -171,6 +182,15 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <url>http://repository.primefaces.org/</url>
+            <id>PrimeFaces-maven-lib</id>
+            <layout>default</layout>
+            <name>Repository for library PrimeFaces-maven-lib</name>
+        </repository>
+    </repositories>
+
     <build>
         <resources>
             <resource>
@@ -264,9 +284,7 @@
                     <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
                     <version>2.5.1</version>
                     <scope>provided</scope>
-                </dependency>
-               
-                
+                </dependency>                           
             </dependencies>
             <build>
                 <plugins>
