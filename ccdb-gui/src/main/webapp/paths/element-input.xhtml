@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"               
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:form id="PathRepForm"> 
+        <p:panelGrid id="reportPanel" >
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="3">
+                        Beampath Between Elements
+                    </p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column><h:outputText value="Lattice: "/> </p:column>
+                <p:column>                
+                    <p:selectOneMenu id="lattice" value="#{latticeManager.inpLattice}"  panelStyle="width:600px"  
+                                     var="l" style="width:200px" 
+                                     converter="#{latticeConverter}" 
+                                     filter="true" filterMatchMode="contains">                       
+                        <f:selectItems value="#{latticeManager.lattices}" var="lat" itemLabel="#{lat.name}" itemValue="#{lat}"/>
+                        <p:column>  
+                            #{l.name}  
+                        </p:column> 
+                        <p:column >  
+                            #{l.description}
+                        </p:column> 
+                        <f:validateBean/>
+                    </p:selectOneMenu>                   
+                              
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputText value="Start Element: "/> </p:column>
+                <p:column>                
+                    <p:selectOneMenu id="startElem" value="#{latticeManager.inpStartElement}"  panelStyle="width:600px"  
+                                     var="p" style="width:200px" 
+                                     converter="#{elementConverter}" 
+                                     filter="true" filterMatchMode="contains">
+                         <f:selectItem   itemLabel="Choose an Element" itemValue="#{null}"  />
+                        <f:selectItems value="#{latticeManager.slotElements}" var="se" itemLabel="#{se.name}" itemValue="#{se}"/>
+                        <p:column>  
+                            #{p == null? 'Choose an Element' : p.name}  
+                        </p:column> 
+                        <p:column >  
+                            #{p.description}
+                        </p:column> 
+                        
+                    </p:selectOneMenu>                   
+                    <p:tooltip for="startElem" value="If no start element is specified, all possible source elements will be used." />           
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputText value="End Element: "/> </p:column>
+                <p:column>                                                         
+                    <p:selectOneMenu id="endElem" value="#{latticeManager.inpEndElement}"  panelStyle="width:600px"  
+                                     var="p" style="width:200px" 
+                                     converter="#{elementConverter}" 
+                                     filter="true" filterMatchMode="contains">
+                        <f:selectItem   itemLabel="Choose an Element" itemValue="#{null}"  />
+                        <f:selectItems value="#{latticeManager.slotElements}" var="e" itemLabel="#{e.name}" itemValue="#{e}"/>
+                        <p:column>  
+                            #{p == null? 'Choose an Element' : p.name}  
+                        </p:column> 
+                        <p:column >  
+                            #{p.description}
+                        </p:column> 
+                        <f:validateBean/>
+                    </p:selectOneMenu>
+                    <p:tooltip for="endElem" value="If no end element is specified, all possible target elements will be used." />    
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:commandButton id="repButton" value="Generate"  action="#{latticeManager.genElementPaths()}"
+                         update=":requestMsgs :LatticeResults" 
+                         process="@form" />
+        <p:blockUI block=":LatticeResults" trigger="repButton" >          
+            <p:graphicImage value="/resources/images/ajax-loader.gif" style="background-color: transparent" />  
+        </p:blockUI>
+    </h:form>
+</ui:composition>

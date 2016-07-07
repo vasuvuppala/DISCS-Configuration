@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:cc="http://java.sun.com/jsf/composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="beampaths" required="true"/>      
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:tabView value="#{cc.attrs.beampaths}" var="beampath" >          
+            <p:tab title="#{beampath.name}">
+                <p:dataTable id="elementTable" var="item" value="#{beampath.path}"                            
+                             paginator="false"   rows="25"  
+                             scrollRows="25"  liveScroll="true"  scrollable="true" scrollHeight="500"
+                             filteredValue="#{latticeView.filteredObjects}"   resizableColumns="true"
+                             emptyMessage="No elements found!"                           
+                             rowKey="#{item.slotId}}" >
+
+                    <f:facet name="footer">
+                        Total Elements: #{fn:length(beampath.path)}
+                    </f:facet>           
+             
+                    <p:column rendered="false" styleClass="alignRight" width="7%" 
+                              sortBy="#{latticeView.elementPropertyValue(item,'Beamline-Name')}" 
+                              filterBy="#{latticeView.elementPropertyValue(item,'Beamline-Name')}" filterMatchMode="contains">
+                        <f:facet name="header">
+                            <h:outputText value="BL" title="Beamline"/>
+                        </f:facet>
+                        <h:outputText value="#{latticeView.elementPropertyValue(item,'Beamline-Name')}"/>
+                    </p:column>
+                    <p:column styleClass="alignRight" width="5%" sortBy="#{beampath.path.indexOf(item)}">
+                        <f:facet name="header">
+                            <h:outputText value="BO" title="Beam Order"/>
+                        </f:facet>
+                        <h:outputText value="#{beampath.path.indexOf(item)}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains">
+                        <f:facet name="header">
+                            Name
+                        </f:facet>
+                        <h:outputText value="#{item.name}"/>
+                        <h:outputLink value="../browse//slot/details.xhtml" styleClass="ui-icon ui-icon-document" 
+                                      style="display:inline-block;" target="_blank"  rendered="false">                         
+                            <f:param name="id" value="#{item.slotId}"/>
+                        </h:outputLink>                       
+                    </p:column>
+                    <p:column filterBy="#{item.description}" filterMatchMode="contains">
+                        <f:facet name="header">
+                            Description
+                        </f:facet>
+                        <h:outputText value="#{item.description}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.slot.componentType.name}" width="10%"
+                              filterBy="#{item.slot.componentType.name}" styleClass="alignCenter">
+                        <f:facet name="header" >
+                            Type
+                        </f:facet>
+                        <h:outputText value="#{item.slot.componentType.name}"/>
+                    </p:column>  
+                    
+                    <p:column styleClass="alignRight" width="10%" sortBy="#{latticeView.elementPropertyValue(item,'BeamlinePosition')}">
+                        <f:facet name="header">
+                            <h:outputText value="BLP" title="Beamline Position"/>
+                        </f:facet>
+                        <h:outputText value="#{latticeView.elementPropertyValue(item,'BeamlinePosition')}"/>
+                    </p:column>
+                    <p:column styleClass="alignRight" width="10%" sortBy="#{latticeView.elementPropertyValue(item,'EffectiveLength')}" filterMatchMode="contains">
+                        <f:facet name="header">
+                            <h:outputText value="ELength" title="Effective Length"/>                             
+                        </f:facet>
+                        <h:outputText value="#{latticeView.elementPropertyValue(item,'EffectiveLength')}"/>
+                    </p:column>
+                    <p:column styleClass="alignRight" width="10%" sortBy="#{latticeView.elementPropertyValue(item,'AccumulatedC2CLength')}">
+                        <f:facet name="header">
+                            <h:outputText value="ACTCL" title="Accumulated Center to Center Length"/>                              
+                        </f:facet>
+                        <h:outputText value="#{latticeView.elementPropertyValue(item,'AccumulatedC2CLength')}"/>
+                    </p:column>
+                    
+                    <p:column  rendered="false" styleClass="alignRight" width="10%" sortBy="#{latticeView.elementPropertyValue(item,'Length-From-Element-Before')}">
+                        <f:facet name="header">
+                            <h:outputText value="LFEB" title="Length From Element Before"/>                              
+                        </f:facet>
+                        <h:outputText value="#{latticeView.elementPropertyValue(item,'Length-From-Element-Before')}"/>
+                    </p:column>
+                                     
+                </p:dataTable>
+
+                <ui:remove> -------------------------- Export  ------------------- </ui:remove> 
+                <h:panelGrid  class="export-grid" >  
+                    <p:panel header="Export Data">  
+                        <h:commandLink>  
+                            <p:graphicImage value="/resources/images/excel.png" title="Excel" />  
+                            <p:dataExporter type="xls" target="elementTable" fileName="proteus-lattice" />  
+                        </h:commandLink>  
+
+                        <h:commandLink>  
+                            <p:graphicImage value="/resources/images/pdf.png" title="PDF" />  
+                            <p:dataExporter type="pdf" target="elementTable" fileName="proteus-lattice"/>  
+                        </h:commandLink>  
+
+                        <h:commandLink>  
+                            <p:graphicImage value="/resources/images/csv.png" title="CSV" />  
+                            <p:dataExporter type="csv" target="elementTable" fileName="proteus-lattice" />  
+                        </h:commandLink>  
+
+                        <h:commandLink>  
+                            <p:graphicImage value="/resources/images/xml.png" title="XML" />  
+                            <p:dataExporter type="xml" target="elementTable" fileName="proteus-lattice" />  
+                        </h:commandLink>  
+                    </p:panel>  
+                
+                </h:panelGrid>
+            </p:tab>
+        </p:tabView>
+
+    </cc:implementation>
+</html>

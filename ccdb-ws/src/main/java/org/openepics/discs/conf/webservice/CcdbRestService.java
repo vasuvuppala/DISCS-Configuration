@@ -36,7 +36,7 @@ public class CcdbRestService extends Application {
     }
 
     private Set<Class<?>> getRestResourceClasses() {  // NOSONAR generic wildcard types part of the framework
-        return new java.util.HashSet<Class<?>>(Arrays.asList(DeviceTypeResourceImpl.class,
+        return new java.util.HashSet<Class<?>>(Arrays.asList(DeviceTypeResourceImpl.class, PathResourceImpl.class,
                 InstallationSlotNameResourceImpl.class, InstallationSlotResourceImpl.class, DeviceResourceImpl.class));
     }
 

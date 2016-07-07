@@ -5,7 +5,6 @@
  */
 package org.openepics.discs.ccdb.model.cm;
 
-import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;

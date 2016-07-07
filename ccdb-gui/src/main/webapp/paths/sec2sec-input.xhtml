@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"               
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:form id="Sec2SecForm"> 
+        <p:panelGrid id="reportPanel" >
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="3">
+                        Beampath Between Beamline Sections   
+                    </p:column>
+                </p:row>
+            </f:facet>
+           <p:row>
+                <p:column><h:outputText value="Lattice: "/> </p:column>
+                <p:column>                
+                    <p:selectOneMenu id="lattice" value="#{latticeView.inpLattice}"  panelStyle="width:600px"  
+                                     var="l" style="width:200px" 
+                                     converter="#{latticeConverter}" 
+                                     filter="true" filterMatchMode="contains">                       
+                        <f:selectItems value="#{latticeView.lattices}" var="lat" itemLabel="#{lat.name}" itemValue="#{lat}"/>
+                        <p:column>  
+                            #{l.name}  
+                        </p:column> 
+                        <p:column >  
+                            #{l.description}
+                        </p:column> 
+                        <f:validateBean/>
+                    </p:selectOneMenu>                   
+                               
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputText value="Start Section: "/> </p:column>
+                <p:column> 
+                    <p:selectOneMenu id="startElem" value="#{latticeView.inpStartSection}"  panelStyle="width:200px"  
+                                     style="width:200px" filter="true" filterMatchMode="contains">  
+                        <f:selectItem   itemLabel="Choose a Section" itemValue="#{null}"  />
+                        <f:selectItems value="#{latticeView.beamlineNames}" var="blname" itemLabel="#{blname}" itemValue="#{blname}"/>                      
+                        <f:validateBean/>
+                    </p:selectOneMenu>
+                    <p:tooltip for="startElem" value="If no start section is specified, all possible source sections will be used." />
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputText value="End Section: "/> </p:column>
+                <p:column> 
+                    <p:selectOneMenu id="endElem" value="#{latticeView.inpEndSection}"  panelStyle="width:200px"  
+                                      style="width:200px" filter="true" filterMatchMode="contains"> 
+                        <f:selectItem   itemLabel="Choose a Section" itemValue="#{null}"  />
+                        <f:selectItems value="#{latticeView.beamlineNames}" var="blname" itemLabel="#{blname}" itemValue="#{blname}"/>                     
+                        <f:validateBean/>
+                    </p:selectOneMenu>                    
+                    <p:tooltip for="endElem" value="If no end section is specified, all possible target sections will be used." />
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:commandButton id="repButton" value="Generate"  action="#{latticeView.genSectionPaths()}"
+                         update=":requestMsgs :LatticeResults" 
+                         process="@form" />
+        <p:blockUI block=":LatticeResults" trigger="repButton" >          
+            <p:graphicImage value="/resources/images/ajax-loader.gif" style="background-color: transparent" />  
+        </p:blockUI>
+    </h:form>
+</ui:composition>

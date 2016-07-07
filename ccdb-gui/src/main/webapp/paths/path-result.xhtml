@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"                                      
+                xmlns:fc="http://java.sun.com/jsf/composite/devcomps"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="LatticeResults" prependId="false">
+        <p:panel rendered="false">
+            <h:outputText value=" Lattice: #{latticeManager.inpLattice.name},  " />
+           
+            <h:outputText value="#{latticeManager.inpLattice.releasedOn}" title="Release Date">
+                <f:convertDateTime  pattern="#{msgs.dateFormat}"/>
+            </h:outputText>
+                          
+        </p:panel>
+
+        <fc:beam-elements beampaths="#{latticeManager.resultBeampaths}"/>       
+    </h:form>
+</ui:composition>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" >
+
+    <ui:define name="content">   
+            <p:growl id="requestMsgs" showDetail="true" life="5000" /> 
+            <p:panelGrid id="reportGrid" styleClass="noBorders" >
+                <p:row>                 
+                    <p:column>
+                        <!--<ui:include src="section-input.xhtml"/>-->
+                    </p:column>
+                    <p:column>
+                        <!--<ui:include src="sec2sec-input.xhtml"/>-->
+                    </p:column>
+                    <p:column>
+                        <ui:include src="element-input.xhtml"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3"> 
+                        <ui:include src="path-result.xhtml"/>                        
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+    </ui:define>
+</ui:composition>
