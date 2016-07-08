@@ -44,22 +44,15 @@
                                             <f:param name="id" value="#{device.device.componentType.id}" />
                                         </h:link>                                    
                                     </p:column>
-    
-                                    <p:column headerText="Name" sortBy="#{device.name}" 
+                                    
+<!--                                    <p:column headerText="Description" sortBy="#{device.description}" 
                                             filterBy="#{device.name}" filterMatchMode="contains">
                                         <h:outputText value="#{device.name}" />
-                                    </p:column>
-                                    <p:column headerText="Description" sortBy="#{device.description}" 
-                                            filterBy="#{device.name}" filterMatchMode="contains">
-                                        <h:outputText value="#{device.name}" />
-                                    </p:column>
+                                    </p:column>-->
                                     <p:column headerText="LoC" sortBy="#{device.levelOfCare}" 
                                             filterBy="#{device.name}" filterMatchMode="contains">
                                         <h:outputText value="#{device.levelOfCare}" />
-                                    </p:column>
-                                    <p:column headerText="AfO" sortBy="#{device.approvedForOp}">
-                                        <h:outputText value="#{device.approvedForOp ? 'Yes' : 'No'}" />
-                                    </p:column>
+                                    </p:column>                                
                                     
                                     <p:column headerText="Installation Slot" sortBy="#{device.installedIn}" 
                                             filterBy="#{device.installedIn}" filterMatchMode="contains">

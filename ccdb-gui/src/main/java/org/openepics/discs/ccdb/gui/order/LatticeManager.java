@@ -67,8 +67,8 @@ public class LatticeManager implements Serializable {
         public void findPath(DirectedGraph graph, Element start, Element end) {
             this.start = start;
             this.end = end;
-            DijkstraShortestPath graphPath = new DijkstraShortestPath(graph, start, end);
-            path = Graphs.getPathVertexList(graphPath.getPath());
+            DijkstraShortestPath graphPath = new DijkstraShortestPath(graph, start, end);          
+            path = Graphs.getPathVertexList(graphPath.getPath());            
         }
         
 //        public void addBeampath(Path bpath) {

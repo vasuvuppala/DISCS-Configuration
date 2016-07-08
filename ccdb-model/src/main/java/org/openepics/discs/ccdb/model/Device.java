@@ -83,14 +83,13 @@ public class Device extends ConfigurationEntity
     @ManyToOne(optional = false)
     private ComponentType componentType;
     
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "name")
-    private String name;
+//    @Basic(optional = true)
+//    @Size(max = 128)
+//    @Column(name = "name")
+//    private String name;
     
     @Basic
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
     
@@ -98,11 +97,7 @@ public class Device extends ConfigurationEntity
     @Column(name = "loc")
     @Enumerated(EnumType.STRING)
     private LevelOfCare levelOfCare = LevelOfCare.NONE;
-    
-    @Basic(optional = false)
-    @Column(name = "afo")
-    private boolean approvedForOp = false;
-    
+      
     //-- assembly 
     
     @ManyToOne
@@ -280,12 +275,12 @@ public class Device extends ConfigurationEntity
 
     @Override
     public String getName() {
-        return name;
+        return serialNumber;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
     public String getDescription() {
         return description;
@@ -302,13 +297,4 @@ public class Device extends ConfigurationEntity
     public void setLevelOfCare(LevelOfCare levelOfCare) {
         this.levelOfCare = levelOfCare;
     }
-
-    public boolean isApprovedForOp() {
-        return approvedForOp;
-    }
-
-    public void setApprovedForOp(boolean approvedForOp) {
-        this.approvedForOp = approvedForOp;
-    }
-
 }

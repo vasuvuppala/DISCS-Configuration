@@ -96,9 +96,6 @@ public class DeviceView implements Serializable {
         return device.getLevelOfCare();
     }
     
-    public boolean getApprovedForOp() {
-        return device.isApprovedForOp();
-    }
     
     public String getDescription() {
         return device.getDescription();
