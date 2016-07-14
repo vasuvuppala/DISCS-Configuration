@@ -34,10 +34,10 @@
                     <p:column>Resource</p:column>  
                     <p:column>Method</p:column>  
                     <p:column>Resource ID</p:column>  
-                    <p:column>Description</p:column> 
+                    <p:column style="width:20%">Description</p:column> 
                     <p:column>Returns</p:column>
                     <p:column>Path/Parameter</p:column> 
-                    <p:column>Examples</p:column> 
+                    <p:column style="width:30%">Examples</p:column> 
                 </p:row>  
             </f:facet>  
             <p:row>  
@@ -54,20 +54,7 @@
                     <ul><li>#{msgs.apiBaseUrl}/device?deviceType=Q7</li></ul>
                 </p:column> 
             </p:row>
-            <p:row>  
-                <p:column>Slot</p:column>  
-                <p:column>GET</p:column>  
-                <p:column>/slot</p:column>  
-                <p:column>List of slots</p:column>
-                <p:column>List of <i>slot</i></p:column>
-                <p:column> 
-                    <ul><li><b>deviceType</b> (optional): Device type</li></ul>
-                </p:column> 
-                <p:column>
-                    <ul><li>#{msgs.apiBaseUrl}/slot</li></ul>
-                    <ul><li>#{msgs.apiBaseUrl}/slot?deviceType=Q7</li></ul>
-                </p:column> 
-            </p:row>
+
             <p:row>  
                 <p:column>Device type</p:column>
                 <p:column>GET</p:column>  
@@ -82,7 +69,48 @@
                     <ul><li>#{msgs.apiBaseUrl}/deviceType/ACC</li></ul>
                 </p:column> 
             </p:row>
-            
+
+            <p:row>  
+                <p:column>Path</p:column>  
+                <p:column>GET</p:column>  
+                <p:column>/path</p:column>  
+                <p:column>
+                    List of paths between two elements. A path is a sequence of elements. If start is not given, all sources are assumed. 
+                    If end is not give, all endpoints are assumed. If neither is given, paths between all combinations of sources and endpoints are generated.
+                </p:column>
+                <p:column>List of <i>element</i></p:column>
+                <p:column> 
+                    <ul>
+                        <li><b>start</b> (optional): From this element</li>
+                        <li><b>end</b> (optional): To this element</li>
+                    </ul>
+                </p:column> 
+                <p:column>                  
+                    <ul>
+                        <li>#{msgs.apiBaseUrl}/path?start=FE_ISRC2:ELC1_D0665&amp;end=FE_BTS:FC_D1100</li> 
+                        <li>#{msgs.apiBaseUrl}/path?start=FE_ISRC2:ELC1_D0665</li> 
+                        <li>#{msgs.apiBaseUrl}/path?end=FE_BTS:FC_D1100</li> 
+                        <li>#{msgs.apiBaseUrl}/path</li>
+                    </ul>
+                </p:column> 
+            </p:row>
+
+            <p:row>  
+                <p:column>Slot</p:column>  
+                <p:column>GET</p:column>  
+                <p:column>/slot</p:column>  
+                <p:column>List of slots</p:column>
+                <p:column>List of <i>slot</i></p:column>
+                <p:column> 
+                    <ul><li><b>deviceType</b> (optional): Device type</li></ul>
+                </p:column> 
+                <p:column>
+                    <ul>
+                        <li>#{msgs.apiBaseUrl}/slot</li>
+                        <li>#{msgs.apiBaseUrl}/slot?deviceType=Q7</li>
+                    </ul>
+                </p:column> 
+            </p:row>
         </p:panelGrid>
     </p:panel>
 </ui:composition>

@@ -14,34 +14,35 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
+import org.openepics.discs.ccdb.model.auth.Role;
 
 /**
- *
+ * A group of slots (for configuration management)
+ * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_phasegroup" )
+@Table(name = "cm_slot_group" )
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PhaseGroup.findAll", query = "SELECT d FROM PhaseGroup d"),
-    @NamedQuery(name = "PhaseGroup.findByName", query = "SELECT d FROM PhaseGroup d WHERE  d.name = :name")
+    @NamedQuery(name = "SlotGroup.findAll", query = "SELECT d FROM SlotGroup d"),
+    @NamedQuery(name = "SlotGroup.findByName", query = "SELECT d FROM SlotGroup d WHERE d.name = :name")
 })
-public class PhaseGroup extends ConfigurationEntity {
+public class SlotGroup extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L; 
 
@@ -57,17 +58,9 @@ public class PhaseGroup extends ConfigurationEntity {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "phaseGroup")
-    private List<StatusOption> options;
-    
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable( name = "cm_phase_in_group", 
-//                joinColumns = @JoinColumn(name = "phasegroup"),
-//                inverseJoinColumns = @JoinColumn(name = "phase") )
-//    private List<Phase> phases;
-  
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="phaseGroup")
-    private List<PhaseGroupMember> phases;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner")
+    private Role owner; 
     
     // getters and setters
 
@@ -87,19 +80,11 @@ public class PhaseGroup extends ConfigurationEntity {
         this.description = description;
     }
 
-    public List<StatusOption> getOptions() {
-        return options;
+    public Role getOwner() {
+        return owner;
     }
 
-    public void setOptions(List<StatusOption> options) {
-        this.options = options;
-    }
-
-    public List<PhaseGroupMember> getPhases() {
-        return phases;
-    }
-
-    public void setPhases(List<PhaseGroupMember> phases) {
-        this.phases = phases;
+    public void setOwner(Role owner) {
+        this.owner = owner;
     }
 }

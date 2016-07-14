@@ -13,7 +13,7 @@
  *        http://frib.msu.edu
  */
 
-package org.openepics.discs.ccdb.gui.cm;
+package org.openepics.discs.ccdb.gui.cl;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,9 +24,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
+import org.openepics.discs.ccdb.core.ejb.AuthEJB;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
-import org.openepics.discs.ccdb.model.cm.PhaseGroup;
+import org.openepics.discs.ccdb.model.auth.Role;
+import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -58,29 +60,33 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-public class PhaseGroupManager implements Serializable {
+public class SlotGroupManager implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
     @EJB
-    private LifecycleEJB lcEJB;
+    private ChecklistEJB lcEJB;
+     @EJB
+    private AuthEJB authEJB;
             
-    private static final Logger LOGGER = Logger.getLogger(PhaseGroupManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SlotGroupManager.class.getName());
 //    @Inject
 //    UserSession userSession;
       
-    private List<PhaseGroup> entities;    
-    private List<PhaseGroup> filteredEntities;    
-    private PhaseGroup inputEntity;
-    private PhaseGroup selectedEntity;
+    private List<SlotGroup> entities;    
+    private List<SlotGroup> filteredEntities;    
+    private List<Role> roles ;
+    private SlotGroup inputEntity;
+    private SlotGroup selectedEntity;
     private InputAction inputAction;
     
     
-    public PhaseGroupManager() {
+    public SlotGroupManager() {
     }
     
     @PostConstruct
     public void init() {      
-        entities = lcEJB.findAllPhaseGroups();     
+        entities = lcEJB.findAllSlotGroups(); 
+        roles = authEJB.findAllRoles();
         resetInput();
     }
     
@@ -94,7 +100,7 @@ public class PhaseGroupManager implements Serializable {
     }
     
     public void onAddCommand(ActionEvent event) {
-        inputEntity = new PhaseGroup();
+        inputEntity = new SlotGroup();
         inputAction = InputAction.CREATE;       
     }
     
@@ -109,10 +115,11 @@ public class PhaseGroupManager implements Serializable {
     public void saveEntity() {
         try {                      
             if (inputAction == InputAction.CREATE) {
-                lcEJB.savePhaseGroup(inputEntity);
+                lcEJB.saveSlotGroup(inputEntity);
                 entities.add(inputEntity);                
             } else {
-                lcEJB.savePhaseGroup(selectedEntity);
+                lcEJB.saveSlotGroup(selectedEntity);
+                lcEJB.refreshVersion(SlotGroup.class, selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
@@ -126,7 +133,7 @@ public class PhaseGroupManager implements Serializable {
     
     public void deleteEntity() {
         try {
-            lcEJB.deletePhaseGroup(selectedEntity);
+            lcEJB.deleteSlotGroup(selectedEntity);
             entities.remove(selectedEntity);  
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
@@ -144,33 +151,35 @@ public class PhaseGroupManager implements Serializable {
         return inputAction;
     }
 
-    public List<PhaseGroup> getEntities() {
+    public List<SlotGroup> getEntities() {
         return entities;
     }
 
-    public List<PhaseGroup> getFilteredEntities() {
+    public List<SlotGroup> getFilteredEntities() {
         return filteredEntities;
     }
 
-    public void setFilteredEntities(List<PhaseGroup> filteredEntities) {
+    public void setFilteredEntities(List<SlotGroup> filteredEntities) {
         this.filteredEntities = filteredEntities;
     }
 
-    public PhaseGroup getInputEntity() {
+    public SlotGroup getInputEntity() {
         return inputEntity;
     }
 
-    public void setInputEntity(PhaseGroup inputEntity) {
+    public void setInputEntity(SlotGroup inputEntity) {
         this.inputEntity = inputEntity;
     }
 
-    public PhaseGroup getSelectedEntity() {
+    public SlotGroup getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(PhaseGroup selectedEntity) {
+    public void setSelectedEntity(SlotGroup selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
-    
+    public List<Role> getRoles() {
+        return roles;
+    }
 }

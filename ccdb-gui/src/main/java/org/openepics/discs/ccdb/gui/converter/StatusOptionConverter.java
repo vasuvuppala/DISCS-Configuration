@@ -12,8 +12,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.inject.Named;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
-import org.openepics.discs.ccdb.model.cm.StatusOption;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
+import org.openepics.discs.ccdb.model.cl.StatusOption;
 
 /**
  *
@@ -23,7 +23,7 @@ import org.openepics.discs.ccdb.model.cm.StatusOption;
 @RequestScoped // Can be ApplicationScoped but have to be careful with state
 public class StatusOptionConverter implements Converter {
 
-    @EJB private LifecycleEJB lcEJB;
+    @EJB private ChecklistEJB lcEJB;
 
     /**
      * Creates a new instance of DeviceConverter

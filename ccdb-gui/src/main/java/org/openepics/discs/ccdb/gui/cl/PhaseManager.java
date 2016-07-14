@@ -12,7 +12,8 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
-package org.openepics.discs.ccdb.gui.cm;
+
+package org.openepics.discs.ccdb.gui.cl;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,20 +22,18 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
-import org.openepics.discs.ccdb.core.ejb.SlotEJB;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
-import org.openepics.discs.ccdb.model.Slot;
-import org.openepics.discs.ccdb.model.cm.SlotGroup;
+import org.openepics.discs.ccdb.model.cl.Process;
+import org.openepics.discs.ccdb.model.cl.Checklist;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
- * Description: State for Manage Process View
+ * Description: State for Manage Phase View
  *
  * Methods:
  * <p>
@@ -57,95 +56,104 @@ import org.primefaces.event.SelectEvent;
  * @author vuppala
  *
  */
+
 @Named
 @ViewScoped
-public class CmSlotManager implements Serializable {
+public class PhaseManager implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
-
     @EJB
-    private SlotEJB slotEJB;
-    @EJB
-    private LifecycleEJB lcEJB;
-
-    private static final Logger LOGGER = Logger.getLogger(CmSlotManager.class.getName());
+    private ChecklistEJB lcEJB;
+            
+    private static final Logger LOGGER = Logger.getLogger(PhaseManager.class.getName());
 //    @Inject
 //    UserSession userSession;
-
-    private List<Slot> entities;
-    private List<Slot> filteredEntities;
-    private Slot inputEntity;
-    private Slot selectedEntity;
+      
+    private List<Process> entities;    
+    private List<Process> filteredEntities;    
+    private Process inputEntity;
+    private Process selectedEntity;
     private InputAction inputAction;
-    private List<SlotGroup> slotGroups;
-
-    public CmSlotManager() {
+    private String selectedType;
+    
+    private List<Checklist> statusTypes;
+    
+    public PhaseManager() {
     }
-
+    
     @PostConstruct
-    public void init() {
-        entities = slotEJB.findByIsHostingSlot(true);
-        slotGroups = lcEJB.findAllSlotGroups();
-        selectedEntity = (entities == null || entities.isEmpty()) ? null: entities.get(0);
+    public void init() { 
+        initialize();
+        statusTypes = lcEJB.findAllPhaseGroups();
         resetInput();
     }
-
-    private void resetInput() {
+    
+    /**
+     * Initialize data in view
+     * 
+     * @return 
+     */
+    public String initialize() {
+        String nextView = null;
+        Checklist stype = null;
+        
+        if (selectedType != null) {
+            stype = lcEJB.findPhaseGroup(selectedType);
+        }
+        if (stype == null) {
+            entities = lcEJB.findAllPhases();
+        } else {
+            entities = lcEJB.findPhases(stype);
+        }
+        
+        return nextView;
+    
+    }
+    
+    private void resetInput() {                
         inputAction = InputAction.READ;
     }
-
+    
     public void onRowSelect(SelectEvent event) {
         // inputRole = selectedRole;
         // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Role Selected", "");
     }
-
-//    public void onAddCommand(ActionEvent event) {
-//        inputEntity = new Slot();
-//        inputAction = InputAction.CREATE;       
-//    }
+    
+    public void onAddCommand(ActionEvent event) {
+        inputEntity = new Process();
+        inputAction = InputAction.CREATE;       
+    }
     
     public void onEditCommand(ActionEvent event) {
         inputAction = InputAction.UPDATE;
     }
-
+    
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
     }
-
-    public void onGroupChange(ValueChangeEvent event) {
-        SlotGroup oldGroup = (SlotGroup) event.getOldValue();
-        SlotGroup newGroup = (SlotGroup) event.getNewValue();
-        
-        if (newGroup == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Removed from Group", "Make sure that the slots' checklist(s) are updated.");           
-        } else if (lcEJB.findAssignment(selectedEntity) != null) {
-           UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Slot already has a checklist", "Slots' checklists will be masked by the group's checklist."); 
-        }
-    }
     
     public void saveEntity() {
-        try {
+        try {                      
             if (inputAction == InputAction.CREATE) {
-                slotEJB.save(inputEntity);
-                entities.add(inputEntity);            
+                lcEJB.savePhase(inputEntity);
+                entities.add(inputEntity);                
             } else {
-                slotEJB.save(selectedEntity);
-                lcEJB.refreshVersion(Slot.class, selectedEntity);             
+                lcEJB.savePhase(selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Updated", "");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Saved", "");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save ", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
     }
-
+    
     public void deleteEntity() {
         try {
-            slotEJB.delete(selectedEntity);
-            entities.remove(selectedEntity);
+            lcEJB.deletePhase(selectedEntity);
+            entities.remove(selectedEntity);  
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
             resetInput();
@@ -155,41 +163,58 @@ public class CmSlotManager implements Serializable {
             System.out.println(e);
         }
     }
-
+    
     //-- Getters/Setters 
+    
     public InputAction getInputAction() {
         return inputAction;
     }
 
-    public List<Slot> getEntities() {
+    public List<Process> getEntities() {
         return entities;
     }
 
-    public List<Slot> getFilteredEntities() {
+    public List<Process> getFilteredEntities() {
         return filteredEntities;
     }
 
-    public void setFilteredEntities(List<Slot> filteredEntities) {
+    public void setFilteredEntities(List<Process> filteredEntities) {
         this.filteredEntities = filteredEntities;
     }
 
-    public Slot getInputEntity() {
+    public Process getInputEntity() {
         return inputEntity;
     }
 
-    public void setInputEntity(Slot inputEntity) {
+    public void setInputEntity(Process inputEntity) {
         this.inputEntity = inputEntity;
     }
 
-    public Slot getSelectedEntity() {
+    public Process getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(Slot selectedEntity) {
+    public void setSelectedEntity(Process selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
-    public List<SlotGroup> getSlotGroups() {
-        return slotGroups;
+    public List<Checklist> getStatusTypes() {
+        return statusTypes;
+    }   
+
+    public ChecklistEJB getLcEJB() {
+        return lcEJB;
+    }
+
+    public void setLcEJB(ChecklistEJB lcEJB) {
+        this.lcEJB = lcEJB;
+    }
+
+    public String getSelectedType() {
+        return selectedType;
+    }
+
+    public void setSelectedType(String selectedType) {
+        this.selectedType = selectedType;
     }
 }

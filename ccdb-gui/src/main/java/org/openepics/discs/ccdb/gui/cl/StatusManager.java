@@ -12,7 +12,7 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
-package org.openepics.discs.ccdb.gui.cm;
+package org.openepics.discs.ccdb.gui.cl;
 
 import com.google.common.base.Preconditions;
 import java.io.Serializable;
@@ -27,13 +27,13 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.auth.User;
-import org.openepics.discs.ccdb.model.cm.PhaseGroup;
-import org.openepics.discs.ccdb.model.cm.PhaseStatus;
-import org.openepics.discs.ccdb.model.cm.StatusOption;
+import org.openepics.discs.ccdb.model.cl.Checklist;
+import org.openepics.discs.ccdb.model.cl.ProcessStatus;
+import org.openepics.discs.ccdb.model.cl.StatusOption;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -69,7 +69,7 @@ public class StatusManager implements Serializable {
 //    private AuthEJB authEJB;
 
     @EJB
-    private LifecycleEJB lcEJB;
+    private ChecklistEJB lcEJB;
     @Inject
     private SecurityPolicy securityPolicy;
 
@@ -78,11 +78,11 @@ public class StatusManager implements Serializable {
 //    UserSession userSession;
 
     private String entityType = "g";
-    private List<PhaseStatus> entities;
-    private List<PhaseStatus> filteredEntities;
+    private List<ProcessStatus> entities;
+    private List<ProcessStatus> filteredEntities;
     private List<StatusOption> statusOptions;
-    private PhaseStatus inputEntity;
-    private PhaseStatus selectedEntity;
+    private ProcessStatus inputEntity;
+    private ProcessStatus selectedEntity;
     private InputAction inputAction;
     private StatusOption inputStatus;
     private String selectedType;
@@ -90,7 +90,7 @@ public class StatusManager implements Serializable {
     // private boolean phaseNR = false; // Phase not required
     private Boolean allPhasesOptional = false;
 
-    private List<PhaseStatus> selectedEntities;
+    private List<ProcessStatus> selectedEntities;
 
     public StatusManager() {
     }
@@ -107,7 +107,7 @@ public class StatusManager implements Serializable {
      */
     public String initialize() {
         String nextView = null;
-        PhaseGroup stype = null;
+        Checklist stype = null;
 
         if (selectedType != null) {
             stype = lcEJB.findPhaseGroup(selectedType);
@@ -144,7 +144,7 @@ public class StatusManager implements Serializable {
     }
 
     public void onRowSelect(SelectEvent event) {
-        PhaseStatus status = (PhaseStatus) event.getObject();
+        ProcessStatus status = (ProcessStatus) event.getObject();
         inputComment = status.getComment();
         inputStatus = status.getStatus();
         // phaseNR = status.getGroupMember().getOptional() && status.getStatus() == null;
@@ -160,7 +160,7 @@ public class StatusManager implements Serializable {
      */
     private boolean findOptional() {
         // LOGGER.log(Level.INFO, "get all optional", "enter");
-        for (PhaseStatus status: selectedEntities) {
+        for (ProcessStatus status: selectedEntities) {
             // LOGGER.log(Level.INFO, "checking {0}", status.getGroupMember().getPhase().getName());
             if (status.getGroupMember().getOptional() == false) return false;
         }
@@ -168,7 +168,7 @@ public class StatusManager implements Serializable {
     }
     
     public void onAddCommand(ActionEvent event) {
-        inputEntity = new PhaseStatus();
+        inputEntity = new ProcessStatus();
         inputAction = InputAction.CREATE;
         
     }
@@ -222,7 +222,7 @@ public class StatusManager implements Serializable {
      */
     private boolean inputValid() {
        
-        for (PhaseStatus status : selectedEntities) {
+        for (ProcessStatus status : selectedEntities) {
 //            if (status.getGroupMember().getOptional() == false && status.getStatus() == null ) { 
 //                // user says that phase is not required but the phase is not optional
 //                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Validation Error",
@@ -260,7 +260,7 @@ public class StatusManager implements Serializable {
      * @param summaryStatus
      * @return 
      */
-    private boolean isValid(PhaseStatus summaryStatus, StatusOption inputStatus) {        
+    private boolean isValid(ProcessStatus summaryStatus, StatusOption inputStatus) {        
         Integer summaryWeight = summaryWeight(summaryStatus);
         Integer inputWeight = toInt(inputStatus);
         
@@ -274,8 +274,8 @@ public class StatusManager implements Serializable {
      * @param status
      * @return 
      */
-    private Integer summaryWeight(PhaseStatus status) {
-        List <PhaseStatus> statuses = lcEJB.findAllStatuses(status.getAssignment());
+    private Integer summaryWeight(ProcessStatus status) {
+        List <ProcessStatus> statuses = lcEJB.findAllStatuses(status.getAssignment());
         Integer minWeight = statuses.stream()
                 .filter(stat -> stat.getGroupMember().getSummaryPhase() == false)
                 .filter(stat -> stat.getStatus() != null)
@@ -291,18 +291,18 @@ public class StatusManager implements Serializable {
      * @param status
      * @return 
      */
-    public String summaryStatus(PhaseStatus status) {
+    public String summaryStatus(ProcessStatus status) {
         if (! status.getGroupMember().getSummaryPhase()) {
             return "";
         }
         
-       for(PhaseStatus stat: lcEJB.findAllStatuses(status.getAssignment())) {
+       for(ProcessStatus stat: lcEJB.findAllStatuses(status.getAssignment())) {
            if (!stat.getGroupMember().getSummaryPhase() && stat.getStatus() != null && "N".equals(stat.getStatus().getName())) {
                return "N";
            }
        }
        
-       for(PhaseStatus stat: lcEJB.findAllStatuses(status.getAssignment())) {
+       for(ProcessStatus stat: lcEJB.findAllStatuses(status.getAssignment())) {
            if (!stat.getGroupMember().getSummaryPhase() && stat.getStatus() != null && "YC".equals(stat.getStatus().getName())) {
                return "YC";
            }
@@ -329,7 +329,7 @@ public class StatusManager implements Serializable {
             }
             User user = new User(userId);
 
-            for (PhaseStatus selectedApproval : selectedEntities) {
+            for (ProcessStatus selectedApproval : selectedEntities) {
                 if (selectedApproval.getAssignedSME() != null && !selectedApproval.getAssignedSME().equals(user)) {
                     UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                             "You are not assigned to one or more of the selected assignments.");
@@ -338,7 +338,7 @@ public class StatusManager implements Serializable {
                 }
             }
 
-            for (PhaseStatus status : selectedEntities) {
+            for (ProcessStatus status : selectedEntities) {
                 status.setModifiedAt(new Date());
                 status.setModifiedBy(user.getUserId());
                 status.setStatus(inputStatus);
@@ -391,39 +391,39 @@ public class StatusManager implements Serializable {
         return inputAction;
     }
 
-    public List<PhaseStatus> getEntities() {
+    public List<ProcessStatus> getEntities() {
         return entities;
     }
 
-    public List<PhaseStatus> getFilteredEntities() {
+    public List<ProcessStatus> getFilteredEntities() {
         return filteredEntities;
     }
 
-    public void setFilteredEntities(List<PhaseStatus> filteredEntities) {
+    public void setFilteredEntities(List<ProcessStatus> filteredEntities) {
         this.filteredEntities = filteredEntities;
     }
 
-    public PhaseStatus getInputEntity() {
+    public ProcessStatus getInputEntity() {
         return inputEntity;
     }
 
-    public void setInputEntity(PhaseStatus inputEntity) {
+    public void setInputEntity(ProcessStatus inputEntity) {
         this.inputEntity = inputEntity;
     }
 
-    public PhaseStatus getSelectedEntity() {
+    public ProcessStatus getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(PhaseStatus selectedEntity) {
+    public void setSelectedEntity(ProcessStatus selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
-    public List<PhaseStatus> getSelectedEntities() {
+    public List<ProcessStatus> getSelectedEntities() {
         return selectedEntities;
     }
 
-    public void setSelectedEntities(List<PhaseStatus> selectedEntities) {
+    public void setSelectedEntities(List<ProcessStatus> selectedEntities) {
         this.selectedEntities = selectedEntities;
     }
 

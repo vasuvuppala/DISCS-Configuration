@@ -14,7 +14,7 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
+import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 
 /**
  * Life cycle phase
@@ -41,14 +42,14 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
     @NamedQuery(name = "Phase.findAll", query = "SELECT d FROM Phase d"),
     @NamedQuery(name = "Phase.findByName", query = "SELECT d FROM Phase d WHERE d.name = :name")
 })
-public class Phase extends ConfigurationEntity {
+public class Process extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L; 
 
     @Basic(optional = false)
     @NotNull
     @Size(min=1, max=64)
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
     
     @Basic(optional = false)

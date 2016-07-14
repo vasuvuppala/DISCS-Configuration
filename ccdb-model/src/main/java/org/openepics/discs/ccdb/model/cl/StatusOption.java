@@ -14,8 +14,9 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
+import org.openepics.discs.ccdb.model.cl.Checklist;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,7 +53,7 @@ public class StatusOption extends ConfigurationEntity {
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "phase_group")
-    private PhaseGroup phaseGroup;
+    private Checklist phaseGroup;
     
     @Basic(optional = false)
     @NotNull
@@ -105,11 +106,11 @@ public class StatusOption extends ConfigurationEntity {
         this.description = description;
     }
 
-    public PhaseGroup getPhaseGroup() {
+    public Checklist getPhaseGroup() {
         return phaseGroup;
     }
 
-    public void setPhaseGroup(PhaseGroup phaseGroup) {
+    public void setPhaseGroup(Checklist phaseGroup) {
         this.phaseGroup = phaseGroup;
     }
 

@@ -14,7 +14,7 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -52,7 +52,7 @@ import org.openepics.discs.ccdb.model.auth.User;
     @NamedQuery(name = "PhaseAssignment.findUnassignedSlots", query = "SELECT s FROM Slot s WHERE s NOT IN (SELECT a.slot FROM PhaseAssignment a WHERE a.slot IS NOT NULL)"),
     @NamedQuery(name = "PhaseAssignment.findBySlot", query = "SELECT d FROM PhaseAssignment d WHERE d.slot = :slot")
 })
-public class PhaseAssignment extends ConfigurationEntity {
+public class Assignment extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L;
     
@@ -70,17 +70,14 @@ public class PhaseAssignment extends ConfigurationEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "phasegroup")
-    private PhaseGroup phaseGroup;
+    private Checklist phaseGroup;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "requestor")
-    private User requestor;    
+    private User requestor; 
     
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "assignment")
-    private List<PhaseApproval> approvals;
-    
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "assignment")
-    private List<PhaseStatus> statuses;
+    private List<ProcessStatus> statuses;
     
     // getters and setters
 
@@ -100,20 +97,12 @@ public class PhaseAssignment extends ConfigurationEntity {
         this.slot = slot;
     }
 
-    public PhaseGroup getPhaseGroup() {
+    public Checklist getPhaseGroup() {
         return phaseGroup;
     }
 
-    public void setPhaseGroup(PhaseGroup phaseGroup) {
+    public void setPhaseGroup(Checklist phaseGroup) {
         this.phaseGroup = phaseGroup;
-    }
-
-    public List<PhaseApproval> getApprovals() {
-        return approvals;
-    }
-
-    public void setApprovals(List<PhaseApproval> approvals) {
-        this.approvals = approvals;
     }
 
     public Device getDevice() {
@@ -132,11 +121,11 @@ public class PhaseAssignment extends ConfigurationEntity {
         this.slotGroup = slotGroup;
     }
 
-    public List<PhaseStatus> getStatuses() {
+    public List<ProcessStatus> getStatuses() {
         return statuses;
     }
 
-    public void setStatuses(List<PhaseStatus> statuses) {
+    public void setStatuses(List<ProcessStatus> statuses) {
         this.statuses = statuses;
     }
     

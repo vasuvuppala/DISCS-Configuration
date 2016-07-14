@@ -93,6 +93,18 @@ public class SlotEJB extends DAO<Slot> {
     }
 
     /**
+     * Find all slots define by users i.e. slots not used internally by system such as _ROOT
+     * 
+     * @return 
+     */
+    public List<Slot> findUserSlots() {
+       ComponentType rootComponentType = comptypeEJB.findByName(ROOT_COMPONENT_TYPE);
+       return em.createQuery("SELECT s FROM Slot s WHERE s.componentType != :ctype", Slot.class)
+               .setParameter("ctype", rootComponentType)
+               .getResultList();
+    }
+    
+    /**
      * Retrieves the special implicit root container from the database.
      *
      * @return the implicit root {@link Slot} of the contains hierarchy

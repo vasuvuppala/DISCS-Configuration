@@ -14,8 +14,10 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
+import org.openepics.discs.ccdb.model.cl.Checklist;
+import org.openepics.discs.ccdb.model.cl.Process;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,17 +45,17 @@ import org.openepics.discs.ccdb.model.auth.Role;
     @NamedQuery(name = "PhaseGroupMember.findDefault", query = "SELECT d.defaultStatus FROM PhaseGroupMember d WHERE d.phaseGroup = :group AND d.phase = :phase"),
     @NamedQuery(name = "PhaseGroupMember.findByGroup", query = "SELECT d FROM PhaseGroupMember d WHERE d.phaseGroup = :group ORDER BY d.position ASC")
 })
-public class PhaseGroupMember extends ConfigurationEntity {
+public class ChecklistField extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "phase")
-    private Phase phase;
+    private Process phase;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "phasegroup")
-    private PhaseGroup phaseGroup;
+    private Checklist phaseGroup;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "sme")
@@ -80,19 +82,19 @@ public class PhaseGroupMember extends ConfigurationEntity {
     
     // --
 
-    public Phase getPhase() {
+    public Process getPhase() {
         return phase;
     }
 
-    public void setPhase(Phase phase) {
+    public void setPhase(Process phase) {
         this.phase = phase;
     }
 
-    public PhaseGroup getPhaseGroup() {
+    public Checklist getPhaseGroup() {
         return phaseGroup;
     }
 
-    public void setPhaseGroup(PhaseGroup phaseGroup) {
+    public void setPhaseGroup(Checklist phaseGroup) {
         this.phaseGroup = phaseGroup;
     }
 

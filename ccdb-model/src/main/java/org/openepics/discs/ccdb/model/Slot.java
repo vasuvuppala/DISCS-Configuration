@@ -46,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import org.openepics.discs.ccdb.model.cm.LevelOfCare;
-import org.openepics.discs.ccdb.model.cm.SlotGroup;
+import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 /**
  * An installation slot for devices

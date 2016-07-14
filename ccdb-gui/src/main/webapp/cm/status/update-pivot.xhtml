@@ -44,7 +44,7 @@
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
                     <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
-                              filterMatchMode="contains" >
+                              filterMatchMode="contains"  rendered="false">
                         <h:outputText value="#{assignment.requestor.name}" />
                     </p:column>
 

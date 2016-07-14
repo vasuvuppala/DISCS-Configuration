@@ -12,8 +12,9 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
-package org.openepics.discs.ccdb.gui.cm;
+package org.openepics.discs.ccdb.gui.cl;
 
+import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +28,17 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.openepics.discs.ccdb.core.ejb.AuthEJB;
 import org.openepics.discs.ccdb.core.ejb.DeviceEJB;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.User;
-import org.openepics.discs.ccdb.model.cm.Phase;
-import org.openepics.discs.ccdb.model.cm.PhaseAssignment;
-import org.openepics.discs.ccdb.model.cm.PhaseGroup;
-import org.openepics.discs.ccdb.model.cm.SlotGroup;
+import org.openepics.discs.ccdb.model.cl.Process;
+import org.openepics.discs.ccdb.model.cl.Assignment;
+import org.openepics.discs.ccdb.model.cl.Checklist;
+import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -73,7 +74,7 @@ public class AssignmentManager implements Serializable {
 //    private AuthEJB authEJB;
 
     @EJB
-    private LifecycleEJB lcEJB;
+    private ChecklistEJB lcEJB;
     @EJB
     private SlotEJB slotEJB;
     @EJB
@@ -87,22 +88,23 @@ public class AssignmentManager implements Serializable {
 
      // request parameters
     private String selectedType;
-    private CMEntityType entityType = CMEntityType.GROUP;
+    private ChecklistEntity entityType = ChecklistEntity.GROUP;
 
     // view data
-    private List<PhaseAssignment> entities;
-    private List<PhaseAssignment> filteredEntities;
-    private PhaseAssignment selectedEntity;
+    private List<Assignment> entities;
+    private List<Assignment> filteredEntities;
+    private List<Assignment> selectedEntities;
+    private Assignment selectedEntity;
     private List<Slot> slots;
     private List<SlotGroup> slotGroups;
-    private List<Phase> phases;
-    private List<PhaseGroup> phaseGroups;
+    private List<Process> phases;
+    private List<Checklist> phaseGroups;
     private List<Device> devices;
     private List<User> users;
 
      // input data
     private InputAction inputAction;
-    private PhaseAssignment inputEntity;
+    private Assignment inputEntity;
     private List<User> inputApprovers = new ArrayList<>();
 
     public AssignmentManager() {
@@ -126,7 +128,7 @@ public class AssignmentManager implements Serializable {
      */
     public String initialize() {
         String nextView = null;
-        PhaseGroup stype = null;
+        Checklist stype = null;
 
         if (selectedType != null) {
             stype = lcEJB.findPhaseGroup(selectedType);
@@ -163,7 +165,7 @@ public class AssignmentManager implements Serializable {
     }
 
     public void onAddCommand(ActionEvent event) {
-        inputEntity = new PhaseAssignment();
+        inputEntity = new Assignment();
         inputAction = InputAction.CREATE;
         String userId = securityPolicy.getUserId();
         if (userId == null) {
@@ -184,7 +186,7 @@ public class AssignmentManager implements Serializable {
     }
 
     private boolean inputIsValid() {
-        PhaseAssignment assignment = inputAction == InputAction.CREATE ? inputEntity : selectedEntity;
+        Assignment assignment = inputAction == InputAction.CREATE ? inputEntity : selectedEntity;
 
 //        if (assignment.getDevice() == null && assignment.getSlotGroup() == null && assignment.getSlot() == null) {
 //            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "You must specify a group, slot or a device", "");
@@ -224,7 +226,7 @@ public class AssignmentManager implements Serializable {
                 entities.add(inputEntity);
             } else {
                 lcEJB.saveAssignment(selectedEntity, inputApprovers);
-                lcEJB.refreshVersion(PhaseAssignment.class, selectedEntity);
+                lcEJB.refreshVersion(Assignment.class, selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
@@ -255,31 +257,31 @@ public class AssignmentManager implements Serializable {
         return inputAction;
     }
 
-    public List<PhaseAssignment> getEntities() {
+    public List<Assignment> getEntities() {
         return entities;
     }
 
-    public List<PhaseAssignment> getFilteredEntities() {
+    public List<Assignment> getFilteredEntities() {
         return filteredEntities;
     }
 
-    public void setFilteredEntities(List<PhaseAssignment> filteredEntities) {
+    public void setFilteredEntities(List<Assignment> filteredEntities) {
         this.filteredEntities = filteredEntities;
     }
 
-    public PhaseAssignment getInputEntity() {
+    public Assignment getInputEntity() {
         return inputEntity;
     }
 
-    public void setInputEntity(PhaseAssignment inputEntity) {
+    public void setInputEntity(Assignment inputEntity) {
         this.inputEntity = inputEntity;
     }
 
-    public PhaseAssignment getSelectedEntity() {
+    public Assignment getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(PhaseAssignment selectedEntity) {
+    public void setSelectedEntity(Assignment selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
@@ -287,7 +289,7 @@ public class AssignmentManager implements Serializable {
         return slots;
     }
 
-    public List<Phase> getPhases() {
+    public List<Process> getPhases() {
         return phases;
     }
 
@@ -327,19 +329,28 @@ public class AssignmentManager implements Serializable {
         this.slotGroups = slotGroups;
     }
 
-    public List<PhaseGroup> getPhaseGroups() {
+    public List<Checklist> getPhaseGroups() {
         return phaseGroups;
     }
 
-    public void setPhaseGroups(List<PhaseGroup> phaseGroups) {
+    public void setPhaseGroups(List<Checklist> phaseGroups) {
         this.phaseGroups = phaseGroups;
     }
 
-    public CMEntityType getEntityType() {
+    public ChecklistEntity getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(CMEntityType entityType) {
+    public void setEntityType(ChecklistEntity entityType) {
         this.entityType = entityType;
     }
+
+    public List<Assignment> getSelectedEntities() {
+        return selectedEntities;
+    }
+
+    public void setSelectedEntities(List<Assignment> selectedEntities) {
+        this.selectedEntities = selectedEntities;
+    }
+ 
 }

@@ -11,7 +11,7 @@
         The #{msgs.title} API provides access to the resources or entities that CCDB manages. 
         These entities and their attributes are described below. Note that the names of attributes are important as they are 
         used in the various representations of these resources (see Resource Representations Section below).</p>
-    
+
     <p:panel header='Resources and Attributes' toggleable="true" >
         <p:panelGrid style="text-align: left">  
             <f:facet name="header">  
@@ -54,13 +54,31 @@
                 <p:column>Description</p:column>  
                 <p:column>Beam current monitor</p:column>                     
             </p:row>
-            
 
-            
-            
             <p:row>
-                <p:column rowspan="7">slot</p:column>  
-                <p:column rowspan="7">Slot</p:column>  
+                <p:column rowspan="3">element</p:column>  
+                <p:column rowspan="3">Element</p:column>  
+                <p:column>name</p:column>  
+                <p:column>String</p:column> 
+                <p:column>Name</p:column> 
+                <p:column>FS1_BTS:DH_D2394</p:column> 
+            </p:row>
+            <p:row>                    
+                <p:column>description</p:column>  
+                <p:column>String</p:column> 
+                <p:column>Description</p:column> 
+                <p:column>Dipole (-45deg), D45-1</p:column> 
+            </p:row> 
+            <p:row>                   
+                <p:column>slot</p:column>                    
+                <p:column><i>slot</i></p:column> 
+                <p:column>Slot</p:column>  
+                <p:column>FS1_BBS:DH_D2394. See <i>slot</i> resource</p:column>                     
+            </p:row>
+
+            <p:row>
+                <p:column rowspan="6">slot</p:column>  
+                <p:column rowspan="6">Slot</p:column>  
                 <p:column>name</p:column>  
                 <p:column>String</p:column> 
                 <p:column>Name</p:column> 
@@ -71,14 +89,8 @@
                 <p:column>String</p:column> 
                 <p:column>Description</p:column> 
                 <p:column>ES Quad</p:column> 
-            </p:row> 
-            <p:row>                    
-                <p:column>percentComplete</p:column>  
-                <p:column>Float</p:column> 
-                <p:column>Percentage of installation complete</p:column> 
-                <p:column>24.5</p:column> 
-            </p:row>
-           <p:row>                   
+            </p:row>            
+            <p:row>                   
                 <p:column>deviceType</p:column>                    
                 <p:column><i>deviceType</i></p:column> 
                 <p:column>Device Type</p:column>  
@@ -103,7 +115,6 @@
                 <p:column>See <i>property</i> resource</p:column>                     
             </p:row>
 
-                    
         </p:panelGrid>
     </p:panel>
 </ui:composition>

@@ -12,8 +12,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.inject.Named;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
-import org.openepics.discs.ccdb.model.cm.Phase;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
+import org.openepics.discs.ccdb.model.cl.Process;
 
 /**
  *
@@ -23,7 +23,7 @@ import org.openepics.discs.ccdb.model.cm.Phase;
 @RequestScoped // Can be ApplicationScoped but have to be careful with state
 public class PhaseConverter implements Converter {
 
-    @EJB private LifecycleEJB lcEJB;
+    @EJB private ChecklistEJB lcEJB;
 
     /**
      * Creates a new instance of DeviceConverter
@@ -50,8 +50,8 @@ public class PhaseConverter implements Converter {
             return "";
         }
         
-        if (modelObject instanceof Phase) {
-            return ((Phase) modelObject).getId().toString();
+        if (modelObject instanceof Process) {
+            return ((Process) modelObject).getId().toString();
         } else {
             throw new ConverterException("Not a valid entity");
         }

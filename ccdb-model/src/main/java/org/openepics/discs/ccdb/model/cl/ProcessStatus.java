@@ -14,8 +14,11 @@
  *
  */
 
-package org.openepics.discs.ccdb.model.cm;
+package org.openepics.discs.ccdb.model.cl;
 
+import org.openepics.discs.ccdb.model.cl.Assignment;
+import org.openepics.discs.ccdb.model.cl.StatusOption;
+import org.openepics.discs.ccdb.model.cl.ChecklistField;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,18 +50,18 @@ import org.openepics.discs.ccdb.model.auth.User;
     @NamedQuery(name = "PhaseStatus.findByGroup", query = "SELECT d FROM PhaseStatus d WHERE d.groupMember.phaseGroup = :group"),
     @NamedQuery(name = "PhaseStatus.findByAssignment", query = "SELECT d FROM PhaseStatus d WHERE d.assignment = :assignment")
 })
-public class PhaseStatus extends ConfigurationEntity {
+public class ProcessStatus extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "assignment")
-    private PhaseAssignment assignment;
+    private Assignment assignment;
     
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_member")
-    private PhaseGroupMember groupMember;
+    private ChecklistField groupMember;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "assigned_sme")
@@ -91,11 +94,11 @@ public class PhaseStatus extends ConfigurationEntity {
         this.status = status;
     }  
 
-    public PhaseAssignment getAssignment() {
+    public Assignment getAssignment() {
         return assignment;
     }
 
-    public void setAssignment(PhaseAssignment assignment) {
+    public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
     }
 
@@ -115,11 +118,11 @@ public class PhaseStatus extends ConfigurationEntity {
         this.comment = comment;
     }
 
-    public PhaseGroupMember getGroupMember() {
+    public ChecklistField getGroupMember() {
         return groupMember;
     }
 
-    public void setGroupMember(PhaseGroupMember groupMember) {
+    public void setGroupMember(ChecklistField groupMember) {
         this.groupMember = groupMember;
     }
 }

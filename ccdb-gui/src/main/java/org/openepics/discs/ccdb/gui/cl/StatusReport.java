@@ -1,4 +1,4 @@
-package org.openepics.discs.ccdb.gui.cm;
+package org.openepics.discs.ccdb.gui.cl;
 
 /*
  * This software is Copyright by the Board of Trustees of Michigan
@@ -28,13 +28,13 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import org.openepics.discs.ccdb.core.ejb.LifecycleEJB;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
-import org.openepics.discs.ccdb.model.cm.Phase;
-import org.openepics.discs.ccdb.model.cm.PhaseStatus;
-import org.openepics.discs.ccdb.model.cm.PhaseGroup;
-import org.openepics.discs.ccdb.model.cm.SlotGroup;
+import org.openepics.discs.ccdb.model.cl.Process;
+import org.openepics.discs.ccdb.model.cl.ProcessStatus;
+import org.openepics.discs.ccdb.model.cl.Checklist;
+import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 /**
  * Bean to support lifecycle phase report
@@ -67,11 +67,11 @@ public class StatusReport implements Serializable {
     
     private static final Logger LOGGER = Logger.getLogger(StatusReport.class.getName());
     @EJB
-    private LifecycleEJB lcEJB;
+    private ChecklistEJB lcEJB;
     
-    private List<PhaseStatus> statusList;
-    private List<PhaseStatus> filteredStatus;
-    private List<Phase> phases;
+    private List<ProcessStatus> statusList;
+    private List<ProcessStatus> filteredStatus;
+    private List<Process> phases;
     private Set<SlotGroup> slotGroups;
     private Set<Slot> slots;
     private Set<Device> devices;
@@ -101,7 +101,7 @@ public class StatusReport implements Serializable {
      */
     public String initialize() {
         String nextView = null;
-        PhaseGroup stype = null;
+        Checklist stype = null;
         
         if (selectedType != null) {
             stype = lcEJB.findPhaseGroup(selectedType);
@@ -124,13 +124,13 @@ public class StatusReport implements Serializable {
     }
     
 
-    public PhaseStatus getStatusRec(Slot slot, Phase phase) {
+    public ProcessStatus getStatusRec(Slot slot, Process phase) {
        
           if (slot == null || phase == null ) {
               return null;
           }
           
-          for(PhaseStatus lcstat: statusList) {
+          for(ProcessStatus lcstat: statusList) {
               if (slot.getCmGroup() != null) {
                   return getGroupStatusRec(slot.getCmGroup(), phase);
               }
@@ -142,13 +142,13 @@ public class StatusReport implements Serializable {
         return null;
     }
     
-    public PhaseStatus getGroupStatusRec(SlotGroup group, Phase phase) {
+    public ProcessStatus getGroupStatusRec(SlotGroup group, Process phase) {
        
           if (group == null || phase == null ) {
               return null;
           }
           
-          for(PhaseStatus lcstat: statusList) {
+          for(ProcessStatus lcstat: statusList) {
               if (group.equals(lcstat.getAssignment().getSlotGroup()) && phase.equals(lcstat.getGroupMember().getPhase())) {
                   return lcstat;
              }
@@ -158,13 +158,13 @@ public class StatusReport implements Serializable {
     }
     
 
-    public PhaseStatus getDeviceStatusRec(Device device, Phase phase) {
+    public ProcessStatus getDeviceStatusRec(Device device, Process phase) {
        
           if (device == null || phase == null ) {
               return null;
           }
           
-          for(PhaseStatus lcstat: statusList) {
+          for(ProcessStatus lcstat: statusList) {
               if (device.equals(lcstat.getAssignment().getDevice()) && phase.equals(lcstat.getGroupMember().getPhase())) {
                   return lcstat;
              }
@@ -175,11 +175,11 @@ public class StatusReport implements Serializable {
     
     // getters and setters
 
-    public List<PhaseStatus> getFilteredStatus() {
+    public List<ProcessStatus> getFilteredStatus() {
         return filteredStatus;
     }
 
-    public void setFilteredStatus(List<PhaseStatus> filteredStatus) {
+    public void setFilteredStatus(List<ProcessStatus> filteredStatus) {
         this.filteredStatus = filteredStatus;
     }
 
@@ -191,7 +191,7 @@ public class StatusReport implements Serializable {
         this.selectedType = selectedType;
     }
 
-    public List<Phase> getPhases() {
+    public List<Process> getPhases() {
         return phases;
     }
 
