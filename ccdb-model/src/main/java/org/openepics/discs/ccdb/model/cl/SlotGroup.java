@@ -26,7 +26,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.auth.Role;
 
@@ -37,7 +36,6 @@ import org.openepics.discs.ccdb.model.auth.Role;
  */
 @Entity
 @Table(name = "cm_slot_group" )
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SlotGroup.findAll", query = "SELECT d FROM SlotGroup d"),
     @NamedQuery(name = "SlotGroup.findByName", query = "SELECT d FROM SlotGroup d WHERE d.name = :name")

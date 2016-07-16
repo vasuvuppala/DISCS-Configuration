@@ -84,7 +84,7 @@ public class PhaseManager implements Serializable {
     @PostConstruct
     public void init() { 
         initialize();
-        statusTypes = lcEJB.findAllPhaseGroups();
+        statusTypes = lcEJB.findAllChecklists();
         resetInput();
     }
     
@@ -98,7 +98,7 @@ public class PhaseManager implements Serializable {
         Checklist stype = null;
         
         if (selectedType != null) {
-            stype = lcEJB.findPhaseGroup(selectedType);
+            stype = lcEJB.findChecklist(selectedType);
         }
         if (stype == null) {
             entities = lcEJB.findAllPhases();

@@ -116,7 +116,7 @@ public class AssignmentManager implements Serializable {
         slots = lcEJB.findUnassignedSlots();
         slotGroups = lcEJB.findUnassignedGroups();
         users = authEJB.findAllUsers();
-        phaseGroups = lcEJB.findAllPhaseGroups();
+        phaseGroups = lcEJB.findAllChecklists();
         initialize();
         resetInput();
     }
@@ -131,7 +131,7 @@ public class AssignmentManager implements Serializable {
         Checklist stype = null;
 
         if (selectedType != null) {
-            stype = lcEJB.findPhaseGroup(selectedType);
+            stype = lcEJB.findChecklist(selectedType);
         }
 
         if (stype == null) {

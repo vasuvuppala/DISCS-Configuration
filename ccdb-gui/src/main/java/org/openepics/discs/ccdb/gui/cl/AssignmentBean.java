@@ -33,6 +33,7 @@ import org.openepics.discs.ccdb.core.ejb.SlotEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Slot;
+import org.openepics.discs.ccdb.model.cl.Checklist;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -91,6 +92,9 @@ public class AssignmentBean implements Serializable {
     private List<Slot> selectedSlots;
     private List<Slot> filteredSlots;
     private InputAction inputAction;
+    
+    // input data
+    private List<Checklist> selectedChecklists;
 
     public AssignmentBean() {
     }
@@ -115,14 +119,14 @@ public class AssignmentBean implements Serializable {
 //                entities = lcEJB.findGroupAssignments();
                 break;
             case SLOT:
-                slots = slotEJB.findUserSlots();
+                slots = lcEJB.findUnassignedSlots();
                 break;
             case DEVICE:
 //                entities = lcEJB.findDeviceAssignments();
                 break;
             default:
                 LOGGER.log(Level.WARNING, "Invalid CM entity type {0}", entityType);
-                slots = slotEJB.findUserSlots();
+                slots = lcEJB.findUnassignedSlots();
         }
 
         return nextView;
@@ -255,6 +259,14 @@ public class AssignmentBean implements Serializable {
 
     public void setInputAction(InputAction inputAction) {
         this.inputAction = inputAction;
+    }
+
+    public List<Checklist> getSelectedChecklists() {
+        return selectedChecklists;
+    }
+
+    public void setSelectedChecklists(List<Checklist> selectedChecklists) {
+        this.selectedChecklists = selectedChecklists;
     }
     
 }

@@ -38,7 +38,7 @@ public class PhaseGroupConverter implements Converter {
         } 
         
         try {
-            return lcEJB.findPhaseGroup(Long.valueOf(stringValue));
+            return lcEJB.findChecklist(Long.valueOf(stringValue));
         } catch (Exception e){
             throw new ConverterException("Not a valid ID");
         }

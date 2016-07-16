@@ -155,7 +155,7 @@ public class StatusPivotManager implements Serializable {
         Checklist stype = null;
 
         if (selectedPhaseGroup != null) {
-            stype = lcEJB.findPhaseGroup(selectedPhaseGroup);
+            stype = lcEJB.findChecklist(selectedPhaseGroup);
         }
 
         if (stype == null) {
@@ -504,7 +504,7 @@ public class StatusPivotManager implements Serializable {
                             status.setStatus(inputStatus);
                             status.setComment(inputComment);
                             status.setAssignedSME(inputSME);                           
-                            lcEJB.savePhaseStatus(status);                          
+                            lcEJB.saveProcessStatus(status);                          
                             lcEJB.refreshVersion(ProcessStatus.class, status); // ToDo: to update the version field
                             // lcEJB.refreshVersion(status); // ToDo: to update the version field
                         }

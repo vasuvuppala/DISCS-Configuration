@@ -36,11 +36,11 @@ import org.openepics.discs.ccdb.model.cm.LevelOfCare;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_phase" )
+@Table(name = "cm_process" )
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Phase.findAll", query = "SELECT d FROM Phase d"),
-    @NamedQuery(name = "Phase.findByName", query = "SELECT d FROM Phase d WHERE d.name = :name")
+    @NamedQuery(name = "Process.findAll", query = "SELECT d FROM Process d"),
+    @NamedQuery(name = "Process.findByName", query = "SELECT d FROM Process d WHERE d.name = :name")
 })
 public class Process extends ConfigurationEntity {
 

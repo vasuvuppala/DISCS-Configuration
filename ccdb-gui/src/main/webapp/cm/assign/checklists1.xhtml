@@ -7,7 +7,6 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-
     <ui:define name="content"> 
         <f:metadata>          
             <f:viewParam name="et" value="#{assignmentBean.entityType}"  /> 
@@ -16,7 +15,7 @@
         <h:form id="crudForm" > 
             <p:panel>
                 <h:outputText value="Checklist Assignment" styleClass="heading"/>
-                <p:dataTable id="entityTable" var="entity" 
+                <p:dataTable id="assignTable" var="entity" 
                              value="#{assignmentBean.slots}" rowSelectMode="checkbox"
                              emptyMessage="No records found." 
                              rowKey="#{entity.id}" selection="#{assignmentBean.selectedSlots}"
@@ -43,19 +42,21 @@
 
                     <p:column headerText="Type" sortBy="#{entity.componentType.name}" filterBy="#{entity.componentType.name}"
                               filterMatchMode="contains">
-                        <h:outputText value="#{entity.componentType.name}" />
+                        <!-- ToDo: Temporary. Remove after _GRP is changed to _SYS -->
+                        <h:outputText value="#{entity.componentType.name}" rendered="#{entity.componentType.name != '_GRP'}"/>
+                        <h:outputText value="_SYS" rendered="#{entity.componentType.name == '_GRP'}"/>
                     </p:column>
 
                     <f:facet name="footer">
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
-                                <p:commandButton title="Assign XXX" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
+                                <p:commandButton value="Assign" title="Assign Checklist" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{assignmentBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty assignmentBean.selectedSlots}" />   
-                                <p:commandButton title="Unassign" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
-                                                 actionListener="#{assignmentBean.onDeleteCommand}"
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty assignmentBean.selectedSlots}" />      
+                                <p:commandButton value="Remove" title="Unassign" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
+                                                 actionListener="#{assignmentBean.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty assignmentBean.selectedSlots}"/>                        
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty assignmentBean.selectedSlots}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>
@@ -75,7 +76,6 @@
                         </p:row>
                     </f:facet>
 
-
                     <p:row>                       
                         <p:column colspan="2">
                             <h:outputText value="Do you really want to assign checklists?"/>                                
@@ -90,11 +90,11 @@
                                 <p:commandButton icon="ui-icon-disk" value="Confirm" style="float: right;"
                                                  action="#{assignmentBean.assignCheckist()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{assignmentBean.inputAction != 'DELETE'}"/>
+                                                 process="@form"  update="@form :crudForm:assignTable :crudForm:unassignTable" rendered="#{assignmentBean.inputAction != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm Deletion" style="float: right;"
                                                  action="#{assignmentBean.unassignChecklist()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:entityTable" rendered="#{assignmentBean.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":crudForm:assignTable :crudForm:unassignTable" rendered="#{assignmentBean.inputAction == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

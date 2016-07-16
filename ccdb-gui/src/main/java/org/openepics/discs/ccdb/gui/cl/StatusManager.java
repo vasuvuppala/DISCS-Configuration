@@ -110,7 +110,7 @@ public class StatusManager implements Serializable {
         Checklist stype = null;
 
         if (selectedType != null) {
-            stype = lcEJB.findPhaseGroup(selectedType);
+            stype = lcEJB.findChecklist(selectedType);
         }
 
         if (stype == null) {
@@ -203,7 +203,7 @@ public class StatusManager implements Serializable {
 
     public void deleteEntity() {
         try {
-            lcEJB.deletePhaseStatus(selectedEntity);
+            lcEJB.deleteProcessStatus(selectedEntity);
             entities.remove(selectedEntity);
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
@@ -344,7 +344,7 @@ public class StatusManager implements Serializable {
                 status.setStatus(inputStatus);
 //                status.setStatus(phaseNR? null: inputStatus);
                 status.setComment(inputComment);
-                lcEJB.savePhaseStatus(status);
+                lcEJB.saveProcessStatus(status);
             }
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,

@@ -16,8 +16,6 @@
 
 package org.openepics.discs.ccdb.model.cl;
 
-import org.openepics.discs.ccdb.model.cl.Checklist;
-import org.openepics.discs.ccdb.model.cl.Process;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,13 +35,13 @@ import org.openepics.discs.ccdb.model.auth.Role;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_phasegroup_member")
+@Table(name = "cm_checklist_field")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PhaseGroupMember.findAll", query = "SELECT d FROM PhaseGroupMember d"),
-    @NamedQuery(name = "PhaseGroupMember.findPhasesByGroup", query = "SELECT d.phase FROM PhaseGroupMember d WHERE d.phaseGroup = :group ORDER BY d.position ASC"),
-    @NamedQuery(name = "PhaseGroupMember.findDefault", query = "SELECT d.defaultStatus FROM PhaseGroupMember d WHERE d.phaseGroup = :group AND d.phase = :phase"),
-    @NamedQuery(name = "PhaseGroupMember.findByGroup", query = "SELECT d FROM PhaseGroupMember d WHERE d.phaseGroup = :group ORDER BY d.position ASC")
+    @NamedQuery(name = "ChecklistField.findAll", query = "SELECT d FROM ChecklistField d"),
+    @NamedQuery(name = "ChecklistField.findPhasesByGroup", query = "SELECT d.phase FROM ChecklistField d WHERE d.phaseGroup = :group ORDER BY d.position ASC"),
+    @NamedQuery(name = "ChecklistField.findDefault", query = "SELECT d.defaultStatus FROM ChecklistField d WHERE d.phaseGroup = :group AND d.phase = :phase"),
+    @NamedQuery(name = "ChecklistField.findByGroup", query = "SELECT d FROM ChecklistField d WHERE d.phaseGroup = :group ORDER BY d.position ASC")
 })
 public class ChecklistField extends ConfigurationEntity {
 

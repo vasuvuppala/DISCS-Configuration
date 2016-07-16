@@ -91,8 +91,8 @@ public class PhaseMemberManager implements Serializable {
     
     @PostConstruct
     public void init() {      
-        entities = lcEJB.findAllPhaseGroupMembers();    
-        phaseGroups = lcEJB.findAllPhaseGroups();
+        entities = lcEJB.findAllChecklistFields();    
+        phaseGroups = lcEJB.findAllChecklists();
         phases = lcEJB.findAllPhases();
         roles = authEJB.findAllRoles();
         if (phaseGroups == null || phaseGroups.isEmpty()) {
@@ -129,10 +129,10 @@ public class PhaseMemberManager implements Serializable {
     public void saveEntity() {
         try {                      
             if (inputAction == InputAction.CREATE) {
-                lcEJB.savePhaseGroupMember(inputEntity);
+                lcEJB.saveChecklistField(inputEntity);
                 entities.add(inputEntity);                
             } else {
-                lcEJB.savePhaseGroupMember(selectedEntity);
+                lcEJB.saveChecklistField(selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
@@ -146,7 +146,7 @@ public class PhaseMemberManager implements Serializable {
     
     public void deleteEntity() {
         try {
-            lcEJB.deletePhaseGroupMember(selectedEntity);
+            lcEJB.deleteChecklistField(selectedEntity);
             entities.remove(selectedEntity);  
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");

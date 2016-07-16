@@ -16,9 +16,6 @@
 
 package org.openepics.discs.ccdb.model.cl;
 
-import org.openepics.discs.ccdb.model.cl.Assignment;
-import org.openepics.discs.ccdb.model.cl.StatusOption;
-import org.openepics.discs.ccdb.model.cl.ChecklistField;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,27 +25,25 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.auth.User;
 
 /**
- * Status of a phase assignment 
+ * Status of a checklist assignment 
  * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_phase_status")
-@XmlRootElement
+@Table(name = "cm_proc_status")
 @NamedQueries({
-    @NamedQuery(name = "PhaseStatus.findAll", query = "SELECT d FROM PhaseStatus d"),
-    @NamedQuery(name = "PhaseStatus.findValid", query = "SELECT d FROM PhaseStatus d"),
-    @NamedQuery(name = "PhaseStatus.findGroupStatus", query = "SELECT d FROM PhaseStatus d WHERE d.assignment.slotGroup IS NOT null"),
-    @NamedQuery(name = "PhaseStatus.findSlotStatus", query = "SELECT d FROM PhaseStatus d WHERE d.assignment.slot IS NOT null"),
-    @NamedQuery(name = "PhaseStatus.findDeviceStatus", query = "SELECT d FROM PhaseStatus d WHERE d.assignment.slot IS null AND d.assignment.device IS NOT null"),
+    @NamedQuery(name = "ProcessStatus.findAll", query = "SELECT d FROM ProcessStatus d"),
+    @NamedQuery(name = "ProcessStatus.findValid", query = "SELECT d FROM ProcessStatus d"),
+    @NamedQuery(name = "ProcessStatus.findGroupStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slotGroup IS NOT null"),
+    @NamedQuery(name = "ProcessStatus.findSlotStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS NOT null"),
+    @NamedQuery(name = "ProcessStatus.findDeviceStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS null AND d.assignment.device IS NOT null"),
 //    @NamedQuery(name = "PhaseStatus.findValid", query = "SELECT d FROM PhaseStatus d WHERE d.assignment.slot is null OR d.assignment.slot.cmGroup is NOT null"),
-    @NamedQuery(name = "PhaseStatus.findByGroup", query = "SELECT d FROM PhaseStatus d WHERE d.groupMember.phaseGroup = :group"),
-    @NamedQuery(name = "PhaseStatus.findByAssignment", query = "SELECT d FROM PhaseStatus d WHERE d.assignment = :assignment")
+    @NamedQuery(name = "ProcessStatus.findByGroup", query = "SELECT d FROM ProcessStatus d WHERE d.groupMember.phaseGroup = :group"),
+    @NamedQuery(name = "ProcessStatus.findByAssignment", query = "SELECT d FROM ProcessStatus d WHERE d.assignment = :assignment")
 })
 public class ProcessStatus extends ConfigurationEntity {
 
@@ -57,8 +52,7 @@ public class ProcessStatus extends ConfigurationEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "assignment")
     private Assignment assignment;
-    
-    
+       
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_member")
     private ChecklistField groupMember;
@@ -69,16 +63,7 @@ public class ProcessStatus extends ConfigurationEntity {
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "status")
-    private StatusOption status;
-    
-//    @ManyToOne
-//    @JoinColumn(name = "approved_by")
-//    private User approved_by;
-//    
-//    @Column(name = "approved_at")
-//    @Basic
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date approved_at;
+    private StatusOption status;    
     
     @Column(name = "comment")
     @Size(max = 1024)

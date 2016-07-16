@@ -18,8 +18,6 @@ package org.openepics.discs.ccdb.gui.cl;
 
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -75,10 +73,7 @@ public class StatusReport implements Serializable {
     private Set<SlotGroup> slotGroups;
     private Set<Slot> slots;
     private Set<Device> devices;
-    // private Set<String> slotNames = new HashSet<>();
     private String selectedType;
-    
-    private List<ColumnModel> columns;
     
     public StatusReport() {
         
@@ -90,8 +85,7 @@ public class StatusReport implements Serializable {
     @PostConstruct
     public void init() {
         // slotGroups = lcEJB.findAllSlotGroups();
-        initialize();
-        
+        initialize();        
     }
 
     /**
@@ -104,7 +98,7 @@ public class StatusReport implements Serializable {
         Checklist stype = null;
         
         if (selectedType != null) {
-            stype = lcEJB.findPhaseGroup(selectedType);
+            stype = lcEJB.findChecklist(selectedType);
         }
         
         if (stype == null) {

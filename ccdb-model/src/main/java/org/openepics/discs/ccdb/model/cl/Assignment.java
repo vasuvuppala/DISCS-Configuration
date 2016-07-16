@@ -25,32 +25,36 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.User;
 
 /**
- * Configuration Management: Phases a slot must go through
+ * Assignment of a checklist to a slot, device or group.
+ * ToDo: Not optimal  design. 
+ *       Constraints: Either a device, a group, or a slot must be present (not null). 
+ *                    It is possible to have slot and device not null (installed device). 
+ *                    There can be only one checklist per entity (slot, group, device).
+ *                    These checks cannot be made in the database.
  * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
 @Table(name = "cm_assignment")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PhaseAssignment.findAll", query = "SELECT d FROM PhaseAssignment d"),
-    @NamedQuery(name = "PhaseAssignment.findGroupAssignments", query = "SELECT d FROM PhaseAssignment d WHERE d.slotGroup IS NOT null"),
-    @NamedQuery(name = "PhaseAssignment.findSlotAssignments", query = "SELECT d FROM PhaseAssignment d WHERE d.slot IS NOT null AND d.slot.cmGroup IS NULL"),
-    @NamedQuery(name = "PhaseAssignment.findAllSlotAssignments", query = "SELECT d FROM PhaseAssignment d WHERE d.slot IS NOT null"),
-    @NamedQuery(name = "PhaseAssignment.findDeviceAssignments", query = "SELECT d FROM PhaseAssignment d WHERE d.slot IS null AND d.device IS NOT null"),
-    @NamedQuery(name = "PhaseAssignment.findByGroup", query = "SELECT d FROM PhaseAssignment d WHERE d.phaseGroup = :group"),
-    @NamedQuery(name = "PhaseAssignment.findBySlotGroup", query = "SELECT d FROM PhaseAssignment d WHERE d.slotGroup = :group"),
-    @NamedQuery(name = "PhaseAssignment.findUnassignedGroups", query = "SELECT g FROM SlotGroup g WHERE g NOT IN (SELECT a.slotGroup FROM PhaseAssignment a WHERE a.slotGroup IS NOT NULL)"),
-    @NamedQuery(name = "PhaseAssignment.findUnassignedDevices", query = "SELECT d FROM Device d WHERE d NOT IN (SELECT a.device FROM PhaseAssignment a WHERE a.device IS NOT NULL)"),
-    @NamedQuery(name = "PhaseAssignment.findUnassignedSlots", query = "SELECT s FROM Slot s WHERE s NOT IN (SELECT a.slot FROM PhaseAssignment a WHERE a.slot IS NOT NULL)"),
-    @NamedQuery(name = "PhaseAssignment.findBySlot", query = "SELECT d FROM PhaseAssignment d WHERE d.slot = :slot")
+    @NamedQuery(name = "Assignment.findAll", query = "SELECT d FROM Assignment d"),
+    @NamedQuery(name = "Assignment.findGroupAssignments", query = "SELECT d FROM Assignment d WHERE d.slotGroup IS NOT null"),
+    @NamedQuery(name = "Assignment.findSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null AND d.slot.cmGroup IS NULL"),
+    @NamedQuery(name = "Assignment.findAllSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null"),
+    @NamedQuery(name = "Assignment.findDeviceAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS null AND d.device IS NOT null"),
+    @NamedQuery(name = "Assignment.findByGroup", query = "SELECT d FROM Assignment d WHERE d.phaseGroup = :group"),
+    @NamedQuery(name = "Assignment.findBySlotGroup", query = "SELECT d FROM Assignment d WHERE d.slotGroup = :group"),
+    @NamedQuery(name = "Assignment.findUnassignedGroups", query = "SELECT g FROM SlotGroup g WHERE g NOT IN (SELECT a.slotGroup FROM Assignment a WHERE a.slotGroup IS NOT NULL)"),
+    @NamedQuery(name = "Assignment.findUnassignedDevices", query = "SELECT d FROM Device d WHERE d NOT IN (SELECT a.device FROM Assignment a WHERE a.device IS NOT NULL)"),
+    @NamedQuery(name = "Assignment.findUnassignedSlots", query = "SELECT s FROM Slot s WHERE s NOT IN (SELECT a.slot FROM Assignment a WHERE a.slot IS NOT NULL) AND s.cmGroup IS NULL AND s.name NOT LIKE '\\_%' ESCAPE '\\'"),
+    @NamedQuery(name = "Assignment.findAssignedSlots", query = "SELECT a.slot s FROM Assignment a WHERE a.slot IS NOT NULL AND s.cmGroup IS NULL"),
+    @NamedQuery(name = "Assignment.findBySlot", query = "SELECT d FROM Assignment d WHERE d.slot = :slot")
 })
 public class Assignment extends ConfigurationEntity {
 

@@ -59,7 +59,7 @@ public class ChecklistEJB {
      * @return a list of all {@link Process}s ordered by name.
      */
     public List<Process> findAllPhases() {
-        return em.createNamedQuery("Phase.findAll", Process.class).getResultList();
+        return em.createNamedQuery("Process.findAll", Process.class).getResultList();
     } 
     
      /**
@@ -70,7 +70,7 @@ public class ChecklistEJB {
      * @return a list of all {@link Process}s ordered by name.
      */
     public List<Process> findPhases(Checklist group) {
-        return em.createNamedQuery("PhaseGroupMember.findPhasesByGroup", Process.class).setParameter("group", group).getResultList();
+        return em.createNamedQuery("ChecklistField.findPhasesByGroup", Process.class).setParameter("group", group).getResultList();
     }
     
     
@@ -115,19 +115,19 @@ public class ChecklistEJB {
      * @return a list of all {@link Process}s ordered by name.
      */
     public List<Assignment> findAllAssignments() {
-        return em.createNamedQuery("PhaseAssignment.findAll", Assignment.class).getResultList();
+        return em.createNamedQuery("Assignment.findAll", Assignment.class).getResultList();
     }
     
     public List<Assignment> findGroupAssignments() {
-        return em.createNamedQuery("PhaseAssignment.findGroupAssignments", Assignment.class).getResultList();
+        return em.createNamedQuery("Assignment.findGroupAssignments", Assignment.class).getResultList();
     }
     
     public List<Assignment> findSlotAssignments() {
-        return em.createNamedQuery("PhaseAssignment.findSlotAssignments", Assignment.class).getResultList();
+        return em.createNamedQuery("Assignment.findSlotAssignments", Assignment.class).getResultList();
     }
     
     public List<Assignment> findDeviceAssignments() {
-        return em.createNamedQuery("PhaseAssignment.findDeviceAssignments", Assignment.class).getResultList();
+        return em.createNamedQuery("Assignment.findDeviceAssignments", Assignment.class).getResultList();
     }
     
     /**
@@ -137,11 +137,11 @@ public class ChecklistEJB {
      * @return a list of all {@link Process}s ordered by name.
      */
     public List<Assignment> findAssignments(Checklist type) {
-        return em.createNamedQuery("PhaseAssignment.findByGroup", Assignment.class).setParameter("group", type).getResultList();
+        return em.createNamedQuery("Assignment.findByGroup", Assignment.class).setParameter("group", type).getResultList();
     }
     
     public Assignment findAssignment(SlotGroup group) {
-        List<Assignment> result = em.createNamedQuery("PhaseAssignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();
+        List<Assignment> result = em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();
         if (result == null || result.isEmpty()) {
             return null;
         } else {
@@ -150,7 +150,7 @@ public class ChecklistEJB {
     }
     
     public Assignment findAssignment(Slot slot) {
-        List<Assignment> result = em.createNamedQuery("PhaseAssignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();
+        List<Assignment> result = em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();
         if (result == null || result.isEmpty()) {
             return null;
         } else {
@@ -238,14 +238,14 @@ public class ChecklistEJB {
         switch (type) {
             case SLOT:
             case GROUP:
-                checklist = em.createNamedQuery("PhaseGroup.findDefaultForSlots", Checklist.class).getResultList();
+                checklist = em.createNamedQuery("Checklist.findDefaultForSlots", Checklist.class).getResultList();
                 break;
             case DEVICE:
-                checklist = em.createNamedQuery("PhaseGroup.findDefaultForDevices", Checklist.class).getResultList();
+                checklist = em.createNamedQuery("Checklist.findDefaultForDevices", Checklist.class).getResultList();
                 break;
             default:
                 LOGGER.log(Level.SEVERE, "Invalid CM entity type {0}", type);
-                checklist = em.createNamedQuery("PhaseGroup.findDefaultForSlots", Checklist.class).getResultList();
+                checklist = em.createNamedQuery("Checklist.findDefaultForSlots", Checklist.class).getResultList();
                 break;
         }
 
@@ -257,6 +257,25 @@ public class ChecklistEJB {
         }
     }
     
+    /**
+     * find slots not assigned any checklists.
+     * 
+     * @return 
+     */
+    public List<Slot> findUnassignedSlots() {
+        return em.createNamedQuery("Assignment.findUnassignedSlots").getResultList();
+    }
+    
+    /**
+     * find slots not assigned any checklists.
+     * 
+     * @return 
+     */
+    public List<Slot> findAssignedSlots() {
+        return em.createNamedQuery("Assignment.findAssignedSlots").getResultList();
+    }
+    
+  
     /**
      * Assign checklist to a set of slots, devices or groups
      * 
@@ -343,7 +362,7 @@ public class ChecklistEJB {
      * @param group
      * @return a list of all {@link PhaseApproval}s ordered by name.
      */
-//    public List<PhaseApproval> findApprovals(PhaseGroup group) {
+//    public List<PhaseApproval> findApprovals(Checklist group) {
 //        return em.createNamedQuery("PhaseApproval.findByGroup", PhaseApproval.class).setParameter("group", group).getResultList();
 //    } 
     
@@ -387,8 +406,8 @@ public class ChecklistEJB {
 //     * 
 //     * @return a list of all {@link Phase}s ordered by name.
 //     */
-//    public List<PhaseGroup> findAllPhaseGroups() {
-//        return em.createNamedQuery("PhaseGroup.findAll", PhaseGroup.class).getResultList();
+//    public List<Checklist> findAllChecklists() {
+//        return em.createNamedQuery("Checklist.findAll", Checklist.class).getResultList();
 //    } 
 //    
 //    /**
@@ -397,8 +416,8 @@ public class ChecklistEJB {
 //     * @param name
 //     * @return a list of all {@link Phase}s ordered by name.
 //     */
-//    public PhaseGroup findPhaseGroup(String name) {
-//        return em.createNamedQuery("PhaseGroup.findByName", PhaseGroup.class).setParameter("name", name).getSingleResult();
+//    public Checklist findChecklist(String name) {
+//        return em.createNamedQuery("Checklist.findByName", Checklist.class).setParameter("name", name).getSingleResult();
 //    } 
 //    
 //    /**
@@ -406,7 +425,7 @@ public class ChecklistEJB {
 //     *
 //     * @param group type
 //     */
-//    public void savePhaseGroup(PhaseGroup group) {
+//    public void saveChecklist(Checklist group) {
 //        if (group.getId() == null) {
 //            em.persist(group);
 //        } else {
@@ -420,8 +439,8 @@ public class ChecklistEJB {
 //     *
 //     * @param group
 //     */
-//    public void deletePhaseGroup(PhaseGroup group) {
-//        PhaseGroup src = em.find(PhaseGroup.class, group.getId());
+//    public void deleteChecklist(Checklist group) {
+//        Checklist src = em.find(Checklist.class, group.getId());
 //        em.remove(src);
 //    }
 //
@@ -431,8 +450,8 @@ public class ChecklistEJB {
 //     * @param id
 //     * @return the status type
 //     */
-//    public PhaseGroup findPhaseGroup(Long id) {
-//        return em.find(PhaseGroup.class, id);
+//    public Checklist findChecklist(Long id) {
+//        return em.find(Checklist.class, id);
 //    }
     
     // ------------------ Slot Groups
@@ -446,15 +465,11 @@ public class ChecklistEJB {
     } 
     
     public List<SlotGroup> findUnassignedGroups() {
-        return em.createNamedQuery("PhaseAssignment.findUnassignedGroups", SlotGroup.class).getResultList();
-    }
-    
-    public List<Slot> findUnassignedSlots() {
-        return em.createNamedQuery("PhaseAssignment.findUnassignedSlots", Slot.class).getResultList();
+        return em.createNamedQuery("Assignment.findUnassignedGroups", SlotGroup.class).getResultList();
     }
     
     public List<Device> findUnassignedDevices() {
-        return em.createNamedQuery("PhaseAssignment.findUnassignedDevices", Device.class).getResultList();
+        return em.createNamedQuery("Assignment.findUnassignedDevices", Device.class).getResultList();
     }
     /**
      * PHase type 
@@ -506,8 +521,8 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
-    public List<Checklist> findAllPhaseGroups() {
-        return em.createNamedQuery("PhaseGroup.findAll", Checklist.class).getResultList();
+    public List<Checklist> findAllChecklists() {
+        return em.createNamedQuery("Checklist.findAll", Checklist.class).getResultList();
     } 
     
     /**
@@ -516,8 +531,13 @@ public class ChecklistEJB {
      * @param name
      * @return a list of all {@link Process}s ordered by name.
      */
-    public Checklist findPhaseGroup(String name) {
-        return em.createNamedQuery("PhaseGroup.findByName", Checklist.class).setParameter("name", name).getSingleResult();
+    public Checklist findChecklist(String name) {
+        List<Checklist> lists = em.createNamedQuery("Checklist.findByName", Checklist.class).setParameter("name", name).getResultList();
+        if (lists == null || lists.isEmpty()) {
+            return null;
+        } else {
+            return lists.get(0);
+        }
     } 
     
     /**
@@ -525,7 +545,7 @@ public class ChecklistEJB {
      *
      * @param group type
      */
-    public void savePhaseGroup(Checklist group) {
+    public void saveChecklist(Checklist group) {
         if (group.getId() == null) {
             em.persist(group);
         } else {
@@ -539,7 +559,7 @@ public class ChecklistEJB {
      *
      * @param group
      */
-    public void deletePhaseGroup(Checklist group) {
+    public void deleteChecklist(Checklist group) {
         Checklist src = em.find(Checklist.class, group.getId());
         em.remove(src);
     }
@@ -550,7 +570,7 @@ public class ChecklistEJB {
      * @param id
      * @return the status type
      */
-    public Checklist findPhaseGroup(Long id) {
+    public Checklist findChecklist(Long id) {
         return em.find(Checklist.class, id);
     }
     
@@ -561,8 +581,8 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
-    public List<ChecklistField> findAllPhaseGroupMembers() {
-        return em.createNamedQuery("PhaseGroupMember.findAll", ChecklistField.class).getResultList();
+    public List<ChecklistField> findAllChecklistFields() {
+        return em.createNamedQuery("ChecklistField.findAll", ChecklistField.class).getResultList();
     } 
     
     /**
@@ -571,8 +591,8 @@ public class ChecklistEJB {
      * @param group
      * @return a list of all {@link Process}s ordered by name.
      */
-    public ChecklistField findPhaseGroupMember(Checklist group) {
-        return em.createNamedQuery("PhaseGroupMember.findByGroup", ChecklistField.class).setParameter("group", group).getSingleResult();
+    public ChecklistField findChecklistField(Checklist group) {
+        return em.createNamedQuery("ChecklistField.findByGroup", ChecklistField.class).setParameter("group", group).getSingleResult();
     } 
     
     /**
@@ -580,7 +600,7 @@ public class ChecklistEJB {
      *
      * @param group type
      */
-    public void savePhaseGroupMember(ChecklistField group) {
+    public void saveChecklistField(ChecklistField group) {
         if (group.getId() == null) {
             em.persist(group);
         } else {
@@ -594,7 +614,7 @@ public class ChecklistEJB {
      *
      * @param group
      */
-    public void deletePhaseGroupMember(ChecklistField group) {
+    public void deleteChecklistField(ChecklistField group) {
         ChecklistField src = em.find(ChecklistField.class, group.getId());
         em.remove(src);
     }
@@ -605,7 +625,7 @@ public class ChecklistEJB {
      * @param id
      * @return the status type
      */
-    public ChecklistField findPhaseGroupMember(Long id) {
+    public ChecklistField findChecklistField(Long id) {
         return em.find(ChecklistField.class, id);
     }
     // ------------------------------------
@@ -671,20 +691,20 @@ public class ChecklistEJB {
      * @return 
      */
     public List<ProcessStatus> findAllStatuses() {
-        return em.createNamedQuery("PhaseStatus.findAll", ProcessStatus.class).getResultList();
+        return em.createNamedQuery("ProcessStatus.findAll", ProcessStatus.class).getResultList();
     }  
     public List<ProcessStatus> findGroupStatus() {
-        return em.createNamedQuery("PhaseStatus.findGroupStatus", ProcessStatus.class).getResultList();
+        return em.createNamedQuery("ProcessStatus.findGroupStatus", ProcessStatus.class).getResultList();
     }
     public List<ProcessStatus> findSlotStatus() {
-        return em.createNamedQuery("PhaseStatus.findSlotStatus", ProcessStatus.class).getResultList();
+        return em.createNamedQuery("ProcessStatus.findSlotStatus", ProcessStatus.class).getResultList();
     }
     public List<ProcessStatus> findDeviceStatus() {
-        return em.createNamedQuery("PhaseStatus.findDeviceStatus", ProcessStatus.class).getResultList();
+        return em.createNamedQuery("ProcessStatus.findDeviceStatus", ProcessStatus.class).getResultList();
     }
     
     public List<ProcessStatus> findAllValidStatuses() {
-        return em.createNamedQuery("PhaseStatus.findValid", ProcessStatus.class).getResultList();
+        return em.createNamedQuery("ProcessStatus.findValid", ProcessStatus.class).getResultList();
     } 
     /**
      * 
@@ -692,13 +712,13 @@ public class ChecklistEJB {
      * @return 
      */
     public List<ProcessStatus> findAllStatuses(Assignment assignment) {
-        return em.createNamedQuery("PhaseStatus.findByAssignment", ProcessStatus.class)
+        return em.createNamedQuery("ProcessStatus.findByAssignment", ProcessStatus.class)
                 .setParameter("assignment", assignment)
                 .getResultList();
     }
     
     public List<ProcessStatus> findAllStatuses(Checklist group) {
-        return em.createNamedQuery("PhaseStatus.findByGroup", ProcessStatus.class)
+        return em.createNamedQuery("ProcessStatus.findByGroup", ProcessStatus.class)
                 .setParameter("group", group)
                 .getResultList();
     }
@@ -708,7 +728,7 @@ public class ChecklistEJB {
      *
      * @param status type
      */
-    public void savePhaseStatus(ProcessStatus status) {
+    public void saveProcessStatus(ProcessStatus status) {
         if (status.getId() == null) {
             em.persist(status);
         } else {
@@ -722,9 +742,9 @@ public class ChecklistEJB {
      * 
      * @param status 
      */
-//    public void refreshVersion(PhaseStatus status) {
+//    public void refreshVersion(ProcessStatus status) {
 //        if (status.getId() != null) {        
-//            PhaseStatus current = em.find(PhaseStatus.class, status.getId());
+//            ProcessStatus current = em.find(ProcessStatus.class, status.getId());
 //            status.updateVersion(current);
 //        }
 //        // LOGGER.log(Level.FINE, "version refreshed - {0}", status.getVersion());
@@ -750,7 +770,7 @@ public class ChecklistEJB {
      *
      * @param status
      */
-    public void deletePhaseStatus(ProcessStatus status) {
+    public void deleteProcessStatus(ProcessStatus status) {
         ProcessStatus src = em.find(ProcessStatus.class, status.getId());
         em.remove(src);
     }
@@ -761,7 +781,7 @@ public class ChecklistEJB {
      * @param id
      * @return the status type
      */
-    public ProcessStatus findPhaseStatus(Long id) {
+    public ProcessStatus findProcessStatus(Long id) {
         return em.find(ProcessStatus.class, id);
     }
     

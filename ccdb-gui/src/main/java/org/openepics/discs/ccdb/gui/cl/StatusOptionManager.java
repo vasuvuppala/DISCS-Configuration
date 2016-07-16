@@ -26,7 +26,6 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
-import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Checklist;
 import org.openepics.discs.ccdb.model.cl.StatusOption;
 
@@ -83,7 +82,7 @@ public class StatusOptionManager implements Serializable {
     
     @PostConstruct
     public void init() { 
-        phaseGroups = lcEJB.findAllPhaseGroups();
+        phaseGroups = lcEJB.findAllChecklists();
         entities = lcEJB.findAllStatusOptions();
         resetInput();
     }

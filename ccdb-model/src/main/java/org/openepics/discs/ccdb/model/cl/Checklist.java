@@ -27,7 +27,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 
 /**
@@ -35,13 +34,12 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_phasegroup" )
-@XmlRootElement
+@Table(name = "cm_checklist" )
 @NamedQueries({
-    @NamedQuery(name = "PhaseGroup.findAll", query = "SELECT d FROM PhaseGroup d"),
-    @NamedQuery(name = "PhaseGroup.findDefaultForSlots", query = "SELECT d FROM PhaseGroup d WHERE d.forDevices = FALSE AND d.defaultList = TRUE"),
-    @NamedQuery(name = "PhaseGroup.findDefaultForDevices", query = "SELECT d FROM PhaseGroup d WHERE d.forDevices = TRUE AND d.defaultList = TRUE"),
-    @NamedQuery(name = "PhaseGroup.findByName", query = "SELECT d FROM PhaseGroup d WHERE  d.name = :name")
+    @NamedQuery(name = "Checklist.findAll", query = "SELECT d FROM Checklist d"),
+    @NamedQuery(name = "Checklist.findDefaultForSlots", query = "SELECT d FROM Checklist d WHERE d.forDevices = FALSE AND d.defaultList = TRUE"),
+    @NamedQuery(name = "Checklist.findDefaultForDevices", query = "SELECT d FROM Checklist d WHERE d.forDevices = TRUE AND d.defaultList = TRUE"),
+    @NamedQuery(name = "Checklist.findByName", query = "SELECT d FROM Checklist d WHERE  d.name = :name")
 })
 public class Checklist extends ConfigurationEntity {
 
@@ -71,12 +69,6 @@ public class Checklist extends ConfigurationEntity {
     
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "phaseGroup")
     private List<StatusOption> options;
-    
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable( name = "cm_phase_in_group", 
-//                joinColumns = @JoinColumn(name = "phasegroup"),
-//                inverseJoinColumns = @JoinColumn(name = "phase") )
-//    private List<Phase> phases;
   
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="phaseGroup")
     private List<ChecklistField> phases;
