@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/template/template.xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"              
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+        
+        <h:form id="crudForm" > 
+            <p:panel>
+                <h:outputText value="Checklist Assignment For Slots" styleClass="heading"/>
+                <p:dataTable id="assignTable" var="entity" 
+                             value="#{slotChecklistBean.entities}" rowSelectMode="checkbox"
+                             emptyMessage="No records found." 
+                             rowKey="#{entity.id}" selection="#{slotChecklistBean.selectedEntities}"
+                             resizableColumns="true" filteredValue="#{slotChecklistBean.filteredEntities}" 
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
+
+                    <p:ajax event="toggleSelect" listener="#{slotChecklistBean.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowSelectCheckbox" listener="#{slotChecklistBean.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowUnselectCheckbox"  listener="#{slotChecklistBean.onRowSelect()}" update="commandButtons" />
+
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"  />
+
+                    <p:column headerText="Slot" sortBy="#{entity.name}" filterBy="#{entity.name}" filterMatchMode="contains">
+                        <h:outputText value="#{entity.name}" />
+                    </p:column>                                    
+
+                    <p:column headerText="Description" filterBy="#{entity.description}" filterMatchMode="contains">
+                        <h:outputText value="#{entity.description}" />
+                    </p:column>
+
+                    <p:column headerText="Type" sortBy="#{entity.componentType.name}" filterBy="#{entity.componentType.name}" filterMatchMode="contains">
+                        <!-- ToDo: Temporary. Remove after _GRP is changed to _SYS -->
+                        <h:outputText value="#{entity.componentType.name}" rendered="#{entity.componentType.name != '_GRP'}"/>
+                        <h:outputText value="_SYS" rendered="#{entity.componentType.name == '_GRP'}"/>
+                    </p:column>
+
+                    <p:column headerText="Checklists" >                      
+                        <h:outputText value="#{slotChecklistBean.assignedChecklists(entity)}" />                                            
+                    </p:column>
+                    
+                    <f:facet name="footer">
+                        <p:toolbar id="commandButtons">
+                            <f:facet name="left">
+                                <p:commandButton value="Assign" title="Assign Checklist" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
+                                                 actionListener="#{slotChecklistBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not slotChecklistBean.noneHasChecklists}" />      
+                                <p:commandButton value="Remove" title="Unassign" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
+                                                 actionListener="#{slotChecklistBean.onDeleteCommand}" style="float: right"
+                                                 oncomplete="PF('crudInputWid').show()" 
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not slotChecklistBean.allHaveChecklists}"/>
+                            </f:facet>
+                        </p:toolbar>
+                    </f:facet>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        <p:dialog id="crudInputDlg" widgetVar="crudInputWid">
+            <h:form id="objectInputForm" rendered="#{slotChecklistBean.inputAction != 'READ'}">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="New Assignments" rendered="#{slotChecklistBean.inputAction == 'CREATE'}"/>   
+                                <h:outputText value="Remove assignments" rendered="#{slotChecklistBean.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+
+                    <p:row>                       
+                        <p:column colspan="2">
+                            <h:outputText value="Do you really want to assign checklists?" rendered="#{slotChecklistBean.inputAction == 'CREATE'}"/>                                
+                            <h:outputText value="Do you really want to un-assign checklists? There is no way to undo this operation!" rendered="#{slotChecklistBean.inputAction == 'DELETE'}"/>                                
+                        </p:column>                                                                         
+                    </p:row>
+
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('crudInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Confirm" style="float: right;"
+                                                 action="#{slotChecklistBean.assignCheckist()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
+                                                 process="@form"  update=":crudForm:assignTable" rendered="#{slotChecklistBean.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Deletion" style="float: right;"
+                                                 action="#{slotChecklistBean.unassignChecklist()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
+                                                 process="@form" update=":crudForm:assignTable" rendered="#{slotChecklistBean.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

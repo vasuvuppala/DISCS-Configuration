@@ -16,6 +16,7 @@
 package org.openepics.discs.ccdb.core.ejb;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -114,9 +115,9 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
-    public List<Assignment> findAllAssignments() {
-        return em.createNamedQuery("Assignment.findAll", Assignment.class).getResultList();
-    }
+//    public List<Assignment> findAllAssignments() {
+//        return em.createNamedQuery("Assignment.findAll", Assignment.class).getResultList();
+//    }
     
     public List<Assignment> findGroupAssignments() {
         return em.createNamedQuery("Assignment.findGroupAssignments", Assignment.class).getResultList();
@@ -131,32 +132,55 @@ public class ChecklistEJB {
     }
     
     /**
-     * All assignments
+     * All assignments of a device
      * 
-     * @param type
-     * @return a list of all {@link Process}s ordered by name.
+     * @param device
+     * @return list of checklist assignments
+     */    
+    public List<Assignment> findAssignments(Device device) {
+        return em.createNamedQuery("Assignment.findByDevice", Assignment.class).setParameter("device", device).getResultList();      
+    }
+    
+    /**
+     * All assignments of a group
+     * 
+     * @param group
+     * @return list of checklist assignments
+     */    
+    public List<Assignment> findAssignments(SlotGroup group) {
+        return em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();      
+    }
+
+    /**
+     * Find all assignments of a slot
+     * 
+     * @param slot
+     * @return list of checklist assignments
      */
-    public List<Assignment> findAssignments(Checklist type) {
-        return em.createNamedQuery("Assignment.findByGroup", Assignment.class).setParameter("group", type).getResultList();
+    public List<Assignment> findAssignments(Slot slot) {
+        return em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();        
     }
-    
-    public Assignment findAssignment(SlotGroup group) {
-        List<Assignment> result = em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();
-        if (result == null || result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
-    }
-    
-    public Assignment findAssignment(Slot slot) {
-        List<Assignment> result = em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();
-        if (result == null || result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
-    }
+//    public List<Assignment> findAssignments(Checklist type) {
+//        return em.createNamedQuery("Assignment.findByGroup", Assignment.class).setParameter("group", type).getResultList();
+//    }
+//    
+//    public Assignment findAssignment(SlotGroup group) {
+//        List<Assignment> result = em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();
+//        if (result == null || result.isEmpty()) {
+//            return null;
+//        } else {
+//            return result.get(0);
+//        }
+//    }
+//    
+//    public Assignment findAssignment(Slot slot) {
+//        List<Assignment> result = em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();
+//        if (result == null || result.isEmpty()) {
+//            return null;
+//        } else {
+//            return result.get(0);
+//        }
+//    }
     
     /**
      * ToDo: either make a named query or move to another module
@@ -262,20 +286,57 @@ public class ChecklistEJB {
      * 
      * @return 
      */
-    public List<Slot> findUnassignedSlots() {
-        return em.createNamedQuery("Assignment.findUnassignedSlots").getResultList();
-    }
+//    public List<Slot> findUnassignedSlots() {
+//        return em.createNamedQuery("Assignment.findUnassignedSlots").getResultList();
+//    }
     
     /**
      * find slots not assigned any checklists.
      * 
      * @return 
      */
-    public List<Slot> findAssignedSlots() {
-        return em.createNamedQuery("Assignment.findAssignedSlots").getResultList();
+//    public List<Slot> findAssignedSlots() {
+//        return em.createNamedQuery("Assignment.findAssignedSlots").getResultList();
+//    }
+    
+    /**
+     * Find slots that are not internal system slots
+     * 
+     * @return 
+     */
+    public List<Slot> findUngroupedSlots() {
+        return em.createNamedQuery("Slot.findUngroupedSlots").getResultList();
     }
     
-  
+    /**
+     * Does none of the given slots have assignments?
+     * 
+     * @param type
+     * @param entities
+     * @return 
+     */
+    public Boolean noneHasChecklists(ChecklistEntity type, List<?> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return false;
+        }
+        Boolean result = false;
+        switch (type) {
+            case GROUP:
+                result = 0 == em.createNamedQuery("Assignment.numberOfAssignedGroups", Long.class).setParameter("groups", entities).getSingleResult();
+                break;
+            case SLOT:
+                result = 0 == em.createNamedQuery("Assignment.numberOfAssignedSlots", Long.class).setParameter("slots", entities).getSingleResult();
+                break;
+            case DEVICE:
+                result = 0 == em.createNamedQuery("Assignment.numberOfAssignedDevices", Long.class).setParameter("devices", entities).getSingleResult();
+                break;
+            default:
+                LOGGER.log(Level.SEVERE, "Invalid CM entity type {0}", type);
+                break;
+        }
+        return result;
+    }
+    
     /**
      * Assign checklist to a set of slots, devices or groups
      * 
@@ -301,6 +362,7 @@ public class ChecklistEJB {
                 assignment.setSlotGroup((SlotGroup) entity);
             }
             assignment.setRequestor(currentUser);
+            assignment.setPhaseGroup(checklist);
             List<ProcessStatus> statuses = new ArrayList<>();
             for (ChecklistField field : checklist.getPhases()) {
                 ProcessStatus phaseStatus = new ProcessStatus();
@@ -322,8 +384,67 @@ public class ChecklistEJB {
      * @param entities 
      */
     public void assignChecklist(ChecklistEntity type, List<?> entities) {
-       Checklist checklist = findDefaultChecklist(type);    
+       Checklist checklist = findDefaultChecklist(type); 
+       if (checklist == null) {
+           throw new IllegalStateException("Checklists are missing or not configured properly. Inform Configuration Manager about this error.");
+       }
        assignChecklist(entities, checklist);
+    }
+    
+     /**
+     * Assign checklist to a set of slots, devices or groups
+     * 
+     * @param <T>
+     * @param type
+     * @param entities
+     * @param checklist 
+     */
+    public <T> void unassignChecklist(ChecklistEntity type, List<T> entities, Checklist checklist) {   
+        LOGGER.log(Level.INFO, "Removing checklist for {0} entities", entities.size());
+        // ToDo: check authorization
+        List<Assignment> assignments = Collections.EMPTY_LIST;
+        
+        switch (type) {
+            case SLOT:
+                assignments = em.createNamedQuery("Assignment.findBySlotChecklist", Assignment.class)
+                        .setParameter("slots", entities)
+                        .setParameter("checklist", checklist)
+                        .getResultList();
+                break;
+            case GROUP:
+                assignments = em.createNamedQuery("Assignment.findByGroupChecklist", Assignment.class)
+                        .setParameter("groups", entities)
+                        .setParameter("checklist", checklist)
+                        .getResultList();
+                break;
+            case DEVICE:
+                assignments = em.createNamedQuery("Assignment.findByDeviceChecklist", Assignment.class)
+                        .setParameter("devices", entities)
+                        .setParameter("checklist", checklist)
+                        .getResultList();
+                break;
+            default:
+                LOGGER.log(Level.SEVERE, "Invalid CM entity type {0}", type);              
+                break;
+        }
+        LOGGER.log(Level.SEVERE, "Removing {0} assignments", assignments.size());  
+        for(Assignment assignment: assignments) {
+            em.remove(assignment);
+        }
+    }
+    
+    /**
+     * Unassign the default checklist from given slots, devices, or groups
+     * 
+     * @param type
+     * @param entities 
+     */
+    public void unassignChecklist(ChecklistEntity type, List<?> entities) {
+       Checklist checklist = findDefaultChecklist(type); 
+       if (checklist == null) {
+           throw new IllegalStateException("Checklists are missing or not configured properly. Inform Configuration Manager about this error.");
+       }
+       unassignChecklist(type, entities, checklist);
     }
     
     /**

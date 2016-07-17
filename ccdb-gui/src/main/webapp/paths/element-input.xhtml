@@ -75,7 +75,7 @@
             </p:row>
         </p:panelGrid>
         <p:commandButton id="repButton" value="Generate"  action="#{latticeManager.genElementPaths()}"
-                         update=":requestMsgs :LatticeResults" 
+                         update=":LatticeResults" 
                          process="@form" />
         <p:blockUI block=":LatticeResults" trigger="repButton" >          
             <p:graphicImage value="/resources/images/ajax-loader.gif" style="background-color: transparent" />  

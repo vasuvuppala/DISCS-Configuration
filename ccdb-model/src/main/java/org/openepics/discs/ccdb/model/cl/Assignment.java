@@ -48,13 +48,16 @@ import org.openepics.discs.ccdb.model.auth.User;
     @NamedQuery(name = "Assignment.findSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null AND d.slot.cmGroup IS NULL"),
     @NamedQuery(name = "Assignment.findAllSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null"),
     @NamedQuery(name = "Assignment.findDeviceAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS null AND d.device IS NOT null"),
+    @NamedQuery(name = "Assignment.findBySlotChecklist", query = "SELECT d FROM Assignment d WHERE d.slot  IN :slots AND d.phaseGroup = :checklist"),
+    @NamedQuery(name = "Assignment.findByGroupChecklist", query = "SELECT d FROM Assignment d WHERE d.slotGroup  IN :groups AND d.phaseGroup = :checklist"),
+    @NamedQuery(name = "Assignment.findByDeviceChecklist", query = "SELECT d FROM Assignment d WHERE d.device  IN :devices AND d.phaseGroup = :checklist"),
     @NamedQuery(name = "Assignment.findByGroup", query = "SELECT d FROM Assignment d WHERE d.phaseGroup = :group"),
-    @NamedQuery(name = "Assignment.findBySlotGroup", query = "SELECT d FROM Assignment d WHERE d.slotGroup = :group"),
-    @NamedQuery(name = "Assignment.findUnassignedGroups", query = "SELECT g FROM SlotGroup g WHERE g NOT IN (SELECT a.slotGroup FROM Assignment a WHERE a.slotGroup IS NOT NULL)"),
-    @NamedQuery(name = "Assignment.findUnassignedDevices", query = "SELECT d FROM Device d WHERE d NOT IN (SELECT a.device FROM Assignment a WHERE a.device IS NOT NULL)"),
-    @NamedQuery(name = "Assignment.findUnassignedSlots", query = "SELECT s FROM Slot s WHERE s NOT IN (SELECT a.slot FROM Assignment a WHERE a.slot IS NOT NULL) AND s.cmGroup IS NULL AND s.name NOT LIKE '\\_%' ESCAPE '\\'"),
-    @NamedQuery(name = "Assignment.findAssignedSlots", query = "SELECT a.slot s FROM Assignment a WHERE a.slot IS NOT NULL AND s.cmGroup IS NULL"),
-    @NamedQuery(name = "Assignment.findBySlot", query = "SELECT d FROM Assignment d WHERE d.slot = :slot")
+    @NamedQuery(name = "Assignment.findBySlotGroup", query = "SELECT d FROM Assignment d WHERE d.slotGroup = :group"),   
+    @NamedQuery(name = "Assignment.numberOfAssignedSlots", query = "SELECT COUNT(DISTINCT d.slot) FROM Assignment d WHERE d.slot IN :slots"),    
+    @NamedQuery(name = "Assignment.numberOfAssignedGroups", query = "SELECT COUNT(DISTINCT d.slotGroup) FROM Assignment d WHERE d.slotGroup IN :groups"),    
+    @NamedQuery(name = "Assignment.numberOfAssignedDevices", query = "SELECT COUNT(DISTINCT d.device) FROM Assignment d WHERE d.device IN :devices"),    
+    @NamedQuery(name = "Assignment.findBySlot", query = "SELECT d FROM Assignment d WHERE d.slot = :slot"),
+    @NamedQuery(name = "Assignment.findByDevice", query = "SELECT d FROM Assignment d WHERE d.device = :device")
 })
 public class Assignment extends ConfigurationEntity {
 
@@ -80,7 +83,7 @@ public class Assignment extends ConfigurationEntity {
     @JoinColumn(name = "requestor")
     private User requestor; 
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "assignment")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "assignment")
     private List<ProcessStatus> statuses;
     
     // getters and setters

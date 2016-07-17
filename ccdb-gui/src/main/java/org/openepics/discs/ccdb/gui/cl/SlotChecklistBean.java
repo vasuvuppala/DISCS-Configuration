@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -36,10 +37,9 @@ import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.cl.Checklist;
 
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 
 /**
- * Description: State for Checklist Assignment View
+ * Description: State for 'Assign Checklists to Slot' View
  *
  * Methods:
  * <p>
@@ -64,90 +64,62 @@ import org.primefaces.event.SelectEvent;
  */
 @Named
 @ViewScoped
-public class AssignmentBean implements Serializable {
+public class SlotChecklistBean implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
 
     @EJB
     private ChecklistEJB lcEJB;
     @EJB
-    private SlotEJB slotEJB;
-    @EJB
-    private DeviceEJB deviceEJB;
-    @EJB
-    private AuthEJB authEJB;
     @Inject
     private SecurityPolicy securityPolicy;
 
-    private static final Logger LOGGER = Logger.getLogger(AssignmentBean.class.getName());
-
-    // request parameters   
-    private ChecklistEntity entityType = ChecklistEntity.GROUP;
+    private static final Logger LOGGER = Logger.getLogger(SlotChecklistBean.class.getName());
+    private final ChecklistEntity ENTITY_TYPE = ChecklistEntity.SLOT;
 
   
     // view data
-    private List<Slot> slots;
-    
-    // view data
-    private List<Slot> selectedSlots;
-    private List<Slot> filteredSlots;
+    private List<Slot> entities;
+    private List<Slot> selectedEntities;
+    private List<Slot> filteredEntities;
     private InputAction inputAction;
+    
+    // state
+    private Boolean noneHasChecklists = false; // none of the selected entities has checklists 
+    private Boolean allHaveChecklists = false; // all of the selected entities have checklists 
     
     // input data
     private List<Checklist> selectedChecklists;
 
-    public AssignmentBean() {
+    public SlotChecklistBean() {
     }
 
     @PostConstruct
     public void init() {
-        slots = lcEJB.findUnassignedSlots();
-        initialize();
+        entities = lcEJB.findUngroupedSlots();
         resetInput();
-    }
-
-    /**
-     * Initialize data in view
-     *
-     * @return
-     */
-    public String initialize() {
-        String nextView = null;
-        
-        switch (entityType) {
-            case GROUP:
-//                entities = lcEJB.findGroupAssignments();
-                break;
-            case SLOT:
-                slots = lcEJB.findUnassignedSlots();
-                break;
-            case DEVICE:
-//                entities = lcEJB.findDeviceAssignments();
-                break;
-            default:
-                LOGGER.log(Level.WARNING, "Invalid CM entity type {0}", entityType);
-                slots = lcEJB.findUnassignedSlots();
-        }
-
-        return nextView;
     }
 
     private void resetInput() {
         inputAction = InputAction.READ;
+        noneHasChecklists = false; 
+        allHaveChecklists = false; 
     }
 
-    public void onRowSelect(SelectEvent event) {
-    }
-
-    public boolean isAuthorized() {
-        String userId = securityPolicy.getUserId();
-        if (userId == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
-                    "Not authorized. User Id is null.");
-            return false;
-        }
-        // User user = new User(userId);
-        return true;
+    
+    /**
+     * When a set of rows is selected
+     * 
+     */
+    public void onRowSelect() {
+        if (selectedEntities == null || selectedEntities.isEmpty()) {
+            noneHasChecklists = false;
+            allHaveChecklists = false;
+        } else {
+            noneHasChecklists = lcEJB.noneHasChecklists(ENTITY_TYPE, selectedEntities);
+            allHaveChecklists = ! noneHasChecklists; //ToDo: this is not right but ok for now
+        } 
+        LOGGER.log(Level.INFO, "has checklists: {0}", noneHasChecklists);
     }
 
     public void onAddCommand(ActionEvent event) {
@@ -157,14 +129,35 @@ public class AssignmentBean implements Serializable {
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
     }
-
+    
+    /**
+     * Validates input
+     * 
+     * @return 
+     */
     private boolean inputIsValid() {
         return true;
     }
 
     /**
-     * Assign checklists to selected entities
+     * Check authorization
      * 
+     * @return 
+     */
+     public boolean isAuthorized() {
+        String userId = securityPolicy.getUserId();
+        if (userId == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
+                    "Not authorized. User Id is null.");
+            return false;
+        }
+        // User user = new User(userId);
+        return true;
+    }
+     
+    /**
+     * Assign checklists to selected entities
+     *
      */
     public void assignCheckist() {
         LOGGER.log(Level.INFO, "Assigning checklists");
@@ -177,30 +170,15 @@ public class AssignmentBean implements Serializable {
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
             }
-
-            switch (entityType) {
-                case GROUP:
-                    // lcEJB.assignChecklist(entityType, groups);
-                    break;
-                case SLOT:
-                    LOGGER.log(Level.INFO, "Assigning checklists to {0} slots", selectedSlots.size());
-                    lcEJB.assignChecklist(entityType, selectedSlots);
-                    break;
-                case DEVICE:
-                    // lcEJB.assignChecklist(entityType, devices);
-                    break;
-                default:
-                    LOGGER.log(Level.WARNING, "Invalid CM entity type {0}", entityType);
-                    lcEJB.assignChecklist(entityType, selectedSlots);
-            }
-
+            LOGGER.log(Level.INFO, "Assigning checklists to {0} slots", selectedEntities.size());
+            lcEJB.assignChecklist(ENTITY_TYPE, selectedEntities);
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Success", "Assigned");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Success", "Checklist Assigned");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Failure", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Error in assigning checklists", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
-            System.out.println(e);
+            // System.out.println(e);
         }
     }
 
@@ -210,6 +188,8 @@ public class AssignmentBean implements Serializable {
      */
     public void unassignChecklist() {
         try {
+            LOGGER.log(Level.INFO, "Unassigning checklists from {0} slots", selectedEntities.size());
+            lcEJB.unassignChecklist(ENTITY_TYPE, selectedEntities);
             // lcEJB.deleteAssignment(selectedEntity);
             // entities.remove(selectedEntity);
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
@@ -222,35 +202,35 @@ public class AssignmentBean implements Serializable {
         }
     }
 
+    /**
+     * Find assignments of a slot
+     * 
+     * @param slot
+     * @return 
+     */
+    public String assignedChecklists(Slot slot) {
+        return lcEJB.findAssignments(slot).stream().map(a -> a.getPhaseGroup().getName()).collect(Collectors.joining());
+    }
     //-- Getters/Setters 
-   
 
-    public List<Slot> getSlots() {
-        return slots;
+    public List<Slot> getSelectedEntities() {
+        return selectedEntities;
     }
 
-    public ChecklistEntity getEntityType() {
-        return entityType;
+    public void setSelectedEntities(List<Slot> selectedEntities) {
+        this.selectedEntities = selectedEntities;
     }
 
-    public void setEntityType(ChecklistEntity entityType) {
-        this.entityType = entityType;
+    public List<Slot> getFilteredEntities() {
+        return filteredEntities;
     }
 
-    public List<Slot> getSelectedSlots() {
-        return selectedSlots;
+    public void setFilteredEntities(List<Slot> filteredEntities) {
+        this.filteredEntities = filteredEntities;
     }
 
-    public void setSelectedSlots(List<Slot> selectedSlots) {
-        this.selectedSlots = selectedSlots;
-    }
-
-    public List<Slot> getFilteredSlots() {
-        return filteredSlots;
-    }
-
-    public void setFilteredSlots(List<Slot> filteredSlots) {
-        this.filteredSlots = filteredSlots;
+    public List<Slot> getEntities() {
+        return entities;
     }
 
     public InputAction getInputAction() {
@@ -268,5 +248,13 @@ public class AssignmentBean implements Serializable {
     public void setSelectedChecklists(List<Checklist> selectedChecklists) {
         this.selectedChecklists = selectedChecklists;
     }
-    
+
+    public Boolean getNoneHasChecklists() {
+        return noneHasChecklists;
+    }
+
+    public Boolean getAllHaveChecklists() {
+        return allHaveChecklists;
+    }
+ 
 }

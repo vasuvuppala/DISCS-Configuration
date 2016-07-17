@@ -7,7 +7,8 @@
                 xmlns:h="http://java.sun.com/jsf/html" >
 
     <ui:define name="content">   
-            <p:growl id="requestMsgs" showDetail="true" life="5000" /> 
+        <p:panel>
+            <h:outputText value="Path Between Elements" styleClass="heading"/>
             <p:panelGrid id="reportGrid" styleClass="noBorders" >
                 <p:row>                 
                     <p:column>
@@ -26,5 +27,6 @@
                     </p:column>
                 </p:row>
             </p:panelGrid>
+        </p:panel>
     </ui:define>
 </ui:composition>

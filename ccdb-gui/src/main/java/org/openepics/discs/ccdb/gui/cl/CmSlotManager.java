@@ -118,7 +118,7 @@ public class CmSlotManager implements Serializable {
         
         if (newGroup == null) {
             UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Removed from Group", "Make sure that the slots' checklist(s) are updated.");           
-        } else if (lcEJB.findAssignment(selectedEntity) != null) {
+        } else if (! lcEJB.findAssignments(selectedEntity).isEmpty() ) {
            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Slot already has a checklist", "Slots' checklists will be masked by the group's checklist."); 
         }
     }

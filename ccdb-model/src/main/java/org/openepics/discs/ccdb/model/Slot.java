@@ -63,11 +63,11 @@ import org.openepics.discs.ccdb.model.cl.SlotGroup;
     @NamedQuery(name = "Slot.findByName", query = "SELECT s FROM Slot s WHERE s.name = :name"),
     @NamedQuery(name = "Slot.findByNameAndHosting", query = "SELECT s FROM Slot s WHERE s.name = :name AND s.isHostingSlot = :isHostingSlot"),
     @NamedQuery(name = "Slot.findByNameContaining", query = "SELECT s FROM Slot s WHERE s.name LIKE :name"),
-    @NamedQuery(name = "Slot.findByIsHostingSlot", query = "SELECT s FROM Slot s "
-            + "WHERE s.isHostingSlot = :isHostingSlot"),
+    @NamedQuery(name = "Slot.findByIsHostingSlot", query = "SELECT s FROM Slot s WHERE s.isHostingSlot = :isHostingSlot"),
     @NamedQuery(name = "Slot.findByModifiedBy", query = "SELECT s FROM Slot s WHERE s.modifiedBy = :modifiedBy"),
-    @NamedQuery(name = "Slot.findByComponentType", query = "SELECT s FROM Slot s "
-            + "WHERE s.componentType = :componentType")
+    @NamedQuery(name = "Slot.findNonSystemSlots", query = "SELECT s FROM Slot s WHERE s.name NOT LIKE '\\_%' ESCAPE '\\'"),
+    @NamedQuery(name = "Slot.findUngroupedSlots", query = "SELECT s FROM Slot s WHERE s.cmGroup IS NULL AND s.name NOT LIKE '\\_%' ESCAPE '\\'"),
+    @NamedQuery(name = "Slot.findByComponentType", query = "SELECT s FROM Slot s WHERE s.componentType = :componentType")
 })
 public class Slot extends ConfigurationEntity implements EntityWithProperties, EntityWithArtifacts, NamedEntity,
                                                             EntityWithTags {
