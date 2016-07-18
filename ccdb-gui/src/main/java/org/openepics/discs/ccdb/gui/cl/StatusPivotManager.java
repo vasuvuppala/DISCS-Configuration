@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.auth.User;
+import org.openepics.discs.ccdb.model.auth.UserRole;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Assignment;
 import org.openepics.discs.ccdb.model.cl.Checklist;
@@ -548,6 +550,26 @@ public class StatusPivotManager implements Serializable {
         return null;
     }
     
+    /**
+     * Default SMEs of a checklist process
+     * 
+     * @param status
+     * @return 
+     */
+    public String defaultSME(ProcessStatus status) {
+        List<UserRole> userRoles = status.getGroupMember().getSme().getUserRoleList();
+        if (userRoles == null || userRoles.isEmpty()) {
+            return "Default";
+        } else {
+//            return userRoles.get(0).getUser().getUserId();
+            StringJoiner smes = new StringJoiner(", ", "[","]");
+            for(UserRole userRole: userRoles) {
+                smes.add(userRole.getUser().getName());
+            }
+            return smes.toString();
+        }
+    }
+     
     //-- Getters/Setters 
 
     public InputAction getInputAction() {
