@@ -70,7 +70,6 @@ public class SlotChecklistBean implements Serializable {
 
     @EJB
     private ChecklistEJB lcEJB;
-    @EJB
     @Inject
     private SecurityPolicy securityPolicy;
 
@@ -190,8 +189,6 @@ public class SlotChecklistBean implements Serializable {
         try {
             LOGGER.log(Level.INFO, "Unassigning checklists from {0} slots", selectedEntities.size());
             lcEJB.unassignChecklist(ENTITY_TYPE, selectedEntities);
-            // lcEJB.deleteAssignment(selectedEntity);
-            // entities.remove(selectedEntity);
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Success", "Operation was successful. However, you may have to refresh the page.");
             resetInput();

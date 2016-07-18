@@ -8,44 +8,53 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content"> 
-
+        
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="Slot Group Membership" styleClass="heading"/>
-                <p:dataTable id="entityTable" value="#{cmSlotManager.entities}" var="obj" 
-                             sortMode="multiple"
-                             rowKey="#{obj.id}" selectionMode="single" selection="#{cmSlotManager.selectedEntity}"                          
-                             filteredValue="#{cmSlotManager.filteredEntities}"
+                <h:outputText value="Checklist Assignment For Slots" styleClass="heading"/>
+                <p:dataTable id="assignTable" var="entity" 
+                             value="#{cmSlotManager.entities}" rowSelectMode="checkbox"
+                             emptyMessage="No records found." 
+                             rowKey="#{entity.id}" selection="#{cmSlotManager.selectedEntities}"
+                             resizableColumns="true" filteredValue="#{cmSlotManager.filteredEntities}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">  
-                    <p:ajax event="rowSelect" listener="#{cmSlotManager.onRowSelect}" update="commandButtons" />
-                    <p:column headerText="Name" sortBy="#{obj.name}" 
-                              filterBy="#{obj.name}" filterMatchMode="contains" > 
-                        <h:outputText value="#{obj.name}" styleClass="colCenter"/>
-                    </p:column>
-                    <p:column headerText="Description" sortBy="#{obj.description}" 
-                              filterBy="#{obj.description}" filterMatchMode="contains" >
-                        <h:outputText value="#{obj.description}" styleClass="colCenter"/>
-                    </p:column>
-                    <p:column headerText="Group" sortBy="#{obj.cmGroup.name}" 
-                              filterBy="#{obj.cmGroup.name}" filterMatchMode="contains" >
-                        <h:outputText value="#{obj.cmGroup.name}" styleClass="colCenter"/>
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
+
+                    <p:ajax event="toggleSelect" listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowSelectCheckbox" listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowUnselectCheckbox"  listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
+
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"  />
+
+                    <p:column headerText="Slot" sortBy="#{entity.name}" filterBy="#{entity.name}" filterMatchMode="contains">
+                        <h:outputText value="#{entity.name}" />
+                    </p:column>                                    
+
+                    <p:column headerText="Description" filterBy="#{entity.description}" filterMatchMode="contains">
+                        <h:outputText value="#{entity.description}" />
                     </p:column>
 
+                    <p:column headerText="Type" sortBy="#{entity.componentType.name}" filterBy="#{entity.componentType.name}" filterMatchMode="contains">
+                        <!-- ToDo: Temporary. Remove after _GRP is changed to _SYS -->
+                        <h:outputText value="#{entity.componentType.name}" rendered="#{entity.componentType.name != '_GRP'}"/>
+                        <h:outputText value="_SYS" rendered="#{entity.componentType.name == '_GRP'}"/>
+                    </p:column>
+
+                    <p:column headerText="Group"  sortBy="#{entity.cmGroup.name}"  filterBy="#{entity.cmGroup.name}" filterMatchMode="contains">                      
+                        <h:outputText value="#{entity.cmGroup.name}" />                                            
+                    </p:column>
+                    
                     <f:facet name="footer">
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
-                                <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
+                                <p:commandButton value="Assign" title="Assign Group" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{cmSlotManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{true or not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
-                                <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
-                                                 actionListener="#{cmSlotManager.onEditCommand}"
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not cmSlotManager.noneHasGroup}" />      
+                                <p:commandButton value="Remove" title="Unassign Group" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
+                                                 actionListener="#{cmSlotManager.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty cmSlotManager.selectedEntity}"/>
-                                <p:commandButton title="Delete" icon="ui-icon-trash" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{cmSlotManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{true or not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty cmSlotManager.selectedEntity}"/>
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not cmSlotManager.allHaveGroup}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>
@@ -54,52 +63,41 @@
         </h:form>
 
         <p:dialog id="crudInputDlg" widgetVar="crudInputWid">
-            <h:form id="objectInputForm">              
+            <h:form id="objectInputForm" rendered="#{cmSlotManager.inputAction != 'READ'}">              
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="New Process" rendered="#{cmSlotManager.inputAction == 'CREATE'}"/>
-                                <h:outputText value="Update Existing Process" rendered="#{cmSlotManager.inputAction == 'UPDATE'}"/>
-                                <h:outputText value="Delete Process" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>
+                                <h:outputText value="Asssign Group" rendered="#{cmSlotManager.inputAction == 'CREATE'}"/>   
+                                <h:outputText value="Remove Group" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="procName" value="Name"/>
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="procName" value="#{cmSlotManager.inputAction == 'CREATE'? cmSlotManager.inputEntity.name: cmSlotManager.selectedEntity.name}" 
-                                         required="true" 
-                                         validatorMessage="Name required" disabled="#{true or cmSlotManager.inputAction == 'DELETE'}"/>                             
-                        </p:column>
-                    </p:row>
 
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="procDesc"  value="Description" />
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="procDesc" value="#{cmSlotManager.inputAction == 'CREATE'? cmSlotManager.inputEntity.description : cmSlotManager.selectedEntity.description}" 
-                                         required="true" 
-                                         validatorMessage="Description required" disabled="#{true or cmSlotManager.inputAction == 'DELETE'}"/>                            
-                        </p:column>
-                    </p:row>
-                    
-                    <p:row>
+                    <p:row rendered="#{cmSlotManager.inputAction == 'CREATE'}">
                         <p:column>
                             <p:outputLabel for="slotGrp"  value="Group" />
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="slotGrp" converter="#{slotGroupConverter}"                                           
-                                             value="#{cmSlotManager.inputAction == 'CREATE'? cmSlotManager.inputEntity.cmGroup : cmSlotManager.selectedEntity.cmGroup}"                                            
-                                             disabled="#{cmSlotManager.inputAction == 'DELETE'}"  valueChangeListener="#{cmSlotManager.onGroupChange}">
-                                <f:selectItem itemLabel="None"  itemValue="#{null}"/>
-                                <f:selectItems value="#{cmSlotManager.slotGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
-                                
+                                             var="g" value="#{cmSlotManager.inputGroup}" filterMatchMode="contains"  filter="true"                                         
+                                             disabled="#{cmSlotManager.inputAction == 'DELETE'}" >
+                                <f:selectItems value="#{cmSlotManager.slotGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />   
+                                <p:column>
+                                    <h:outputText value="#{g.name}" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{g.description}" />
+                                </p:column>
                             </p:selectOneMenu>                       
                         </p:column>
+                    </p:row>
+                    
+                    <p:row>                       
+                        <p:column colspan="2">
+                            <h:outputText value="Do you really want to assign the group?" rendered="#{cmSlotManager.inputAction == 'CREATE'}"/>                                
+                            <h:outputText value="Do you really want to un-assign group? There is no way to undo this operation!" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>                                
+                        </p:column>                                                                         
                     </p:row>
 
                     <f:facet name="footer">
@@ -107,14 +105,14 @@
                             <p:column colspan="2">
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('crudInputWid').hide()"/>
-                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{cmSlotManager.saveEntity()}"  
+                                <p:commandButton icon="ui-icon-disk" value="Confirm" style="float: right;"
+                                                 action="#{cmSlotManager.assignGroup()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{cmSlotManager.inputAction != 'DELETE'}"/>
-                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
-                                                 action="#{cmSlotManager.deleteEntity()}" 
+                                                 process="@form"  update=":crudForm:assignTable" rendered="#{cmSlotManager.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Deletion" style="float: right;"
+                                                 action="#{cmSlotManager.unassignGroup()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:entityTable" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":crudForm:assignTable" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

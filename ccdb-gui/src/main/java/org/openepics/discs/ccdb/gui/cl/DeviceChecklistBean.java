@@ -27,15 +27,12 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.openepics.discs.ccdb.core.ejb.AuthEJB;
 import org.openepics.discs.ccdb.core.ejb.DeviceEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
-import org.openepics.discs.ccdb.core.ejb.SlotEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.cl.Checklist;
-import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
 
@@ -72,11 +69,7 @@ public class DeviceChecklistBean implements Serializable {
     @EJB
     private ChecklistEJB lcEJB;
     @EJB
-    private SlotEJB slotEJB;
-    @EJB
     private DeviceEJB deviceEJB;
-    @EJB
-    private AuthEJB authEJB;
     @Inject
     private SecurityPolicy securityPolicy;
 

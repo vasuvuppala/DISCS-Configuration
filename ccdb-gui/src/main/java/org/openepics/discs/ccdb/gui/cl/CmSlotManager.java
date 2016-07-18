@@ -16,6 +16,7 @@ package org.openepics.discs.ccdb.gui.cl;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -24,8 +25,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
+import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
@@ -67,74 +70,126 @@ public class CmSlotManager implements Serializable {
     private SlotEJB slotEJB;
     @EJB
     private ChecklistEJB lcEJB;
+    @Inject
+    private SecurityPolicy securityPolicy;
 
     private static final Logger LOGGER = Logger.getLogger(CmSlotManager.class.getName());
-//    @Inject
-//    UserSession userSession;
 
+    // view data
     private List<Slot> entities;
+    private List<Slot> selectedEntities;
     private List<Slot> filteredEntities;
-    private Slot inputEntity;
-    private Slot selectedEntity;
     private InputAction inputAction;
     private List<SlotGroup> slotGroups;
+
+    // input data
+    private SlotGroup inputGroup;
+
+    // state
+    private Boolean noneHasGroup = false; // none of the selected entities has checklists 
+    private Boolean allHaveGroup = false; // all of the selected entities have checklists 
 
     public CmSlotManager() {
     }
 
     @PostConstruct
     public void init() {
-        entities = slotEJB.findByIsHostingSlot(true);
+        entities = slotEJB.findNonSystemSlots();
         slotGroups = lcEJB.findAllSlotGroups();
-        selectedEntity = (entities == null || entities.isEmpty()) ? null: entities.get(0);
         resetInput();
     }
 
     private void resetInput() {
         inputAction = InputAction.READ;
+        if (selectedEntities != null) selectedEntities.clear();
+        noneHasGroup = false;
+        allHaveGroup = false;
     }
 
-    public void onRowSelect(SelectEvent event) {
-        // inputRole = selectedRole;
-        // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Role Selected", "");
+    /**
+     * When a set of rows is selected
+     *
+     */
+    public void onRowSelect() {
+        if (selectedEntities == null || selectedEntities.isEmpty()) {
+            noneHasGroup = false;
+            allHaveGroup = false;
+        } else {
+            noneHasGroup = selectedEntities.stream().allMatch(s -> s.getCmGroup() == null);
+            allHaveGroup = selectedEntities.stream().noneMatch(s -> s.getCmGroup() == null);
+        }
+        LOGGER.log(Level.INFO, "none has group: {0}", noneHasGroup);
     }
 
-//    public void onAddCommand(ActionEvent event) {
-//        inputEntity = new Slot();
-//        inputAction = InputAction.CREATE;       
-//    }
-    
-    public void onEditCommand(ActionEvent event) {
-        inputAction = InputAction.UPDATE;
+    public void onAddCommand(ActionEvent event) {
+        inputAction = InputAction.CREATE;
     }
 
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
     }
 
-    public void onGroupChange(ValueChangeEvent event) {
-        SlotGroup oldGroup = (SlotGroup) event.getOldValue();
-        SlotGroup newGroup = (SlotGroup) event.getNewValue();
-        
-        if (newGroup == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Removed from Group", "Make sure that the slots' checklist(s) are updated.");           
-        } else if (! lcEJB.findAssignments(selectedEntity).isEmpty() ) {
-           UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Slot already has a checklist", "Slots' checklists will be masked by the group's checklist."); 
-        }
+    /**
+     * Validates input
+     *
+     * @return
+     */
+    private boolean inputIsValid() {
+        return true;
     }
-    
-    public void saveEntity() {
+
+    /**
+     * Check authorization
+     *
+     * @return
+     */
+    public boolean isAuthorized() {
+        String userId = securityPolicy.getUserId();
+        if (userId == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
+                    "Not authorized. User Id is null.");
+            return false;
+        }
+        // User user = new User(userId);
+        return true;
+    }
+
+//    public void onGroupChange(ValueChangeEvent event) {
+//        SlotGroup oldGroup = (SlotGroup) event.getOldValue();
+//        SlotGroup newGroup = (SlotGroup) event.getNewValue();
+//
+//        if (newGroup == null) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Removed from Group", "Make sure that the slots' checklists are updated.");
+//        } else if (lcEJB.haveAssignments(selectedEntities)) {
+//            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Some of the slots already have a checklist", "Their checklists will be masked by the group's checklist.");
+//        }
+//    }
+
+    /**
+     * Assign the input group to the selected slots
+     * 
+     */
+    public void assignGroup() {
         try {
-            if (inputAction == InputAction.CREATE) {
-                slotEJB.save(inputEntity);
-                entities.add(inputEntity);            
-            } else {
-                slotEJB.save(selectedEntity);
-                lcEJB.refreshVersion(Slot.class, selectedEntity);             
+            if (!isAuthorized()) {
+                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+                return;
+            }
+            if (!inputIsValid()) {
+                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+                return;
+            }
+            LOGGER.log(Level.INFO, "Assigning slots to groups to {0} ", selectedEntities.size());
+            lcEJB.assignGroup(selectedEntities, inputGroup);
+            lcEJB.refreshVersion(Slot.class, entities); // ToDo: update the entitiy and version in the same transaction. possible?
+            selectedEntities.stream().forEach(s -> s.setCmGroup(inputGroup));
+            
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Success", "Assigned slots to the chosen group");
+            if (lcEJB.haveAssignments(selectedEntities)) {
+                UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Success", "Some of the selcted slots have a checklist assigned. Their checklists will be masked by the group's checklist.");
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Updated", "");
         } catch (Exception e) {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save ", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
@@ -142,12 +197,18 @@ public class CmSlotManager implements Serializable {
         }
     }
 
-    public void deleteEntity() {
+    /**
+     * unassign group from the selected slots
+     * 
+     */
+    public void unassignGroup() {
         try {
-            slotEJB.delete(selectedEntity);
-            entities.remove(selectedEntity);
+            LOGGER.log(Level.INFO, "Unassigning {0} slots from group", selectedEntities.size());
+            lcEJB.unassignGroup(selectedEntities);
+            lcEJB.refreshVersion(Slot.class, entities); // ToDo: update the entitiy and version in the same transaction. possible?
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
+            UiUtility.showMessage(FacesMessage.SEVERITY_WARN, "Success", "However, make sure that the slots' checklists are updated.");
+            // UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
             resetInput();
         } catch (Exception e) {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not complete deletion", e.getMessage());
@@ -173,23 +234,31 @@ public class CmSlotManager implements Serializable {
         this.filteredEntities = filteredEntities;
     }
 
-    public Slot getInputEntity() {
-        return inputEntity;
+    public List<Slot> getSelectedEntities() {
+        return selectedEntities;
     }
 
-    public void setInputEntity(Slot inputEntity) {
-        this.inputEntity = inputEntity;
+    public void setSelectedEntities(List<Slot> selectedEntities) {
+        this.selectedEntities = selectedEntities;
     }
 
-    public Slot getSelectedEntity() {
-        return selectedEntity;
+    public SlotGroup getInputGroup() {
+        return inputGroup;
     }
 
-    public void setSelectedEntity(Slot selectedEntity) {
-        this.selectedEntity = selectedEntity;
+    public void setInputGroup(SlotGroup inputGroup) {
+        this.inputGroup = inputGroup;
     }
 
     public List<SlotGroup> getSlotGroups() {
         return slotGroups;
+    }
+
+    public Boolean getNoneHasGroup() {
+        return noneHasGroup;
+    }
+
+    public Boolean getAllHaveGroup() {
+        return allHaveGroup;
     }
 }

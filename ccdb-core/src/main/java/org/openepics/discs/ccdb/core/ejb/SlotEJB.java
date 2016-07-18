@@ -97,11 +97,8 @@ public class SlotEJB extends DAO<Slot> {
      * 
      * @return 
      */
-    public List<Slot> findUserSlots() {
-       ComponentType rootComponentType = comptypeEJB.findByName(ROOT_COMPONENT_TYPE);
-       return em.createQuery("SELECT s FROM Slot s WHERE s.componentType != :ctype", Slot.class)
-               .setParameter("ctype", rootComponentType)
-               .getResultList();
+    public List<Slot> findNonSystemSlots() {
+       return em.createNamedQuery("Slot.findNonSystemSlots", Slot.class).getResultList();
     }
     
     /**

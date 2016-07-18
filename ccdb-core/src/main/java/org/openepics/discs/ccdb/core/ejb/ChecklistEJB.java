@@ -338,6 +338,16 @@ public class ChecklistEJB {
     }
     
     /**
+     * Do the given slots have any assignments?
+     * 
+     * @param slots
+     * @return true if they do. 
+     */
+    public Boolean haveAssignments(List<Slot> slots) {
+        return 0 != em.createNamedQuery("Assignment.numberOfAssignedSlots", Long.class).setParameter("slots", slots).getSingleResult();
+    }
+    
+    /**
      * Assign checklist to a set of slots, devices or groups
      * 
      * @param <T>
@@ -593,7 +603,7 @@ public class ChecklistEJB {
         return em.createNamedQuery("Assignment.findUnassignedDevices", Device.class).getResultList();
     }
     /**
-     * PHase type 
+     * Find a slot group 
      * 
      * @param name
      * @return a list of all {@link Process}s ordered by name.
@@ -601,6 +611,32 @@ public class ChecklistEJB {
     public SlotGroup findSlotGroup(String name) {
         return em.createNamedQuery("SlotGroup.findByName", SlotGroup.class).setParameter("name", name).getSingleResult();
     } 
+    
+    /**
+     * Assign the given group to a set of slots
+     * 
+     * @param slots
+     * @param group 
+     */
+    public void assignGroup(List<Slot> slots, SlotGroup group) {
+//        em.createNamedQuery("Slot.updateGroup")
+//                .setParameter("group", group)
+//                .setParameter("slots", slots)
+//                .executeUpdate();
+        for(Slot slot: slots) {
+            slot.setCmGroup(group);
+            em.merge(slot);
+        }
+    }
+    
+     /**
+     * Remove group from a set of slots
+     * 
+     * @param slots
+     */
+    public void unassignGroup(List<Slot> slots) {
+        assignGroup(slots, null);
+    }
     
     /**
      * save a status type
@@ -872,18 +908,31 @@ public class ChecklistEJB {
 //    }
 
     /**
-     * Update the version of the object
+     * Update the version of an entity
      * 
      * @param <T>
      * @param entityClass
-     * @param status 
+     * @param entity 
      */
-    public <T extends ConfigurationEntity> void refreshVersion(Class<T> entityClass, T status) {
-        if (status.getId() != null) {        
-            T current = em.find(entityClass, status.getId());
-            status.updateVersion(current);
+    public <T extends ConfigurationEntity> void refreshVersion(Class<T> entityClass, T entity) {
+        if (entity.getId() != null) {        
+            T current = em.find(entityClass, entity.getId());
+            entity.updateVersion(current);
         }
         // LOGGER.log(Level.FINE, "version refreshed - {0}", status.getVersion());
+    }
+    
+    /**
+     * Update the version of a set of  entities
+     * 
+     * @param <T>
+     * @param entityClass
+     * @param entities
+     */
+    public <T extends ConfigurationEntity> void refreshVersion(Class<T> entityClass, List<T> entities) {
+        for(T entity: entities) {
+            refreshVersion(entityClass, entity);
+        }
     }
     
     /**
