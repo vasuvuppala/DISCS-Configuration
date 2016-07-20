@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/template/template.xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"              
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+        
+        <h:form id="crudForm" > 
+            <p:panel>
+                <h:outputText value="DHR Readiness Report" styleClass="heading"/>
+                <p:dataTable id="reportTable" var="entry" 
+                             value="#{checklistReport.entries}"
+                             emptyMessage="No records found." 
+                             rowKey="#{entry.id}"
+                             resizableColumns="true" filteredValue="#{checklistReport.filteredEntries}" 
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
+
+                    <p:column headerText="Name" sortBy="#{entry.slot.name}" filterBy="#{entry.slot.name}" filterMatchMode="contains">
+                        <h:outputText value="#{entry.slot.name == '_ROOT'? 'FRIB': entry.slot.name}" />
+                    </p:column>                                    
+
+                    <p:column headerText="Description" filterBy="#{entry.slot.description}" filterMatchMode="contains">
+                        <h:outputText value="#{entry.slot.description}" />
+                    </p:column>
+
+                    <p:column headerText="Subslots" sortBy="#{entry.numOfInstallSlots}" styleClass="alignRight"> 
+                        <h:outputText value="#{entry.numOfInstallSlots}" />
+                    </p:column> 
+                    
+                    <p:column headerText="Assigned Slots" sortBy="#{entry.numOfAssignedSlots}" styleClass="alignRight">
+                        <h:outputText value="#{entry.numOfAssignedSlots}" />
+                    </p:column> 
+                    
+                    <p:column headerText="Approved Slots" sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
+                        <h:outputText value="#{entry.numOfApprovedSlots}" />
+                    </p:column>
+                    
+                     <p:column headerText="Progress">
+                         <p:progressBar value="#{entry.percentComplete}" labelTemplate="#{entry.percentComplete} %" displayOnly="true"/>
+                            
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        
+    </ui:define> 
+</ui:composition>

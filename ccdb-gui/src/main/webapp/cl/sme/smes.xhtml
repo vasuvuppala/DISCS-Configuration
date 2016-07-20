@@ -60,17 +60,18 @@
                                 </p:selectBooleanCheckbox>                            
                             </f:facet>
 
-                            <ui:include src="sme-disp.xhtml">
-                                <ui:param name="statusRec" value="#{statusPivotManager.getStatusRec(assignment, selPhase.phase)}" />
-                                <ui:param name="statusId" value="stat-#{loop.index}" />
-                            </ui:include>    
-                            <p:spacer width="3"/>
-                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"
-                                           rendered="#{not statusPivotManager.lockedAssignment(assignment, selPhase.phase)}"
-                                           actionListener="#{statusPivotManager.onCellEdit(assignment, selPhase.phase)}" 
-                                           oncomplete="PF('crudInputWid').show()" styleClass="iconDisplay">
-                                <i class="fa fa-pencil-square-o" title="modify" />
-                            </p:commandLink>
+                            <ui:fragment rendered="#{not statusPivotManager.lockedOrOptionalAssignment(assignment, selPhase.phase)}">
+                                <ui:include src="sme-disp.xhtml">
+                                    <ui:param name="statusRec" value="#{statusPivotManager.getStatusRec(assignment, selPhase.phase)}" />
+                                    <ui:param name="statusId" value="stat-#{loop.index}" />
+                                </ui:include>    
+                                <p:spacer width="3"/>
+                                <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"
+                                               actionListener="#{statusPivotManager.onCellEdit(assignment, selPhase.phase)}" 
+                                               oncomplete="PF('crudInputWid').show()" styleClass="iconDisplay">
+                                    <i class="fa fa-pencil-square-o" title="modify" />
+                                </p:commandLink>
+                            </ui:fragment>
                         </p:column>         
                     </c:forEach>
 

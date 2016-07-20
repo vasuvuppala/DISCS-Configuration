@@ -29,7 +29,12 @@
                     <p:column headerText="Description" >
                         <h:outputText value="#{obj.description}" styleClass="colCenter"/>
                     </p:column>
-                    
+                    <p:column headerText="For Devices" >
+                        <h:outputText value="#{obj.forDevices}" styleClass="colCenter"/>
+                    </p:column>
+                    <p:column headerText="Default" >
+                        <h:outputText value="#{obj.defaultList}" styleClass="colCenter"/>
+                    </p:column>
                      <p:column headerText="Options" >
                          <ui:repeat value="#{obj.options}" var="opt">
                              <h:outputText value="#{opt.name} " />
@@ -89,7 +94,27 @@
                                          validatorMessage="Description required" disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="procDevices"  value="For Devices" />
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox id="procDevices" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.forDevices : phaseGroupManager.selectedEntity.forDevices}" 
+                                          disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
 
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="procDefault"  value="Default" />
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox id="procDefault" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.defaultList : phaseGroupManager.selectedEntity.defaultList}" 
+                                          disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    
                     <f:facet name="footer">
                         <p:row>
                             <p:column colspan="2">

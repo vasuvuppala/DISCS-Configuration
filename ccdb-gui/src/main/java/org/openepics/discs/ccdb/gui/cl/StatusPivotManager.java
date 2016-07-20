@@ -222,6 +222,27 @@ public class StatusPivotManager implements Serializable {
     }
     
     /**
+     * Is a phase of an assignment locked/frozen or optional?
+     *
+     * @param assignment
+     * @param phase
+     * @return
+     */
+    public Boolean lockedOrOptionalAssignment(Assignment assignment, Process phase) {
+        ProcessStatus phaseStatus = getStatusRec(assignment, phase);
+        if (phaseStatus == null) {
+            return false;
+        }
+        if (phaseStatus.getStatus() == null) { // is the process optional (not required)?
+            return true;
+        }
+        if (phaseStatus.getGroupMember().getSummaryPhase()) {
+            return false;
+        }
+        return lockedAssignment(assignment);
+    }
+    
+    /**
      * reset all input fields
      * 
      */

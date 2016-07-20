@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -34,7 +33,6 @@ import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 
 /**
  * Description: State for Manage Process View

@@ -101,6 +101,7 @@ public class DeviceChecklistBean implements Serializable {
 
     private void resetInput() {
         inputAction = InputAction.READ;
+        if (selectedEntities != null) selectedEntities.clear();
         noneHasChecklists = false; 
         allHaveChecklists = false; 
     }

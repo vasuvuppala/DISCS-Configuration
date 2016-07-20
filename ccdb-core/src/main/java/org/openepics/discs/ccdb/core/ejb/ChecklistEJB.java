@@ -224,6 +224,44 @@ public class ChecklistEJB {
 //    }
     
     /**
+     * List of assigned slots whose name begin with a given prefix
+     * ToDo: Temporary. refactor.
+     * 
+     * @param prefix
+     * @return 
+     */
+    public List<Assignment> assignedSlots(String prefix) {
+        return em.createQuery("SELECT a FROM Assignment a WHERE a.slot.name LIKE :prefix", Assignment.class)
+                .setParameter("prefix", prefix)
+                .getResultList();
+    }
+    
+    public Long numberOfAssignedSlots(String prefix) {
+        return em.createQuery("SELECT COUNT(s) FROM Slot s, Assignment a WHERE a.slot.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup)", Long.class)
+                .setParameter("prefix", prefix)
+                .getSingleResult();
+    }
+    
+     public Long numberOfApprovedSlots(String prefix) {
+        return em.createQuery("SELECT COUNT(s) FROM Slot s, Assignment a, ProcessStatus p WHERE a.slot.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.assignment = a AND p.groupMember.summaryPhase = TRUE AND p.status.completed = TRUE" , Long.class)
+                .setParameter("prefix", prefix)
+                .getSingleResult();
+    }
+    
+    /**
+     * List of sub slots whose name begin with a given prefix
+     * ToDo: Temporary. refactor.
+     * 
+     * @param prefix
+     * @return 
+     */
+    public Long  numberOfHostingSlots(String prefix) {
+        return em.createQuery("SELECT COUNT(a) FROM Slot a WHERE a.name LIKE :prefix AND a.isHostingSlot = TRUE", Long.class)
+                .setParameter("prefix", prefix)
+                .getSingleResult();
+    }
+    
+    /**
      * ToDo: Improve the code with set operations.
      * 
      * @param assignment
