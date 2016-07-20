@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.auth.User;
@@ -34,15 +35,15 @@ import org.openepics.discs.ccdb.model.auth.User;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_proc_status")
+@Table(name = "cm_proc_status",
+       uniqueConstraints=@UniqueConstraint(columnNames={"assignment", "field"}))
 @NamedQueries({
     @NamedQuery(name = "ProcessStatus.findAll", query = "SELECT d FROM ProcessStatus d"),
     @NamedQuery(name = "ProcessStatus.findValid", query = "SELECT d FROM ProcessStatus d"),
     @NamedQuery(name = "ProcessStatus.findGroupStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slotGroup IS NOT null"),
     @NamedQuery(name = "ProcessStatus.findSlotStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS NOT null"),
     @NamedQuery(name = "ProcessStatus.findDeviceStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS null AND d.assignment.device IS NOT null"),
-//    @NamedQuery(name = "PhaseStatus.findValid", query = "SELECT d FROM PhaseStatus d WHERE d.assignment.slot is null OR d.assignment.slot.cmGroup is NOT null"),
-    @NamedQuery(name = "ProcessStatus.findByGroup", query = "SELECT d FROM ProcessStatus d WHERE d.groupMember.phaseGroup = :group"),
+    @NamedQuery(name = "ProcessStatus.findByChecklist", query = "SELECT d FROM ProcessStatus d WHERE d.field.checklist = :checklist"),
     @NamedQuery(name = "ProcessStatus.findByAssignment", query = "SELECT d FROM ProcessStatus d WHERE d.assignment = :assignment")
 })
 public class ProcessStatus extends ConfigurationEntity {
@@ -54,8 +55,8 @@ public class ProcessStatus extends ConfigurationEntity {
     private Assignment assignment;
        
     @ManyToOne(optional = false)
-    @JoinColumn(name = "group_member")
-    private ChecklistField groupMember;
+    @JoinColumn(name = "field")
+    private ChecklistField field;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "assigned_sme")
@@ -103,11 +104,12 @@ public class ProcessStatus extends ConfigurationEntity {
         this.comment = comment;
     }
 
-    public ChecklistField getGroupMember() {
-        return groupMember;
+    public ChecklistField getField() {
+        return field;
     }
 
-    public void setGroupMember(ChecklistField groupMember) {
-        this.groupMember = groupMember;
+    public void setField(ChecklistField field) {
+        this.field = field;
     }
+
 }

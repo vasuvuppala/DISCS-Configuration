@@ -36,12 +36,12 @@
                 <p:column id="desc" headerText="Description"  filterBy="#{comp.description}">
                     <h:outputText value="#{comp.description}"/>
                 </p:column>
-                <p:column id="loc" headerText="LoC"  filterBy="#{comp.levelOfCare}">
+<!--                <p:column id="loc" headerText="LoC"  filterBy="#{comp.levelOfCare}">
                     <h:outputText value="#{comp.levelOfCare}"/>
                 </p:column>
                 <p:column id="afo" headerText="Approved"  sortBy="#{comp.approvedForOp}">
                      <h:outputText value="#{comp.approvedForOp ? 'Yes': 'No'}" />
-                </p:column>
+                </p:column>-->
                 <p:column id="asmp" headerText="Asm Parent" >
                     <h:outputText value="#{comp.asmParent.name}"/>
                 </p:column>

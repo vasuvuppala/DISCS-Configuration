@@ -117,7 +117,7 @@ public class StatusPivotManager implements Serializable {
 
     // request parameters
     private ChecklistEntity entityType = ChecklistEntity.GROUP;
-    private String selectedPhaseGroup;
+    // private String selectedPhaseGroup;
     
     // view data
     private List<SlotGroup> slotGroups;
@@ -154,21 +154,7 @@ public class StatusPivotManager implements Serializable {
      */
     public String initialize() {
         String nextView = null;
-        Checklist stype = null;
-
-        if (selectedPhaseGroup != null) {
-            stype = lcEJB.findChecklist(selectedPhaseGroup);
-        }
-
-        if (stype == null) {
-            phases = lcEJB.findAllPhases();
-        } else {
-            phases = lcEJB.findPhases(stype);
-            statusOptions = lcEJB.findStatusOptions(stype);
-        }
-        selectablePhases = phases == null ? Collections.<SelectablePhase>emptyList() : phases.stream().map(p -> new SelectablePhase(p)).collect(Collectors.toList());
-        updatePhaseSelected();
-        
+ 
         switch (entityType) {
             case GROUP:
                 entities = lcEJB.findGroupAssignments();
@@ -182,7 +168,17 @@ public class StatusPivotManager implements Serializable {
             default:
                 entities = lcEJB.findGroupAssignments();
         }
-
+        
+        Checklist checklist = lcEJB.findDefaultChecklist(entityType);
+        if (checklist == null) {
+            phases = lcEJB.findAllPhases();
+        } else {
+            phases = lcEJB.findPhases(checklist);
+            statusOptions = lcEJB.findStatusOptions(checklist);
+        }
+        selectablePhases = phases == null ? Collections.<SelectablePhase>emptyList() : phases.stream().map(p -> new SelectablePhase(p)).collect(Collectors.toList());
+        updatePhaseSelected();
+        
         return nextView;
     }
 
@@ -197,7 +193,7 @@ public class StatusPivotManager implements Serializable {
         // return assignment.getStatuses().stream().filter(s -> s.getGroupMember().getSummaryPhase()).allMatch(s -> s.getStatus() == null? false: s.getStatus().getCompleted());
         Boolean hasSummary = false;
         for(ProcessStatus status: assignment.getStatuses()) {
-            if (status.getGroupMember().getSummaryPhase() && status.getStatus() != null) {
+            if (status.getField().getSummaryProcess() && status.getStatus() != null) {
                 hasSummary = true;
                 if (! status.getStatus().getCompleted()) {
                     return false;
@@ -217,7 +213,7 @@ public class StatusPivotManager implements Serializable {
     public Boolean lockedAssignment(Assignment assignment, Process phase) {
         ProcessStatus phaseStatus = getStatusRec(assignment,phase);
         if (phaseStatus == null) return false;
-        if (phaseStatus.getGroupMember().getSummaryPhase()) return false;
+        if (phaseStatus.getField().getSummaryProcess()) return false;
         return lockedAssignment(assignment);
     }
     
@@ -236,7 +232,7 @@ public class StatusPivotManager implements Serializable {
         if (phaseStatus.getStatus() == null) { // is the process optional (not required)?
             return true;
         }
-        if (phaseStatus.getGroupMember().getSummaryPhase()) {
+        if (phaseStatus.getField().getSummaryProcess()) {
             return false;
         }
         return lockedAssignment(assignment);
@@ -279,7 +275,7 @@ public class StatusPivotManager implements Serializable {
             for (Assignment record : selectedEntities) {
                 for (ProcessStatus status : record.getStatuses()) {
                     // LOGGER.log(Level.INFO, "checking {0}", status.getGroupMember().getPhase().getName());
-                    if (selectedPhase.phase.equals(status.getGroupMember().getPhase()) && status.getGroupMember().getOptional() == false) {
+                    if (selectedPhase.phase.equals(status.getField().getProcess()) && status.getField().getOptional() == false) {
                         return false;
                     }
                 }
@@ -333,7 +329,7 @@ public class StatusPivotManager implements Serializable {
     private boolean inputValid() {
         for (Assignment record : selectedEntities) {
             for (ProcessStatus status : record.getStatuses()) {
-                if (status.getGroupMember().getSummaryPhase() && !isValid(status)) {
+                if (status.getField().getSummaryProcess() && !isValid(status)) {
                     UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Invalid summary status",
                             "Make sure status for summary (eg AM OK) is valid.");
                     return false;
@@ -361,7 +357,7 @@ public class StatusPivotManager implements Serializable {
      */
     private Integer toInt(ProcessStatus status) {
         for (SelectablePhase selPhase : selectablePhases) {
-            if (selPhase.getSelected() && selPhase.getPhase().equals(status.getGroupMember().getPhase())) {
+            if (selPhase.getSelected() && selPhase.getPhase().equals(status.getField().getProcess())) {
                 return toInt(inputStatus);
             }
         }
@@ -390,7 +386,7 @@ public class StatusPivotManager implements Serializable {
     private Integer summaryWeight(ProcessStatus status) {
         List<ProcessStatus> statuses = lcEJB.findAllStatuses(status.getAssignment());
         Integer minWeight = statuses.stream()
-                .filter(stat -> stat.getGroupMember().getSummaryPhase() == false)
+                .filter(stat -> stat.getField().getSummaryProcess() == false)
                 .filter(stat -> stat.getStatus() != null)
                 .map(stat -> toInt(stat.getStatus()))
                 .min(Integer::compare)
@@ -502,7 +498,7 @@ public class StatusPivotManager implements Serializable {
                 }
                 for (Assignment record : selectedEntities) {
                     for (ProcessStatus status : record.getStatuses()) {
-                        if (selectedPhase.phase.equals(status.getGroupMember().getPhase())) {
+                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
                             if (! isAuthorized(view, status, user)) {
                                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                                         "You are not authorized to update one or more of the statuses.");
@@ -521,7 +517,7 @@ public class StatusPivotManager implements Serializable {
                 }
                 for (Assignment record : selectedEntities) {
                     for (ProcessStatus status : record.getStatuses()) {
-                        if (selectedPhase.phase.equals(status.getGroupMember().getPhase())) {
+                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
                             status.setModifiedAt(new Date());
                             status.setModifiedBy(user.getUserId());
                             status.setStatus(inputStatus);
@@ -563,7 +559,7 @@ public class StatusPivotManager implements Serializable {
         }
         for (ProcessStatus status : assignment.getStatuses()) {
             // LOGGER.log(Level.INFO, "phase {0}", status.getGroupMember().getPhase());
-            if (phase.equals(status.getGroupMember().getPhase())) {
+            if (phase.equals(status.getField().getProcess())) {
                 return status;
             }
         }
@@ -578,7 +574,7 @@ public class StatusPivotManager implements Serializable {
      * @return 
      */
     public String defaultSME(ProcessStatus status) {
-        List<UserRole> userRoles = status.getGroupMember().getSme().getUserRoleList();
+        List<UserRole> userRoles = status.getField().getSme().getUserRoleList();
         if (userRoles == null || userRoles.isEmpty()) {
             return "Default";
         } else {
@@ -679,17 +675,5 @@ public class StatusPivotManager implements Serializable {
 
     public ChecklistEntity getEntityType() {
         return entityType;
-    }
-
-    public void setEntityType(ChecklistEntity entityType) {
-        this.entityType = entityType;
-    }
-
-    public String getSelectedPhaseGroup() {
-        return selectedPhaseGroup;
-    }
-
-    public void setSelectedPhaseGroup(String selectedPhaseGroup) {
-        this.selectedPhaseGroup = selectedPhaseGroup;
     }
 }

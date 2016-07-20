@@ -206,7 +206,7 @@ public class GroupChecklistBean implements Serializable {
      * @return 
      */
     public String assignedChecklists(SlotGroup group) {
-        return lcEJB.findAssignments(group).stream().map(a -> a.getPhaseGroup().getName()).collect(Collectors.joining());
+        return lcEJB.findAssignments(group).stream().map(a -> a.getChecklist().getName()).collect(Collectors.joining());
     }
     //-- Getters/Setters 
 

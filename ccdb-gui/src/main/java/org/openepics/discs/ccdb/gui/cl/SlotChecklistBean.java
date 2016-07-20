@@ -207,7 +207,7 @@ public class SlotChecklistBean implements Serializable {
      * @return 
      */
     public String assignedChecklists(Slot slot) {
-        return lcEJB.findAssignments(slot).stream().map(a -> a.getPhaseGroup().getName()).collect(Collectors.joining());
+        return lcEJB.findAssignments(slot).stream().map(a -> a.getChecklist().getName()).collect(Collectors.joining());
     }
     //-- Getters/Setters 
 

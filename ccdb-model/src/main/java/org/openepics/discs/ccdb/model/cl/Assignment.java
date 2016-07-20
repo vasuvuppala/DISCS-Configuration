@@ -48,10 +48,10 @@ import org.openepics.discs.ccdb.model.auth.User;
     @NamedQuery(name = "Assignment.findSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null AND d.slot.cmGroup IS NULL"),
     @NamedQuery(name = "Assignment.findAllSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null"),
     @NamedQuery(name = "Assignment.findDeviceAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS null AND d.device IS NOT null"),
-    @NamedQuery(name = "Assignment.findBySlotChecklist", query = "SELECT d FROM Assignment d WHERE d.slot  IN :slots AND d.phaseGroup = :checklist"),
-    @NamedQuery(name = "Assignment.findByGroupChecklist", query = "SELECT d FROM Assignment d WHERE d.slotGroup  IN :groups AND d.phaseGroup = :checklist"),
-    @NamedQuery(name = "Assignment.findByDeviceChecklist", query = "SELECT d FROM Assignment d WHERE d.device  IN :devices AND d.phaseGroup = :checklist"),
-    @NamedQuery(name = "Assignment.findByGroup", query = "SELECT d FROM Assignment d WHERE d.phaseGroup = :group"),
+    @NamedQuery(name = "Assignment.findBySlotChecklist", query = "SELECT d FROM Assignment d WHERE d.slot  IN :slots AND d.checklist = :checklist"),
+    @NamedQuery(name = "Assignment.findByGroupChecklist", query = "SELECT d FROM Assignment d WHERE d.slotGroup  IN :groups AND d.checklist = :checklist"),
+    @NamedQuery(name = "Assignment.findByDeviceChecklist", query = "SELECT d FROM Assignment d WHERE d.device  IN :devices AND d.checklist = :checklist"),
+    @NamedQuery(name = "Assignment.findByGroup", query = "SELECT d FROM Assignment d WHERE d.checklist = :checklist"),
     @NamedQuery(name = "Assignment.findBySlotGroup", query = "SELECT d FROM Assignment d WHERE d.slotGroup = :group"),   
     @NamedQuery(name = "Assignment.numberOfAssignedSlots", query = "SELECT COUNT(DISTINCT d.slot) FROM Assignment d WHERE d.slot IN :slots"),    
     @NamedQuery(name = "Assignment.numberOfAssignedGroups", query = "SELECT COUNT(DISTINCT d.slotGroup) FROM Assignment d WHERE d.slotGroup IN :groups"),    
@@ -76,8 +76,8 @@ public class Assignment extends ConfigurationEntity {
     private Device device;
     
     @ManyToOne(optional = false)
-    @JoinColumn(name = "phasegroup")
-    private Checklist phaseGroup;
+    @JoinColumn(name = "checklist")
+    private Checklist checklist;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "requestor")
@@ -104,12 +104,12 @@ public class Assignment extends ConfigurationEntity {
         this.slot = slot;
     }
 
-    public Checklist getPhaseGroup() {
-        return phaseGroup;
+    public Checklist getChecklist() {
+        return checklist;
     }
 
-    public void setPhaseGroup(Checklist phaseGroup) {
-        this.phaseGroup = phaseGroup;
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
     }
 
     public Device getDevice() {

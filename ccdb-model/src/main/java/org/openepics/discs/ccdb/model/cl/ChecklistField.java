@@ -24,36 +24,38 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.auth.Role;
 
 /**
- * A phase of group 
+ * A field in a checklist
  * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_checklist_field")
+@Table(name = "cm_checklist_field", 
+       uniqueConstraints=@UniqueConstraint(columnNames={"process", "checklist"}))
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ChecklistField.findAll", query = "SELECT d FROM ChecklistField d"),
-    @NamedQuery(name = "ChecklistField.findPhasesByGroup", query = "SELECT d.phase FROM ChecklistField d WHERE d.phaseGroup = :group ORDER BY d.position ASC"),
-    @NamedQuery(name = "ChecklistField.findDefault", query = "SELECT d.defaultStatus FROM ChecklistField d WHERE d.phaseGroup = :group AND d.phase = :phase"),
-    @NamedQuery(name = "ChecklistField.findByGroup", query = "SELECT d FROM ChecklistField d WHERE d.phaseGroup = :group ORDER BY d.position ASC")
+    @NamedQuery(name = "ChecklistField.findPhasesByChecklist", query = "SELECT d.process FROM ChecklistField d WHERE d.checklist = :checklist ORDER BY d.position ASC"),
+    @NamedQuery(name = "ChecklistField.findDefault", query = "SELECT d.defaultStatus FROM ChecklistField d WHERE d.checklist = :checklist AND d.process = :process"),
+    @NamedQuery(name = "ChecklistField.findByChecklist", query = "SELECT d FROM ChecklistField d WHERE d.checklist = :checklist ORDER BY d.position ASC")
 })
 public class ChecklistField extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L;
     
     @ManyToOne(optional = false)
-    @JoinColumn(name = "phase")
-    private Process phase;
+    @JoinColumn(name = "process")
+    private Process process;
     
     @ManyToOne(optional = false)
-    @JoinColumn(name = "phasegroup")
-    private Checklist phaseGroup;
+    @JoinColumn(name = "checklist")
+    private Checklist checklist;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "sme")
@@ -61,8 +63,8 @@ public class ChecklistField extends ConfigurationEntity {
     
     @Basic(optional = false)
     @NotNull
-    @Column(name = "summary_phase")
-    private Boolean summaryPhase = false; // is this a summary phase (like 'AM OK')?
+    @Column(name = "summary_proc")
+    private Boolean summaryProcess = false; // is this a summary inspection (like 'AM OK')?
     
     @Basic(optional = false)
     @NotNull
@@ -80,21 +82,30 @@ public class ChecklistField extends ConfigurationEntity {
     
     // --
 
-    public Process getPhase() {
-        return phase;
+    public Process getProcess() {
+        return process;
     }
 
-    public void setPhase(Process phase) {
-        this.phase = phase;
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
-    public Checklist getPhaseGroup() {
-        return phaseGroup;
+    public Checklist getChecklist() {
+        return checklist;
     }
 
-    public void setPhaseGroup(Checklist phaseGroup) {
-        this.phaseGroup = phaseGroup;
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
     }
+
+    public Boolean getSummaryProcess() {
+        return summaryProcess;
+    }
+
+    public void setSummaryProcess(Boolean summaryProcess) {
+        this.summaryProcess = summaryProcess;
+    }
+
 
     public Role getSme() {
         return sme;
@@ -104,14 +115,7 @@ public class ChecklistField extends ConfigurationEntity {
         this.sme = sme;
     }
 
-    public Boolean getSummaryPhase() {
-        return summaryPhase;
-    }
-
-    public void setSummaryPhase(Boolean summaryPhase) {
-        this.summaryPhase = summaryPhase;
-    }
-
+    
     public Boolean getOptional() {
         return optional;
     }

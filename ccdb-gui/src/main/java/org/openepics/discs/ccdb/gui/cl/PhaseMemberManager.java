@@ -163,9 +163,9 @@ public class PhaseMemberManager implements Serializable {
      * 
      */
     public void onGroupChange() {
-        Checklist phaseGroup = inputAction == InputAction.CREATE? inputEntity.getPhaseGroup() : selectedEntity.getPhaseGroup();
-        if( phaseGroup != null) {
-            statusOptions = lcEJB.findStatusOptions(phaseGroup);
+        Checklist checklist = inputAction == InputAction.CREATE? inputEntity.getChecklist() : selectedEntity.getChecklist();
+        if( checklist != null) {
+            statusOptions = lcEJB.findStatusOptions(checklist);
             if (statusOptions == null || statusOptions.isEmpty()) {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No status options defined for this group", "You must first define status options for this group");
             }

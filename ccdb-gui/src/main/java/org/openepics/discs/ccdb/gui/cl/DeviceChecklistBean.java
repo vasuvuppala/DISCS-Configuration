@@ -209,7 +209,7 @@ public class DeviceChecklistBean implements Serializable {
      * @return 
      */
     public String assignedChecklists(Device device) {
-        return lcEJB.findAssignments(device).stream().map(a -> a.getPhaseGroup().getName()).collect(Collectors.joining());
+        return lcEJB.findAssignments(device).stream().map(a -> a.getChecklist().getName()).collect(Collectors.joining());
     }
     //-- Getters/Setters 
 

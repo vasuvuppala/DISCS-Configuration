@@ -41,11 +41,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 /**
@@ -107,19 +103,15 @@ public class Slot extends ConfigurationEntity implements EntityWithProperties, E
     @ManyToOne(optional = false)
     private ComponentType componentType;
 
-    @Basic(optional = false)
-    @Column(name = "loc")
-    @Enumerated(EnumType.STRING)
-    private LevelOfCare levelOfCare = LevelOfCare.NONE;
+//    @Basic(optional = false)
+//    @Column(name = "loc")
+//    @Enumerated(EnumType.STRING)
+//    private LevelOfCare levelOfCare = LevelOfCare.NONE;
     
-    @Basic(optional = false)
-    @Column(name = "afo")
-    private boolean approvedForOp = false;
-    
-    // ToDO: Temporary. To be removed. For CM Group
+    // ToDO: Temporary. To be removed. For Checklists Slot Group
     @JoinColumn(name = "cm_group")
     @ManyToOne(optional = true)
-    private SlotGroup cmGroup;
+    private SlotGroup cmGroup; // group used for checklists
     
     // -- assembly
     
@@ -321,22 +313,6 @@ public class Slot extends ConfigurationEntity implements EntityWithProperties, E
         return "Slot[ slotId=" + id + " ]";
     }
 
-    public LevelOfCare getLevelOfCare() {
-        return levelOfCare;
-    }
-
-    public void setLevelOfCare(LevelOfCare levelOfCare) {
-        this.levelOfCare = levelOfCare;
-    }
-
-    public boolean isApprovedForOp() {
-        return approvedForOp;
-    }
-
-    public void setApprovedForOp(boolean approvedForOp) {
-        this.approvedForOp = approvedForOp;
-    }
-
     public SlotGroup getCmGroup() {
         return cmGroup;
     }
@@ -344,6 +320,4 @@ public class Slot extends ConfigurationEntity implements EntityWithProperties, E
     public void setCmGroup(SlotGroup cmGroup) {
         this.cmGroup = cmGroup;
     }
-    
-    
 }

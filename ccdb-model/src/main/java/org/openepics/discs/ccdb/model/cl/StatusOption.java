@@ -24,22 +24,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 
 /**
- * Status values for a phase group
+ * Status values that a field in a checklist can take
  * 
- * ToDo: fix the findDefault query
  * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_status_option" )
+@Table(name = "cm_status_option",
+       uniqueConstraints=@UniqueConstraint(columnNames={"checklist", "name"}))
 @NamedQueries({
     @NamedQuery(name = "StatusOption.findAll", query = "SELECT d FROM StatusOption d"),
-    @NamedQuery(name = "StatusOption.findByGroup", query = "SELECT d FROM StatusOption d WHERE d.phaseGroup = :group"),    
+    @NamedQuery(name = "StatusOption.findByChecklist", query = "SELECT d FROM StatusOption d WHERE d.checklist = :checklist"),    
     @NamedQuery(name = "StatusOption.findByName", query = "SELECT d FROM StatusOption d WHERE  d.name = :name")
 })
 public class StatusOption extends ConfigurationEntity {
@@ -48,8 +49,8 @@ public class StatusOption extends ConfigurationEntity {
     
     @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "phase_group")
-    private Checklist phaseGroup;
+    @JoinColumn(name = "checklist")
+    private Checklist checklist;
     
     @Basic(optional = false)
     @NotNull
@@ -102,12 +103,12 @@ public class StatusOption extends ConfigurationEntity {
         this.description = description;
     }
 
-    public Checklist getPhaseGroup() {
-        return phaseGroup;
+    public Checklist getChecklist() {
+        return checklist;
     }
 
-    public void setPhaseGroup(Checklist phaseGroup) {
-        this.phaseGroup = phaseGroup;
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
     }
 
     public Boolean getLogicalValue() {

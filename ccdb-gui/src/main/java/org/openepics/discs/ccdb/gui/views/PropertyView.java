@@ -22,19 +22,16 @@ package org.openepics.discs.ccdb.gui.views;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.validator.ValidatorException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import org.openepics.discs.ccdb.model.DataType;
 import org.openepics.discs.ccdb.model.Property;
 import org.openepics.discs.ccdb.model.PropertyValueUniqueness;
 import org.openepics.discs.ccdb.model.Unit;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.core.util.BuiltInDataType;
-import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 
 /**
  * @author <a href="mailto:miha.vitorovic@cosylab.com">Miha Vitorovič</a>
@@ -85,11 +82,6 @@ public class PropertyView implements Serializable {
     /** @return The {@link Unit} of the property the user is working on. Used by UI */
     public Unit getUnit() {
         return prop.getUnit();
-    }
-    
-    /** @return The level of care of the property the user is working on. Used by UI */
-    public LevelOfCare getLevelOfCare() {
-        return prop.getLevelOfCare();
     }
 
     /** @return The {@link DataType} of the property the user is working on. Used by UI */
@@ -148,14 +140,6 @@ public class PropertyView implements Serializable {
     /** @return the beingAdded */
     public boolean isBeingAdded() {
         return beingAdded;
-    }
-
-    public LevelOfCare getLoc() {
-        return prop.getLevelOfCare();
-    }
-
-    public void setLoc(LevelOfCare loc) {
-        prop.setLevelOfCare(loc);
     }
 
 

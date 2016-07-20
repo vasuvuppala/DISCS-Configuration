@@ -30,7 +30,8 @@ import javax.validation.constraints.Size;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 
 /**
- *
+ * A checklist
+ * 
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
@@ -48,7 +49,7 @@ public class Checklist extends ConfigurationEntity {
     @Basic(optional = false)
     @NotNull
     @Size(min=1, max=64)
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
     
     @Basic(optional = false)
@@ -67,11 +68,11 @@ public class Checklist extends ConfigurationEntity {
     @Column(name = "for_devices")
     private Boolean forDevices = false; // true: the list applies to devices. False: for slots and groups
     
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "phaseGroup")
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "checklist")
     private List<StatusOption> options;
   
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="phaseGroup")
-    private List<ChecklistField> phases;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="checklist")
+    private List<ChecklistField> fields; // fields in a checklist
     
     // getters and setters
 
@@ -99,13 +100,13 @@ public class Checklist extends ConfigurationEntity {
         this.options = options;
     }
 
-    public List<ChecklistField> getPhases() {
-        return phases;
+    public List<ChecklistField> getFields() {
+        return fields;
     }
 
-    public void setPhases(List<ChecklistField> phases) {
-        this.phases = phases;
-    }
+    public void setFields(List<ChecklistField> fields) {
+        this.fields = fields;
+    } 
 
     public Boolean getDefaultList() {
         return defaultList;

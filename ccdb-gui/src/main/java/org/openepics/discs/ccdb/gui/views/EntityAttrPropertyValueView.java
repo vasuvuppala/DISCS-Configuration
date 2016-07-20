@@ -22,12 +22,10 @@ package org.openepics.discs.ccdb.gui.views;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-
 import org.openepics.discs.ccdb.model.ComponentType;
 import org.openepics.discs.ccdb.model.ComptypePropertyValue;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
@@ -46,7 +44,6 @@ import org.openepics.discs.ccdb.core.util.PropertyValueUIElement;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
 
 import com.google.common.base.Preconditions;
-import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 
 /**
  * @author <a href="mailto:miha.vitorovic@cosylab.com">Miha Vitorovič</a>
@@ -106,10 +103,6 @@ public class EntityAttrPropertyValueView<E extends ConfigurationEntity & NamedEn
         return propertyValue.getProperty().getName();
     }
 
-    @Override
-    public LevelOfCare getLevelOfCare() {
-        return propertyValue.getProperty().getLevelOfCare();
-    }
     /** @return A String representation of the associated entity */
     @Override
     public String getValue() {

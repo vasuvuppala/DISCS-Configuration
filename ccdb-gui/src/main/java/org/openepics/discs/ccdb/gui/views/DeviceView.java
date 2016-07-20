@@ -91,11 +91,6 @@ public class DeviceView implements Serializable {
     public String getName() {
         return device.getName();
     }
-
-    public LevelOfCare getLevelOfCare() {
-        return device.getLevelOfCare();
-    }
-    
     
     public String getDescription() {
         return device.getDescription();

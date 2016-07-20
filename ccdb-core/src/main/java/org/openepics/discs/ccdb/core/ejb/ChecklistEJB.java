@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -54,11 +55,14 @@ public class ChecklistEJB {
 
     private static final Logger LOGGER = Logger.getLogger(ChecklistEJB.class.getName());   
     @PersistenceContext private EntityManager em;
+    
+    
     /**
      * All reviews
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Process> findAllPhases() {
         return em.createNamedQuery("Process.findAll", Process.class).getResultList();
     } 
@@ -66,12 +70,13 @@ public class ChecklistEJB {
      /**
      * Reviews with a given tag
      * 
-     * @param group
+     * @param checklist
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
-    public List<Process> findPhases(Checklist group) {
-        return em.createNamedQuery("ChecklistField.findPhasesByGroup", Process.class).setParameter("group", group).getResultList();
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<Process> findPhases(Checklist checklist) {
+        return em.createNamedQuery("ChecklistField.findPhasesByChecklist", Process.class).setParameter("checklist", checklist).getResultList();
     }
     
     
@@ -105,6 +110,7 @@ public class ChecklistEJB {
      * @param id
      * @return the process
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Process findPhase(Long id) {
         return em.find(Process.class, id);
     }
@@ -115,18 +121,27 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
-//    public List<Assignment> findAllAssignments() {
-//        return em.createNamedQuery("Assignment.findAll", Assignment.class).getResultList();
-//    }
-    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findGroupAssignments() {
         return em.createNamedQuery("Assignment.findGroupAssignments", Assignment.class).getResultList();
     }
     
+    /**
+     * All slot assignments
+     * 
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findSlotAssignments() {
         return em.createNamedQuery("Assignment.findSlotAssignments", Assignment.class).getResultList();
     }
     
+    /**
+     * All device assignments
+     * 
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findDeviceAssignments() {
         return em.createNamedQuery("Assignment.findDeviceAssignments", Assignment.class).getResultList();
     }
@@ -136,7 +151,8 @@ public class ChecklistEJB {
      * 
      * @param device
      * @return list of checklist assignments
-     */    
+     */ 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findAssignments(Device device) {
         return em.createNamedQuery("Assignment.findByDevice", Assignment.class).setParameter("device", device).getResultList();      
     }
@@ -146,7 +162,8 @@ public class ChecklistEJB {
      * 
      * @param group
      * @return list of checklist assignments
-     */    
+     */  
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findAssignments(SlotGroup group) {
         return em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();      
     }
@@ -157,30 +174,10 @@ public class ChecklistEJB {
      * @param slot
      * @return list of checklist assignments
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Assignment> findAssignments(Slot slot) {
         return em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();        
     }
-//    public List<Assignment> findAssignments(Checklist type) {
-//        return em.createNamedQuery("Assignment.findByGroup", Assignment.class).setParameter("group", type).getResultList();
-//    }
-//    
-//    public Assignment findAssignment(SlotGroup group) {
-//        List<Assignment> result = em.createNamedQuery("Assignment.findBySlotGroup", Assignment.class).setParameter("group", group).getResultList();
-//        if (result == null || result.isEmpty()) {
-//            return null;
-//        } else {
-//            return result.get(0);
-//        }
-//    }
-//    
-//    public Assignment findAssignment(Slot slot) {
-//        List<Assignment> result = em.createNamedQuery("Assignment.findBySlot", Assignment.class).setParameter("slot", slot).getResultList();
-//        if (result == null || result.isEmpty()) {
-//            return null;
-//        } else {
-//            return result.get(0);
-//        }
-//    }
     
     /**
      * ToDo: either make a named query or move to another module
@@ -188,41 +185,26 @@ public class ChecklistEJB {
      * @param groups
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Slot> findSlots(Set<SlotGroup> groups) {
         return em.createQuery("SELECT s FROM Slot s where s.cmGroup IN :groups", Slot.class).setParameter("groups", groups).getResultList();
     }
+    
+   
     /**
-     * save a process
+     * save the given  assignment
      *
      * @param assignment
      */
-    public void saveAssignment(Assignment assignment) {
-        if (assignment.getId() == null) {
-            em.persist(assignment);
-        } else {
-            em.merge(assignment);
-        }
-        LOGGER.log(Level.FINE, "phase assignment  saved - {0}", assignment.getId());
-    }
-
-    /**
-     * 
-     * @param approvals
-     * @param approver
-     * @return 
-     */
-//    private boolean isAnApprover(List<PhaseApproval> approvals, User approver) {
-//        if (approvals == null || approver == null ) {
-//            return false;
+//    public void saveAssignment(Assignment assignment) {
+//        if (assignment.getId() == null) {
+//            em.persist(assignment);
+//        } else {
+//            em.merge(assignment);
 //        }
-//        for (PhaseApproval approval : approvals) {
-//            if (approver.equals(approval.getAssignedApprover())) {
-//                return true;
-//            }
-//        }
-//        return false;
+//        LOGGER.log(Level.FINE, "phase assignment  saved - {0}", assignment.getId());
 //    }
-    
+
     /**
      * List of assigned slots whose name begin with a given prefix
      * ToDo: Temporary. refactor.
@@ -230,20 +212,38 @@ public class ChecklistEJB {
      * @param prefix
      * @return 
      */
-    public List<Assignment> assignedSlots(String prefix) {
-        return em.createQuery("SELECT a FROM Assignment a WHERE a.slot.name LIKE :prefix", Assignment.class)
-                .setParameter("prefix", prefix)
-                .getResultList();
-    }
+//    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+//    public List<Assignment> assignedSlots(String prefix) {
+//        return em.createQuery("SELECT a FROM Assignment a WHERE a.slot.name LIKE :prefix", Assignment.class)
+//                .setParameter("prefix", prefix)
+//                .getResultList();
+//    }
     
+    /**
+     * Number of assigned slots whose names begin with a prefix
+     * ToDo: Remove prefix and use containment relationship
+     * ToDo: appears to be a EclipseLink bug on how the query is translated
+     * 
+     * @param prefix
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Long numberOfAssignedSlots(String prefix) {
-        return em.createQuery("SELECT COUNT(s) FROM Slot s, Assignment a WHERE a.slot.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup)", Long.class)
+        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup)", Long.class)
                 .setParameter("prefix", prefix)
                 .getSingleResult();
     }
     
+    /**
+     * Number of approved slots whose names begin with a prefix
+     * ToDo: Remove prefix and use containment relationship
+     * 
+     * @param prefix
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
      public Long numberOfApprovedSlots(String prefix) {
-        return em.createQuery("SELECT COUNT(s) FROM Slot s, Assignment a, ProcessStatus p WHERE a.slot.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.assignment = a AND p.groupMember.summaryPhase = TRUE AND p.status.completed = TRUE" , Long.class)
+        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.groupMember.summaryPhase = TRUE AND p.status.completed = TRUE" , Long.class)
                 .setParameter("prefix", prefix)
                 .getSingleResult();
     }
@@ -255,6 +255,7 @@ public class ChecklistEJB {
      * @param prefix
      * @return 
      */
+     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Long  numberOfHostingSlots(String prefix) {
         return em.createQuery("SELECT COUNT(a) FROM Slot a WHERE a.name LIKE :prefix AND a.isHostingSlot = TRUE", Long.class)
                 .setParameter("prefix", prefix)
@@ -267,25 +268,25 @@ public class ChecklistEJB {
      * @param assignment
      * @param approvers 
      */
-    public void saveAssignment(Assignment assignment, List<User> approvers) {       
-        List<ProcessStatus> statuses = new ArrayList<>();
-        
-        for(ChecklistField pog : assignment.getPhaseGroup().getPhases()) {
-            ProcessStatus phaseStatus = new ProcessStatus();
-            phaseStatus.setAssignment(assignment);
-            phaseStatus.setGroupMember(pog);
-            phaseStatus.setStatus(pog.getDefaultStatus());
-            // em.persist(phaseStatus);
-            statuses.add(phaseStatus);
-        }
-
-        assignment.setStatuses(statuses);
-        if (assignment.getId() == null) {
-            em.persist(assignment);
-        } else {
-            em.merge(assignment);
-        }
-    }
+//    public void saveAssignment(Assignment assignment, List<User> approvers) {       
+//        List<ProcessStatus> statuses = new ArrayList<>();
+//        
+//        for(ChecklistField field : assignment.getChecklist().getFields()) {
+//            ProcessStatus phaseStatus = new ProcessStatus();
+//            phaseStatus.setAssignment(assignment);
+//            phaseStatus.setField(field);
+//            phaseStatus.setStatus(field.getDefaultStatus());
+//            // em.persist(phaseStatus);
+//            statuses.add(phaseStatus);
+//        }
+//
+//        assignment.setStatuses(statuses);
+//        if (assignment.getId() == null) {
+//            em.persist(assignment);
+//        } else {
+//            em.merge(assignment);
+//        }
+//    }
     
     /**
      * Default process list for the given entity type
@@ -293,6 +294,7 @@ public class ChecklistEJB {
      * @param type
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Checklist findDefaultChecklist(ChecklistEntity type) {
         // due to different class loaders, it is safer get the type explicitely rather than inferring it from class
         List<Checklist> checklist;
@@ -320,28 +322,31 @@ public class ChecklistEJB {
     }
     
     /**
-     * find slots not assigned any checklists.
+     * Installation checklist: the default checklist for devices
      * 
      * @return 
      */
-//    public List<Slot> findUnassignedSlots() {
-//        return em.createNamedQuery("Assignment.findUnassignedSlots").getResultList();
-//    }
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Checklist findInstalaltionChecklist() {
+        return findDefaultChecklist(ChecklistEntity.DEVICE);
+    }
     
     /**
-     * find slots not assigned any checklists.
+     * Hazard Review  checklist: the default checklist for slots or groups
      * 
      * @return 
      */
-//    public List<Slot> findAssignedSlots() {
-//        return em.createNamedQuery("Assignment.findAssignedSlots").getResultList();
-//    }
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Checklist findReviewChecklist() {
+        return findDefaultChecklist(ChecklistEntity.SLOT);
+    }
     
     /**
      * Find slots that are not internal system slots
      * 
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Slot> findUngroupedSlots() {
         return em.createNamedQuery("Slot.findUngroupedSlots").getResultList();
     }
@@ -353,6 +358,7 @@ public class ChecklistEJB {
      * @param entities
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Boolean noneHasChecklists(ChecklistEntity type, List<?> entities) {
         if (entities == null || entities.isEmpty()) {
             return false;
@@ -381,6 +387,7 @@ public class ChecklistEJB {
      * @param slots
      * @return true if they do. 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Boolean haveAssignments(List<Slot> slots) {
         return 0 != em.createNamedQuery("Assignment.numberOfAssignedSlots", Long.class).setParameter("slots", slots).getSingleResult();
     }
@@ -410,12 +417,12 @@ public class ChecklistEJB {
                 assignment.setSlotGroup((SlotGroup) entity);
             }
             assignment.setRequestor(currentUser);
-            assignment.setPhaseGroup(checklist);
+            assignment.setChecklist(checklist);
             List<ProcessStatus> statuses = new ArrayList<>();
-            for (ChecklistField field : checklist.getPhases()) {
+            for (ChecklistField field : checklist.getFields()) {
                 ProcessStatus phaseStatus = new ProcessStatus();
                 phaseStatus.setAssignment(assignment);
-                phaseStatus.setGroupMember(field);
+                phaseStatus.setField(field);
                 phaseStatus.setStatus(field.getDefaultStatus());
                 statuses.add(phaseStatus);
             }
@@ -504,124 +511,7 @@ public class ChecklistEJB {
         Assignment src = em.find(Assignment.class, assignment.getId());
         em.remove(src);
     }
-
-    /**
-     * find a process given its id
-     *
-     * @param id
-     * @return the process
-     */
-    public Assignment findRequirement(Long id) {
-        return em.find(Assignment.class, id);
-    }
     
-    // -------------------- Approvals
-    /**
-     * All approvals
-     * 
-     * @return a list of all {@link PhaseApproval}s ordered by name.
-     */
-//    public List<PhaseApproval> findAllApprovals() {
-//        return em.createNamedQuery("PhaseApproval.findAll", PhaseApproval.class).getResultList();
-//    }   
-    
-    /**
-     * All approvals
-     * 
-     * @param group
-     * @return a list of all {@link PhaseApproval}s ordered by name.
-     */
-//    public List<PhaseApproval> findApprovals(Checklist group) {
-//        return em.createNamedQuery("PhaseApproval.findByGroup", PhaseApproval.class).setParameter("group", group).getResultList();
-//    } 
-    
-    /**
-     * find a approval given its id
-     *
-     * @param id
-     * @return the process
-     */
-//    public PhaseApproval findPhaseApproval(Long id) {
-//        return em.find(PhaseApproval.class, id);
-//    }
-    
-    /**
-     * save a phase approval
-     *
-     * @param approval
-     */
-//    public void saveApproval(PhaseApproval approval) {
-//        if (approval.getId() == null) {
-//            em.persist(approval);
-//        } else {
-//            em.merge(approval);
-//        }
-//        LOGGER.log(Level.INFO, "phase approval  saved - {0}", approval.getId());
-//    }
-    
-    /**
-     * delete a given approval
-     *
-     * @param approval
-     */
-//    public void deleteApproval(PhaseApproval approval) {
-//        PhaseApproval src = em.find(PhaseApproval.class, approval.getId());
-//        em.remove(src);
-//    }
-    
-//    // ------------------ Status type
-//    /**
-//     * All types
-//     * 
-//     * @return a list of all {@link Phase}s ordered by name.
-//     */
-//    public List<Checklist> findAllChecklists() {
-//        return em.createNamedQuery("Checklist.findAll", Checklist.class).getResultList();
-//    } 
-//    
-//    /**
-//     * PHase type 
-//     * 
-//     * @param name
-//     * @return a list of all {@link Phase}s ordered by name.
-//     */
-//    public Checklist findChecklist(String name) {
-//        return em.createNamedQuery("Checklist.findByName", Checklist.class).setParameter("name", name).getSingleResult();
-//    } 
-//    
-//    /**
-//     * save a status type
-//     *
-//     * @param group type
-//     */
-//    public void saveChecklist(Checklist group) {
-//        if (group.getId() == null) {
-//            em.persist(group);
-//        } else {
-//            em.merge(group);
-//        }
-//        LOGGER.log(Level.FINE, "status type saved - {0}", group.getId());
-//    }
-//
-//    /**
-//     * delete a given process
-//     *
-//     * @param group
-//     */
-//    public void deleteChecklist(Checklist group) {
-//        Checklist src = em.find(Checklist.class, group.getId());
-//        em.remove(src);
-//    }
-//
-//    /**
-//     * find a status type given its id
-//     *
-//     * @param id
-//     * @return the status type
-//     */
-//    public Checklist findChecklist(Long id) {
-//        return em.find(Checklist.class, id);
-//    }
     
     // ------------------ Slot Groups
     /**
@@ -629,29 +519,25 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<SlotGroup> findAllSlotGroups() {
         return em.createNamedQuery("SlotGroup.findAll", SlotGroup.class).getResultList();
     } 
     
-    public List<SlotGroup> findUnassignedGroups() {
-        return em.createNamedQuery("Assignment.findUnassignedGroups", SlotGroup.class).getResultList();
-    }
-    
-    public List<Device> findUnassignedDevices() {
-        return em.createNamedQuery("Assignment.findUnassignedDevices", Device.class).getResultList();
-    }
     /**
      * Find a slot group 
      * 
      * @param name
      * @return a list of all {@link Process}s ordered by name.
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public SlotGroup findSlotGroup(String name) {
         return em.createNamedQuery("SlotGroup.findByName", SlotGroup.class).setParameter("name", name).getSingleResult();
     } 
     
     /**
      * Assign the given group to a set of slots
+     * 
      * 
      * @param slots
      * @param group 
@@ -677,7 +563,7 @@ public class ChecklistEJB {
     }
     
     /**
-     * save a status type
+     * save a group
      *
      * @param status type
      */
@@ -687,11 +573,11 @@ public class ChecklistEJB {
         } else {
             em.merge(status);
         }
-        LOGGER.log(Level.FINE, "status type saved - {0}", status.getId());
+        LOGGER.log(Level.FINE, "group saved - {0}", status.getId());
     }
 
     /**
-     * delete a given process
+     * delete a given group
      *
      * @param status
      */
@@ -701,31 +587,34 @@ public class ChecklistEJB {
     }
 
     /**
-     * find a status type given its id
+     * find a group given its id
      *
      * @param id
      * @return the status type
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public SlotGroup findSlotGroup(Long id) {
         return em.find(SlotGroup.class, id);
     }
     
-    // ------------------ Phase Groups
+    // ------------------ Checklists
     /**
      * All groups
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<Checklist> findAllChecklists() {
         return em.createNamedQuery("Checklist.findAll", Checklist.class).getResultList();
     } 
     
     /**
-     * PHase type 
+     * find checklist by name 
      * 
      * @param name
-     * @return a list of all {@link Process}s ordered by name.
+     * @return a  {@link Checklist}
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Checklist findChecklist(String name) {
         List<Checklist> lists = em.createNamedQuery("Checklist.findByName", Checklist.class).setParameter("name", name).getResultList();
         if (lists == null || lists.isEmpty()) {
@@ -760,11 +649,12 @@ public class ChecklistEJB {
     }
 
     /**
-     * find a status type given its id
+     * find a checklist given its id
      *
      * @param id
      * @return the status type
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public Checklist findChecklist(Long id) {
         return em.find(Checklist.class, id);
     }
@@ -772,26 +662,28 @@ public class ChecklistEJB {
     // ------------------------------------
     // ------------------ Phase Group Members
     /**
-     * All groups
+     * All fields
      * 
      * @return a list of all {@link Process}s ordered by name.
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<ChecklistField> findAllChecklistFields() {
         return em.createNamedQuery("ChecklistField.findAll", ChecklistField.class).getResultList();
     } 
     
     /**
-     * PHase type 
+     * fields of the given checklist 
      * 
-     * @param group
+     * @param checklist
      * @return a list of all {@link Process}s ordered by name.
      */
-    public ChecklistField findChecklistField(Checklist group) {
-        return em.createNamedQuery("ChecklistField.findByGroup", ChecklistField.class).setParameter("group", group).getSingleResult();
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public ChecklistField findChecklistField(Checklist checklist) {
+        return em.createNamedQuery("ChecklistField.findByChecklist", ChecklistField.class).setParameter("checklist", checklist).getSingleResult();
     } 
     
     /**
-     * save a status type
+     * save a checklist field
      *
      * @param group type
      */
@@ -801,7 +693,7 @@ public class ChecklistEJB {
         } else {
             em.merge(group);
         }
-        LOGGER.log(Level.FINE, "phase group member saved - {0}", group.getId());
+        LOGGER.log(Level.FINE, "checklist field saved - {0}", group.getId());
     }
 
     /**
@@ -820,6 +712,7 @@ public class ChecklistEJB {
      * @param id
      * @return the status type
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public ChecklistField findChecklistField(Long id) {
         return em.find(ChecklistField.class, id);
     }
@@ -831,19 +724,21 @@ public class ChecklistEJB {
      * 
      * @return a list of all {@link StatusOption}s .
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<StatusOption> findAllStatusOptions() {
         return em.createNamedQuery("StatusOption.findAll", StatusOption.class).getResultList();
     } 
     
     /**
-     * All status options for a type
+     * All status options for a checklist
      * 
-     * @param group given status type
+     * @param checklist given status type
      * @return a list of all {@link StatusOption}s.
      */
-    public List<StatusOption> findStatusOptions(Checklist group) {
-        return em.createNamedQuery("StatusOption.findByGroup", StatusOption.class)
-                .setParameter("group", group)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<StatusOption> findStatusOptions(Checklist checklist) {
+        return em.createNamedQuery("StatusOption.findByChecklist", StatusOption.class)
+                .setParameter("checklist", checklist)
                 .getResultList();
     } 
     
@@ -862,7 +757,7 @@ public class ChecklistEJB {
     }
 
     /**
-     * delete a given process
+     * delete a given status option
      *
      * @param option
      */
@@ -872,49 +767,68 @@ public class ChecklistEJB {
     }
 
     /**
-     * find a status type given its id
+     * find a status option given its id
      *
      * @param id
      * @return the status type
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public StatusOption findStatusOption(Long id) {
         return em.find(StatusOption.class, id);
     }
-    //----------------- phase status
+    
+    
+    //----------------- process status
     /**
+     * All statuses
+     *
      * 
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<ProcessStatus> findAllStatuses() {
         return em.createNamedQuery("ProcessStatus.findAll", ProcessStatus.class).getResultList();
     }  
-    public List<ProcessStatus> findGroupStatus() {
-        return em.createNamedQuery("ProcessStatus.findGroupStatus", ProcessStatus.class).getResultList();
-    }
-    public List<ProcessStatus> findSlotStatus() {
-        return em.createNamedQuery("ProcessStatus.findSlotStatus", ProcessStatus.class).getResultList();
-    }
-    public List<ProcessStatus> findDeviceStatus() {
-        return em.createNamedQuery("ProcessStatus.findDeviceStatus", ProcessStatus.class).getResultList();
-    }
     
-    public List<ProcessStatus> findAllValidStatuses() {
-        return em.createNamedQuery("ProcessStatus.findValid", ProcessStatus.class).getResultList();
-    } 
+    
+//    public List<ProcessStatus> findGroupStatus() {
+//        return em.createNamedQuery("ProcessStatus.findGroupStatus", ProcessStatus.class).getResultList();
+//    }
+//    public List<ProcessStatus> findSlotStatus() {
+//        return em.createNamedQuery("ProcessStatus.findSlotStatus", ProcessStatus.class).getResultList();
+//    }
+//    public List<ProcessStatus> findDeviceStatus() {
+//        return em.createNamedQuery("ProcessStatus.findDeviceStatus", ProcessStatus.class).getResultList();
+//    }
+//    
+//    public List<ProcessStatus> findAllValidStatuses() {
+//        return em.createNamedQuery("ProcessStatus.findValid", ProcessStatus.class).getResultList();
+//    } 
+    
+    
     /**
+     * All status records for the given assignment
      * 
      * @param assignment
      * @return 
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public List<ProcessStatus> findAllStatuses(Assignment assignment) {
         return em.createNamedQuery("ProcessStatus.findByAssignment", ProcessStatus.class)
                 .setParameter("assignment", assignment)
                 .getResultList();
     }
     
-    public List<ProcessStatus> findAllStatuses(Checklist group) {
-        return em.createNamedQuery("ProcessStatus.findByGroup", ProcessStatus.class)
-                .setParameter("group", group)
+    /**
+     * All status records for the give checklist
+     * 
+     * @param checklist
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<ProcessStatus> findAllStatuses(Checklist checklist) {
+        return em.createNamedQuery("ProcessStatus.findByChecklist", ProcessStatus.class)
+                .setParameter("checklist", checklist)
                 .getResultList();
     }
     
@@ -932,21 +846,9 @@ public class ChecklistEJB {
         // LOGGER.log(Level.FINE, "status  saved - {0}", status.getId());
     }
     
+    
     /**
-     * ToDo: Make it generic. not straightforward due to em.find() will have to use DAO<T>. 
-     * 
-     * @param status 
-     */
-//    public void refreshVersion(ProcessStatus status) {
-//        if (status.getId() != null) {        
-//            ProcessStatus current = em.find(ProcessStatus.class, status.getId());
-//            status.updateVersion(current);
-//        }
-//        // LOGGER.log(Level.FINE, "version refreshed - {0}", status.getVersion());
-//    }
-
-    /**
-     * Update the version of an entity
+     * Sync the version of an entity
      * 
      * @param <T>
      * @param entityClass
@@ -978,19 +880,19 @@ public class ChecklistEJB {
      *
      * @param status
      */
-    public void deleteProcessStatus(ProcessStatus status) {
-        ProcessStatus src = em.find(ProcessStatus.class, status.getId());
-        em.remove(src);
-    }
+//    public void deleteProcessStatus(ProcessStatus status) {
+//        ProcessStatus src = em.find(ProcessStatus.class, status.getId());
+//        em.remove(src);
+//    }
 
     /**
-     * find a status type given its id
+     * find a process status given its id
      *
      * @param id
      * @return the status type
      */
-    public ProcessStatus findProcessStatus(Long id) {
-        return em.find(ProcessStatus.class, id);
-    }
+//    public ProcessStatus findProcessStatus(Long id) {
+//        return em.find(ProcessStatus.class, id);
+//    }
     
 }

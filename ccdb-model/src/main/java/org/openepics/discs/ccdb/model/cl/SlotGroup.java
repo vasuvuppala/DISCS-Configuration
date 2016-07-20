@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
-import org.openepics.discs.ccdb.model.auth.Role;
+import org.openepics.discs.ccdb.model.auth.User;
 
 /**
  * A group of slots (for configuration management)
@@ -47,7 +47,7 @@ public class SlotGroup extends ConfigurationEntity {
     @Basic(optional = false)
     @NotNull
     @Size(min=1, max=64)
-    @Column(name = "name")
+    @Column(name = "name", unique=true)
     private String name;
     
     @Basic(optional = false)
@@ -58,7 +58,7 @@ public class SlotGroup extends ConfigurationEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner")
-    private Role owner; 
+    private User owner; 
     
     // getters and setters
 
@@ -78,11 +78,11 @@ public class SlotGroup extends ConfigurationEntity {
         this.description = description;
     }
 
-    public Role getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(Role owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 }

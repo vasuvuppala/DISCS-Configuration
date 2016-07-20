@@ -93,10 +93,10 @@ public class Device extends ConfigurationEntity
     @Column(name = "description")
     private String description;
     
-    @Basic(optional = false)
-    @Column(name = "loc")
-    @Enumerated(EnumType.STRING)
-    private LevelOfCare levelOfCare = LevelOfCare.NONE;
+//    @Basic(optional = false)
+//    @Column(name = "loc")
+//    @Enumerated(EnumType.STRING)
+//    private LevelOfCare levelOfCare = LevelOfCare.NONE;
       
     //-- assembly 
     
@@ -288,13 +288,5 @@ public class Device extends ConfigurationEntity
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LevelOfCare getLevelOfCare() {
-        return levelOfCare;
-    }
-
-    public void setLevelOfCare(LevelOfCare levelOfCare) {
-        this.levelOfCare = levelOfCare;
     }
 }

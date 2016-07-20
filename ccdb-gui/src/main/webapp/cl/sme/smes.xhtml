@@ -9,11 +9,10 @@
 
     <ui:define name="content"> 
         <f:metadata>
-            <f:viewParam name="pg" value="#{statusPivotManager.selectedPhaseGroup}"  /> 
             <f:viewParam name="et" value="#{statusPivotManager.entityType}"  />
-
             <f:viewAction action="#{statusPivotManager.initialize()}" />
         </f:metadata>
+        
         <h:form id="crudForm" > 
             <p:panel>
                 <h:outputText value="Subject Matter Experts" styleClass="heading"/>

@@ -23,7 +23,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
  *
  * @author vuppala
  */
-@Table(name = "configuration_record")
+@Table(name = "cm_configuration_record")
 @Entity
 @XmlRootElement
 @NamedQueries({
@@ -37,7 +37,7 @@ public class ConfigurationRecord extends ConfigurationEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name="name", nullable = false)
+    @Column(name="name", nullable=false, unique=true)
     @NotNull
     @Basic
     @Size(min = 1, max = 64)

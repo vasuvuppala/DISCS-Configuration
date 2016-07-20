@@ -76,10 +76,10 @@ public class Property extends ConfigurationEntity implements NamedEntity {
     @ManyToOne
     private Unit unit;
 
-    @Basic(optional = false)
-    @Column(name = "loc")
-    @Enumerated(EnumType.STRING)
-    private LevelOfCare levelOfCare = LevelOfCare.NONE;
+//    @Basic(optional = false)
+//    @Column(name = "loc")
+//    @Enumerated(EnumType.STRING)
+//    private LevelOfCare levelOfCare = LevelOfCare.NONE;
     
     @Basic(optional = false)
     @Column(name = "value_unique")
@@ -149,16 +149,6 @@ public class Property extends ConfigurationEntity implements NamedEntity {
     public void setUnit(Unit unit) {
         this.unit = unit;
     }
-
-    public LevelOfCare getLevelOfCare() {
-        return levelOfCare;
-    }
-
-    public void setLevelOfCare(LevelOfCare levelOfCare) {
-        this.levelOfCare = levelOfCare;
-    }
-
-   
    
     /** @return the type of the property value uniqueness as defined in {@link PropertyValueUniqueness} enumeration */
     public PropertyValueUniqueness getValueUniqueness() {

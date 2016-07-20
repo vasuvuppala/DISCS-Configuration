@@ -32,10 +32,11 @@ import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 import org.openepics.discs.ccdb.model.cl.Checklist;
+import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 /**
- * Bean to support lifecycle phase report
+ * Bean for status reports
  *
  * @author vuppala
  *
@@ -67,13 +68,16 @@ public class StatusReport implements Serializable {
     @EJB
     private ChecklistEJB lcEJB;
     
+    // request parameter
+    private ChecklistEntity selectedType = ChecklistEntity.GROUP;
+    
+    // view data
     private List<ProcessStatus> statusList;
     private List<ProcessStatus> filteredStatus;
     private List<Process> phases;
     private Set<SlotGroup> slotGroups;
     private Set<Slot> slots;
     private Set<Device> devices;
-    private String selectedType;
     
     public StatusReport() {
         
@@ -95,18 +99,14 @@ public class StatusReport implements Serializable {
      */
     public String initialize() {
         String nextView = null;
-        Checklist stype = null;
+        Checklist checklist = lcEJB.findDefaultChecklist(selectedType);
         
-        if (selectedType != null) {
-            stype = lcEJB.findChecklist(selectedType);
-        }
-        
-        if (stype == null) {
+        if (checklist == null) {
             statusList = lcEJB.findAllStatuses();
             phases = lcEJB.findAllPhases();
         } else {                 
-            statusList = lcEJB.findAllStatuses(stype); 
-            phases = lcEJB.findPhases(stype);
+            statusList = lcEJB.findAllStatuses(checklist); 
+            phases = lcEJB.findPhases(checklist);
         }
         slotGroups = statusList.stream().filter(stat -> stat.getAssignment().getSlotGroup() != null).map(stat -> stat.getAssignment().getSlotGroup()).collect(Collectors.toSet());
         slots = statusList.stream().filter(stat -> stat.getAssignment().getSlot() != null).map(stat -> stat.getAssignment().getSlot()).collect(Collectors.toSet());
@@ -128,7 +128,7 @@ public class StatusReport implements Serializable {
               if (slot.getCmGroup() != null) {
                   return getGroupStatusRec(slot.getCmGroup(), phase);
               }
-              if (slot.equals(lcstat.getAssignment().getSlot()) && phase.equals(lcstat.getGroupMember().getPhase())) {
+              if (slot.equals(lcstat.getAssignment().getSlot()) && phase.equals(lcstat.getField().getProcess())) {
                   return lcstat;
              }
           }
@@ -143,7 +143,7 @@ public class StatusReport implements Serializable {
           }
           
           for(ProcessStatus lcstat: statusList) {
-              if (group.equals(lcstat.getAssignment().getSlotGroup()) && phase.equals(lcstat.getGroupMember().getPhase())) {
+              if (group.equals(lcstat.getAssignment().getSlotGroup()) && phase.equals(lcstat.getField().getProcess())) {
                   return lcstat;
              }
           }
@@ -159,7 +159,7 @@ public class StatusReport implements Serializable {
           }
           
           for(ProcessStatus lcstat: statusList) {
-              if (device.equals(lcstat.getAssignment().getDevice()) && phase.equals(lcstat.getGroupMember().getPhase())) {
+              if (device.equals(lcstat.getAssignment().getDevice()) && phase.equals(lcstat.getField().getProcess())) {
                   return lcstat;
              }
           }
@@ -177,11 +177,11 @@ public class StatusReport implements Serializable {
         this.filteredStatus = filteredStatus;
     }
 
-    public String getSelectedType() {
+    public ChecklistEntity getSelectedType() {
         return selectedType;
     }
 
-    public void setSelectedType(String selectedType) {
+    public void setSelectedType(ChecklistEntity selectedType) {
         this.selectedType = selectedType;
     }
 
