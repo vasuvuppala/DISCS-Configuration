@@ -75,14 +75,14 @@ public class StatusOptionManager implements Serializable {
     private StatusOption selectedEntity;
     private InputAction inputAction;
     
-    private List<Checklist> phaseGroups;
+    private List<Checklist> checklists;
     
     public StatusOptionManager() {
     }
     
     @PostConstruct
     public void init() { 
-        phaseGroups = lcEJB.findAllChecklists();
+        checklists = lcEJB.findAllChecklists();
         entities = lcEJB.findAllStatusOptions();
         resetInput();
     }
@@ -176,7 +176,7 @@ public class StatusOptionManager implements Serializable {
         this.selectedEntity = selectedEntity;
     }
 
-    public List<Checklist> getPhaseGroups() {
-        return phaseGroups;
+    public List<Checklist> getChecklists() {
+        return checklists;
     }
 }

@@ -35,7 +35,7 @@ import org.openepics.discs.ccdb.model.auth.User;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_slot_group" )
+@Table(name = "cl_slot_group" )
 @NamedQueries({
     @NamedQuery(name = "SlotGroup.findAll", query = "SELECT d FROM SlotGroup d"),
     @NamedQuery(name = "SlotGroup.findByName", query = "SELECT d FROM SlotGroup d WHERE d.name = :name")

@@ -7,7 +7,7 @@
 
     <ui:define name="content">
         <f:metadata>
-            <f:viewParam name="pg" value="#{statusReport.selectedType}"  /> 
+            <f:viewParam name="et" value="#{statusReport.selectedType}"  /> 
             <f:viewAction action="#{statusReport.initialize()}" />
         </f:metadata>
 
@@ -16,7 +16,10 @@
                 <h:outputText value="Device Status Report" styleClass="heading"/>
 
                 <p:dataTable id="statusDevTable" var="device" value="#{statusReport.devices}" 
-                             rowKey="#{device.id}" > 
+                             rowKey="#{device.id}" 
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable"> 
                     <p:column headerText="Device" sortBy="#{device.serialNumber}" filterBy="#{device.serialNumber}" filterMatchMode="contains">
                         <h:outputText value="#{device.serialNumber}" />
                     </p:column>

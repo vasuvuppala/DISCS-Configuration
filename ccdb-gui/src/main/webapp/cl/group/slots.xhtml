@@ -13,17 +13,17 @@
             <p:panel>
                 <h:outputText value="Group Membership" styleClass="heading"/>
                 <p:dataTable id="assignTable" var="entity" 
-                             value="#{cmSlotManager.entities}" rowSelectMode="checkbox"
+                             value="#{groupSlotBean.entities}" rowSelectMode="checkbox"
                              emptyMessage="No records found." 
-                             rowKey="#{entity.id}" selection="#{cmSlotManager.selectedEntities}"
-                             resizableColumns="true" filteredValue="#{cmSlotManager.filteredEntities}" 
+                             rowKey="#{entity.id}" selection="#{groupSlotBean.selectedEntities}"
+                             resizableColumns="true" filteredValue="#{groupSlotBean.filteredEntities}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
 
-                    <p:ajax event="toggleSelect" listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
-                    <p:ajax event="rowSelectCheckbox" listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
-                    <p:ajax event="rowUnselectCheckbox"  listener="#{cmSlotManager.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="toggleSelect" listener="#{groupSlotBean.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowSelectCheckbox" listener="#{groupSlotBean.onRowSelect()}" update="commandButtons" />
+                    <p:ajax event="rowUnselectCheckbox"  listener="#{groupSlotBean.onRowSelect()}" update="commandButtons" />
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"  />
 
@@ -49,12 +49,12 @@
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
                                 <p:commandButton value="Assign" title="Assign Group" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{cmSlotManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not cmSlotManager.noneHasGroup}" />      
+                                                 actionListener="#{groupSlotBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not groupSlotBean.noneHasGroup or empty groupSlotBean.slotGroups}" />      
                                 <p:commandButton value="Remove" title="Unassign Group" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
-                                                 actionListener="#{cmSlotManager.onDeleteCommand}" style="float: right"
+                                                 actionListener="#{groupSlotBean.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not cmSlotManager.allHaveGroup}"/>
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not groupSlotBean.allHaveGroup}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>
@@ -63,26 +63,26 @@
         </h:form>
 
         <p:dialog id="crudInputDlg" widgetVar="crudInputWid">
-            <h:form id="objectInputForm" rendered="#{cmSlotManager.inputAction != 'READ'}">              
+            <h:form id="objectInputForm" rendered="#{groupSlotBean.inputAction != 'READ'}">              
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="Asssign Group" rendered="#{cmSlotManager.inputAction == 'CREATE'}"/>   
-                                <h:outputText value="Remove Group" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>
+                                <h:outputText value="Asssign Group" rendered="#{groupSlotBean.inputAction == 'CREATE'}"/>   
+                                <h:outputText value="Remove Group" rendered="#{groupSlotBean.inputAction == 'DELETE'}"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
 
-                    <p:row rendered="#{cmSlotManager.inputAction == 'CREATE'}">
+                    <p:row rendered="#{groupSlotBean.inputAction == 'CREATE'}">
                         <p:column>
                             <p:outputLabel for="slotGrp"  value="Group" />
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="slotGrp" converter="#{slotGroupConverter}"                                           
-                                             var="g" value="#{cmSlotManager.inputGroup}" filterMatchMode="contains"  filter="true"                                         
-                                             disabled="#{cmSlotManager.inputAction == 'DELETE'}" >
-                                <f:selectItems value="#{cmSlotManager.slotGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />   
+                                             var="g" value="#{groupSlotBean.inputGroup}" filterMatchMode="contains"  filter="true"                                         
+                                             disabled="#{groupSlotBean.inputAction == 'DELETE'}" >
+                                <f:selectItems value="#{groupSlotBean.slotGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />   
                                 <p:column>
                                     <h:outputText value="#{g.name}" />
                                 </p:column>
@@ -95,8 +95,8 @@
                     
                     <p:row>                       
                         <p:column colspan="2">
-                            <h:outputText value="Do you really want to assign the group?" rendered="#{cmSlotManager.inputAction == 'CREATE'}"/>                                
-                            <h:outputText value="Do you really want to un-assign group? There is no way to undo this operation!" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>                                
+                            <h:outputText value="Do you really want to assign the group?" rendered="#{groupSlotBean.inputAction == 'CREATE'}"/>                                
+                            <h:outputText value="Do you really want to un-assign group? There is no way to undo this operation!" rendered="#{groupSlotBean.inputAction == 'DELETE'}"/>                                
                         </p:column>                                                                         
                     </p:row>
 
@@ -106,13 +106,13 @@
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('crudInputWid').hide()"/>
                                 <p:commandButton icon="ui-icon-disk" value="Confirm" style="float: right;"
-                                                 action="#{cmSlotManager.assignGroup()}"  
+                                                 action="#{groupSlotBean.assignGroup()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form"  update=":crudForm:assignTable" rendered="#{cmSlotManager.inputAction != 'DELETE'}"/>
+                                                 process="@form"  update=":crudForm:assignTable" rendered="#{groupSlotBean.inputAction != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm Deletion" style="float: right;"
-                                                 action="#{cmSlotManager.unassignGroup()}" 
+                                                 action="#{groupSlotBean.unassignGroup()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:assignTable" rendered="#{cmSlotManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":crudForm:assignTable" rendered="#{groupSlotBean.inputAction == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

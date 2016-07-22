@@ -1,12 +1,18 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" 
                 xmlns:p="http://primefaces.org/ui" 
-                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <ui:fragment  rendered="#{not empty statusRec}">
-        <h:outputText id="PhaseStat" value="#{statusRec.assignedSME.userId}" rendered="#{not empty statusRec.assignedSME}"/>
-        <h:outputText value="Default" title="#{statusPivotManager.defaultSME(statusRec)}" rendered="#{empty statusRec.assignedSME}"/>
+        <c:set  var="smeName" value="#{empty statusRec.status? 'NA': empty statusRec.assignedSME? processStatusManager.defaultSME(statusRec): statusRec.assignedSME.userId}"/>
+        <c:set  var="smeNameAbbr" value="#{smeName.length() gt 10 ? smeName.substring(0,9).concat('...'): smeName}" />
+        <ui:fragment rendered="#{not empty statusRec.status and not empty statusRec.assignedSME}" >
+            <i class="fa fa-star-half-o" title="Specifically assigned SME (not the default)" />
+            <p:spacer width="5"/>
+        </ui:fragment>        
+        <h:outputText value="#{smeNameAbbr}"  title="#{smeName}" />
     </ui:fragment>
-    <h:outputText value="NA" rendered="#{empty statusRec}" title="Not Assigned"/>
+    <h:outputText value="New Field" rendered="#{empty statusRec}" title="This is a new process that was added to the checklist after the assignment was made."/>
 
 </ui:composition>

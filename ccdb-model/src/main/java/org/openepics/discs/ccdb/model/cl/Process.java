@@ -36,7 +36,7 @@ import org.openepics.discs.ccdb.model.cm.LevelOfCare;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_process" )
+@Table(name = "cl_process" )
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Process.findAll", query = "SELECT d FROM Process d"),

@@ -41,7 +41,7 @@ import org.openepics.discs.ccdb.model.auth.User;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_assignment")
+@Table(name = "cl_assignment")
 @NamedQueries({
     @NamedQuery(name = "Assignment.findAll", query = "SELECT d FROM Assignment d"),
     @NamedQuery(name = "Assignment.findGroupAssignments", query = "SELECT d FROM Assignment d WHERE d.slotGroup IS NOT null"),

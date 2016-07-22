@@ -24,10 +24,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import org.openepics.discs.ccdb.core.ejb.AuthEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
+import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.auth.Role;
+import org.openepics.discs.ccdb.model.auth.User;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
@@ -61,24 +64,23 @@ import org.primefaces.event.SelectEvent;
 @Named
 @ViewScoped
 public class SlotGroupManager implements Serializable {
-//    @EJB
-//    private AuthEJB authEJB;
     @EJB
     private ChecklistEJB lcEJB;
-     @EJB
-    private AuthEJB authEJB;
-            
+    @EJB
+    private AuthEJB authEJB;            
+    @Inject
+    private SecurityPolicy securityPolicy;
+     
     private static final Logger LOGGER = Logger.getLogger(SlotGroupManager.class.getName());
 //    @Inject
 //    UserSession userSession;
       
     private List<SlotGroup> entities;    
     private List<SlotGroup> filteredEntities;    
-    private List<Role> roles ;
     private SlotGroup inputEntity;
     private SlotGroup selectedEntity;
     private InputAction inputAction;
-    
+    private User currentUser;
     
     public SlotGroupManager() {
     }
@@ -86,7 +88,7 @@ public class SlotGroupManager implements Serializable {
     @PostConstruct
     public void init() {      
         entities = lcEJB.findAllSlotGroups(); 
-        roles = authEJB.findAllRoles();
+
         resetInput();
     }
     
@@ -112,12 +114,31 @@ public class SlotGroupManager implements Serializable {
         inputAction = InputAction.DELETE;
     }
     
+    private Boolean isAuthorized() {
+        String userId = securityPolicy.getUserId();
+        if (userId == null) {
+            currentUser = null;
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
+                    "You are not authorized. User Id is null.");
+            RequestContext.getCurrentInstance().addCallbackParam("success", false);
+            return false;
+        }
+        currentUser = authEJB.findUser(userId);
+        return true;
+    }
+    
     public void saveEntity() {
         try {                      
+            if (! isAuthorized()) {
+                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Unauthorized", "You are not authorized to perform this action");
+                return;
+            }
             if (inputAction == InputAction.CREATE) {
+                inputEntity.setOwner(currentUser);
                 lcEJB.saveSlotGroup(inputEntity);
                 entities.add(inputEntity);                
             } else {
+                selectedEntity.setOwner(currentUser);
                 lcEJB.saveSlotGroup(selectedEntity);
                 lcEJB.refreshVersion(SlotGroup.class, selectedEntity);
             }
@@ -177,9 +198,5 @@ public class SlotGroupManager implements Serializable {
 
     public void setSelectedEntity(SlotGroup selectedEntity) {
         this.selectedEntity = selectedEntity;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
     }
 }

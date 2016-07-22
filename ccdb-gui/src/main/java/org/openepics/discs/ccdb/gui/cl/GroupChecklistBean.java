@@ -84,8 +84,7 @@ public class GroupChecklistBean implements Serializable {
     private Boolean noneHasChecklists = false; // none of the selected entities has checklists 
     private Boolean allHaveChecklists = false; // all of the selected entities have checklists 
     
-    // input data
-    private List<Checklist> selectedChecklists;
+    private Checklist defaultChecklist;
 
     public GroupChecklistBean() {
     }
@@ -93,6 +92,7 @@ public class GroupChecklistBean implements Serializable {
     @PostConstruct
     public void init() {
         entities = lcEJB.findAllSlotGroups();
+        defaultChecklist = lcEJB.findDefaultChecklist(ENTITY_TYPE);
         resetInput();
     }
 
@@ -116,7 +116,10 @@ public class GroupChecklistBean implements Serializable {
             noneHasChecklists = lcEJB.noneHasChecklists(ENTITY_TYPE, selectedEntities);
             allHaveChecklists = ! noneHasChecklists; //ToDo: this is not right but ok for now
         } 
-        LOGGER.log(Level.INFO, "has checklists: {0}", noneHasChecklists);
+        if (defaultChecklist == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "There is no default checklist to assign.", "Default checklist must be defined first");           
+        }
+        // LOGGER.log(Level.INFO, "has checklists: {0}", noneHasChecklists);
     }
 
     public void onAddCommand(ActionEvent event) {
@@ -133,6 +136,10 @@ public class GroupChecklistBean implements Serializable {
      * @return 
      */
     private boolean inputIsValid() {
+        if (defaultChecklist == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "There is no default checklist to assign.", "Default checklist must be defined first"); 
+            return false;
+        }
         return true;
     }
 
@@ -238,12 +245,8 @@ public class GroupChecklistBean implements Serializable {
         this.inputAction = inputAction;
     }
 
-    public List<Checklist> getSelectedChecklists() {
-        return selectedChecklists;
-    }
-
-    public void setSelectedChecklists(List<Checklist> selectedChecklists) {
-        this.selectedChecklists = selectedChecklists;
+    public Checklist getDefaultChecklist() {
+        return defaultChecklist;
     }
 
     public Boolean getNoneHasChecklists() {

@@ -3,11 +3,12 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
         <f:metadata>
-            <f:viewParam name="pg" value="#{statusReport.selectedType}"  /> 
+            <f:viewParam name="et" value="#{statusReport.selectedType}" /> 
             <f:viewAction action="#{statusReport.initialize()}" />
         </f:metadata>
 
@@ -16,7 +17,10 @@
                 <h:outputText value="Group Status Report" styleClass="heading"/>
 
                 <p:dataTable id="groupTable" var="group" value="#{statusReport.slotGroups}" widgetVar="statusTableWid"
-                             rowKey="#{group.id}" > 
+                             rowKey="#{group.id}" 
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable"> 
                     <p:column headerText="Group" sortBy="#{group.name}" filterBy="#{group.name}" filterMatchMode="contains">
                         <h:outputText value="#{group.name}" />
                     </p:column>

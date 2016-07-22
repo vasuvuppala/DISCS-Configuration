@@ -97,7 +97,7 @@ public class ChecklistReport implements Serializable {
      * 
      * @param entry 
      */
-    public void refresh(SlotReportEntry entry) {
+    private void refresh(SlotReportEntry entry) {
         String prefix = "_ROOT".equals(entry.slot.getName()) ? "%" : entry.slot.getName() + "%";
 
         entry.numOfInstallSlots = clEJB.numberOfHostingSlots(prefix);

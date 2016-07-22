@@ -64,7 +64,7 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-public class PhaseMemberManager implements Serializable {
+public class FieldManager implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
     @EJB
@@ -72,7 +72,7 @@ public class PhaseMemberManager implements Serializable {
     @EJB
     private AuthEJB authEJB;
             
-    private static final Logger LOGGER = Logger.getLogger(PhaseMemberManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FieldManager.class.getName());
 //    @Inject
 //    UserSession userSession;
       
@@ -81,25 +81,25 @@ public class PhaseMemberManager implements Serializable {
     private ChecklistField inputEntity;
     private ChecklistField selectedEntity;
     private InputAction inputAction;
-    private List<Checklist> phaseGroups;
-    private List<Process> phases;
+    private List<Checklist> checklists;
+    private List<Process> processes;
     private List<Role> roles ;
     private List<StatusOption> statusOptions;
     
-    public PhaseMemberManager() {
+    public FieldManager() {
     }
     
     @PostConstruct
     public void init() {      
         entities = lcEJB.findAllChecklistFields();    
-        phaseGroups = lcEJB.findAllChecklists();
-        phases = lcEJB.findAllPhases();
+        checklists = lcEJB.findAllChecklists();
+        processes = lcEJB.findAllPhases();
         roles = authEJB.findAllRoles();
-        if (phaseGroups == null || phaseGroups.isEmpty()) {
+        if (checklists == null || checklists.isEmpty()) {
             LOGGER.log(Level.SEVERE, "There are no phase groups!");
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No Phase Groups", "You must first add one ore more phase groups");
         } else {
-            statusOptions = lcEJB.findStatusOptions(phaseGroups.get(0));
+            statusOptions = lcEJB.findStatusOptions(checklists.get(0));
         }
         resetInput();
     }
@@ -209,12 +209,12 @@ public class PhaseMemberManager implements Serializable {
         this.selectedEntity = selectedEntity;
     }    
 
-    public List<Checklist> getPhaseGroups() {
-        return phaseGroups;
+    public List<Checklist> getChecklists() {
+        return checklists;
     }
 
-    public List<Process> getPhases() {
-        return phases;
+    public List<Process> getProcesses() {
+        return processes;
     }
 
     public List<Role> getRoles() {

@@ -4,7 +4,7 @@
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <ui:fragment  rendered="#{not empty statusRec}" >
-        <h:outputText id="#{statusId}" value="#{empty statusRec.status ? 'NR': statusRec.status.name}"/>     
+        <h:outputText id="#{statusId}" value="#{empty statusRec.status ? 'NA': statusRec.status.name}"/>     
         <p:overlayPanel  for="#{statusId}" showEvent="mouseover" hideEvent="mouseout" style="width: 15%">
             <p:panelGrid columnClasses="phaseStatus,phaseStatus">
                 <p:row>
@@ -12,7 +12,7 @@
                         <h:outputText value="Status" />
                     </p:column>
                     <p:column>
-                        <h:outputText value="#{empty statusRec.status ? 'Not Required': statusRec.status.description}" styleClass="phaseStatus" />
+                        <h:outputText value="#{empty statusRec.status ? 'NA': statusRec.status.description}" styleClass="phaseStatus" />
                     </p:column>                                            
                 </p:row>
                 <p:row>
@@ -44,6 +44,6 @@
             </p:panelGrid>
         </p:overlayPanel>          
     </ui:fragment>
-    <h:outputText value="NA" rendered="#{empty statusRec}" title="Not Assigned"/>
+    <h:outputText value="New Field" rendered="#{empty statusRec}" title="This is a new process that was added to the checklist after the assignment was made."/>
 
 </ui:composition>

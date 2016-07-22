@@ -36,7 +36,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_status_option",
+@Table(name = "cl_status_option",
        uniqueConstraints=@UniqueConstraint(columnNames={"checklist", "name"}))
 @NamedQueries({
     @NamedQuery(name = "StatusOption.findAll", query = "SELECT d FROM StatusOption d"),

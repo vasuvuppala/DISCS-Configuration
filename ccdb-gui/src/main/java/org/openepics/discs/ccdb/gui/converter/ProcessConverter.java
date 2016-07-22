@@ -21,14 +21,14 @@ import org.openepics.discs.ccdb.model.cl.Process;
  */
 @Named
 @RequestScoped // Can be ApplicationScoped but have to be careful with state
-public class PhaseConverter implements Converter {
+public class ProcessConverter implements Converter {
 
     @EJB private ChecklistEJB lcEJB;
 
     /**
      * Creates a new instance of DeviceConverter
      */
-    public PhaseConverter() {
+    public ProcessConverter() {
     }
 
     @Override

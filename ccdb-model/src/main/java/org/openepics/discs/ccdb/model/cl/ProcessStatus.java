@@ -35,7 +35,7 @@ import org.openepics.discs.ccdb.model.auth.User;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_proc_status",
+@Table(name = "cl_proc_status",
        uniqueConstraints=@UniqueConstraint(columnNames={"assignment", "field"}))
 @NamedQueries({
     @NamedQuery(name = "ProcessStatus.findAll", query = "SELECT d FROM ProcessStatus d"),

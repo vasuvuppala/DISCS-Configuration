@@ -21,14 +21,14 @@ import org.openepics.discs.ccdb.model.cl.Checklist;
  */
 @Named
 @RequestScoped // Can be ApplicationScoped but have to be careful with state
-public class PhaseGroupConverter implements Converter {
+public class ChecklistConverter implements Converter {
 
     @EJB private ChecklistEJB lcEJB;
 
     /**
      * Creates a new instance of DeviceConverter
      */
-    public PhaseGroupConverter() {
+    public ChecklistConverter() {
     }
 
     @Override

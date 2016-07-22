@@ -12,15 +12,15 @@
         <h:form id="crudForm" > 
             <p:panel>
                 <h:outputText value="Checklists" styleClass="heading"/>
-                <p:dataTable id="entityTable" value="#{phaseGroupManager.entities}" var="obj" 
+                <p:dataTable id="entityTable" value="#{checklistManager.entities}" var="obj" 
                              sortMode="multiple"
-                             rowKey="#{obj.id}" selectionMode="single" selection="#{phaseGroupManager.selectedEntity}"                          
-                             filteredValue="#{phaseGroupManager.filteredEntities}"
+                             rowKey="#{obj.id}" selectionMode="single" selection="#{checklistManager.selectedEntity}"                          
+                             filteredValue="#{checklistManager.filteredEntities}"
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">  
                     
-                    <p:ajax event="rowSelect" listener="#{phaseGroupManager.onRowSelect}" update="commandButtons" />
+                    <p:ajax event="rowSelect" listener="#{checklistManager.onRowSelect}" update="commandButtons" />
                     
                     <p:column headerText="Name" sortBy="#{obj.name}" 
                               filterBy="#{obj.name}" filterMatchMode="contains" > 
@@ -45,15 +45,15 @@
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
                                 <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{phaseGroupManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
+                                                 actionListener="#{checklistManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
                                                  disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
                                 <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
-                                                 actionListener="#{phaseGroupManager.onEditCommand}"
+                                                 actionListener="#{checklistManager.onEditCommand}"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty phaseGroupManager.selectedEntity}"/>
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty checklistManager.selectedEntity}"/>
                                 <p:commandButton title="Delete" icon="ui-icon-trash" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{phaseGroupManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty phaseGroupManager.selectedEntity}"/>
+                                                 actionListener="#{checklistManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty checklistManager.selectedEntity}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>
@@ -67,9 +67,9 @@
                     <f:facet name="header">
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="New Process Group" rendered="#{phaseGroupManager.inputAction == 'CREATE'}"/>
-                                <h:outputText value="Update Existing Process Group" rendered="#{phaseGroupManager.inputAction == 'UPDATE'}"/>
-                                <h:outputText value="Delete Process Group" rendered="#{phaseGroupManager.inputAction == 'DELETE'}"/>
+                                <h:outputText value="New Process Group" rendered="#{checklistManager.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Process Group" rendered="#{checklistManager.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Process Group" rendered="#{checklistManager.inputAction == 'DELETE'}"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
@@ -78,9 +78,9 @@
                             <p:outputLabel for="procName" value="Name"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="procName" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.name: phaseGroupManager.selectedEntity.name}" 
+                            <p:inputText id="procName" value="#{checklistManager.inputAction == 'CREATE'? checklistManager.inputEntity.name: checklistManager.selectedEntity.name}" 
                                          required="true" 
-                                         validatorMessage="Name required" disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                             
+                                         validatorMessage="Name required" disabled="#{checklistManager.inputAction == 'DELETE'}"/>                             
                         </p:column>
                     </p:row>
 
@@ -89,9 +89,9 @@
                             <p:outputLabel for="procDesc"  value="Description" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="procDesc" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.description : phaseGroupManager.selectedEntity.description}" 
+                            <p:inputText id="procDesc" value="#{checklistManager.inputAction == 'CREATE'? checklistManager.inputEntity.description : checklistManager.selectedEntity.description}" 
                                          required="true" 
-                                         validatorMessage="Description required" disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
+                                         validatorMessage="Description required" disabled="#{checklistManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
                     
@@ -100,8 +100,8 @@
                             <p:outputLabel for="procDevices"  value="For Devices" />
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox id="procDevices" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.forDevices : phaseGroupManager.selectedEntity.forDevices}" 
-                                          disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
+                            <p:selectBooleanCheckbox id="procDevices" value="#{checklistManager.inputAction == 'CREATE'? checklistManager.inputEntity.forDevices : checklistManager.selectedEntity.forDevices}" 
+                                          disabled="#{checklistManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
 
@@ -110,8 +110,8 @@
                             <p:outputLabel for="procDefault"  value="Default" />
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox id="procDefault" value="#{phaseGroupManager.inputAction == 'CREATE'? phaseGroupManager.inputEntity.defaultList : phaseGroupManager.selectedEntity.defaultList}" 
-                                          disabled="#{phaseGroupManager.inputAction == 'DELETE'}"/>                            
+                            <p:selectBooleanCheckbox id="procDefault" value="#{checklistManager.inputAction == 'CREATE'? checklistManager.inputEntity.defaultList : checklistManager.selectedEntity.defaultList}" 
+                                          disabled="#{checklistManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
                     
@@ -121,13 +121,13 @@
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('crudInputWid').hide()"/>
                                 <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{phaseGroupManager.saveEntity()}"  
+                                                 action="#{checklistManager.saveEntity()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{phaseGroupManager.inputAction != 'DELETE'}"/>
+                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{checklistManager.inputAction != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
-                                                 action="#{phaseGroupManager.deleteEntity()}" 
+                                                 action="#{checklistManager.deleteEntity()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:entityTable" rendered="#{phaseGroupManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":crudForm:entityTable" rendered="#{checklistManager.inputAction == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

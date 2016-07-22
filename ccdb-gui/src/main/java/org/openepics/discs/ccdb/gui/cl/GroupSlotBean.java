@@ -35,7 +35,7 @@ import org.openepics.discs.ccdb.model.cl.SlotGroup;
 import org.primefaces.context.RequestContext;
 
 /**
- * Description: State for Manage Process View
+ * Description: State for 'Assign Slot to Groups' View
  *
  * Methods:
  * <p>
@@ -50,17 +50,14 @@ import org.primefaces.context.RequestContext;
  * onEditCommand: things to do before editing an item
  * <p>
  * onDeleteCommand: things to do before deleting an item
- * <p>
- * saveXXXX: save the input or edited item
- * <p>
- * deleteXXXX: delete the selected item
+ * 
  *
  * @author vuppala
  *
  */
 @Named
 @ViewScoped
-public class CmSlotManager implements Serializable {
+public class GroupSlotBean implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
 
@@ -71,7 +68,7 @@ public class CmSlotManager implements Serializable {
     @Inject
     private SecurityPolicy securityPolicy;
 
-    private static final Logger LOGGER = Logger.getLogger(CmSlotManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GroupSlotBean.class.getName());
 
     // view data
     private List<Slot> entities;
@@ -87,7 +84,7 @@ public class CmSlotManager implements Serializable {
     private Boolean noneHasGroup = false; // none of the selected entities has checklists 
     private Boolean allHaveGroup = false; // all of the selected entities have checklists 
 
-    public CmSlotManager() {
+    public GroupSlotBean() {
     }
 
     @PostConstruct
@@ -116,13 +113,26 @@ public class CmSlotManager implements Serializable {
             noneHasGroup = selectedEntities.stream().allMatch(s -> s.getCmGroup() == null);
             allHaveGroup = selectedEntities.stream().noneMatch(s -> s.getCmGroup() == null);
         }
+        if (slotGroups == null || slotGroups.isEmpty()) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "There are no groups to assign slots to.", "You may want to define groups first");           
+        }
         LOGGER.log(Level.INFO, "none has group: {0}", noneHasGroup);
     }
 
+    /**
+     * Things to do before adding
+     * 
+     * @param event 
+     */
     public void onAddCommand(ActionEvent event) {
         inputAction = InputAction.CREATE;
     }
 
+    /**
+     * Things to do before deleting 
+     * 
+     * @param event 
+     */
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
     }
@@ -133,6 +143,10 @@ public class CmSlotManager implements Serializable {
      * @return
      */
     private boolean inputIsValid() {
+        if (inputGroup == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Invalid group");
+            return false;
+        }
         return true;
     }
 
@@ -196,7 +210,7 @@ public class CmSlotManager implements Serializable {
     }
 
     /**
-     * unassign group from the selected slots
+     * un-assign group from the selected slots
      * 
      */
     public void unassignGroup() {

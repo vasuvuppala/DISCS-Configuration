@@ -88,9 +88,9 @@
                 </p:submenu>
                 
                <p:submenu label="Status Report" icon="fa fa-list-alt">
-                    <p:menuitem value="Device Status" icon="fa fa-list-alt" url="/cl/report/device-status.xhtml" />
-                    <p:menuitem value="Group Status" icon="fa fa-list-alt" url="/cl/report/group-status.xhtml" />
-                    <p:menuitem value="Slot Status" icon="fa fa-list-alt" url="/cl/report/slot-status.xhtml" />   
+                    <p:menuitem value="Device Status" icon="fa fa-list-alt" url="/cl/report/device-status.xhtml?et=DEVICE" />
+                    <p:menuitem value="Group Status" icon="fa fa-list-alt" url="/cl/report/group-status.xhtml?et=GROUP" />
+                    <p:menuitem value="Slot Status" icon="fa fa-list-alt" url="/cl/report/slot-status.xhtml?et=GROUP" />   
                     <p:menuitem value="Readiness" icon="fa fa-list-alt" url="/cl/report/readiness.xhtml" /> 
                 </p:submenu>    
                 <p:menuitem value="User Manual" icon="fa fa-list-alt" url="/cl/docs/usermanual.xhtml" />
@@ -115,9 +115,9 @@
             <p:submenu label="Admin" icon="fa fa-cubes">               
                 <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth"/>   
                 <p:submenu label="Checklists" icon="fa fa-list-alt">
-                    <p:menuitem value="Processes" icon="fa fa-list-alt" outcome="/cl/admin/phases.xhtml" />
-                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" outcome="/cl/admin/phase-groups.xhtml" /> 
-                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" outcome="/cl/admin/phase-group-members.xhtml" />                
+                    <p:menuitem value="Processes" icon="fa fa-list-alt" outcome="/cl/admin/processes.xhtml" />
+                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" outcome="/cl/admin/checklists.xhtml" /> 
+                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" outcome="/cl/admin/fields.xhtml" />                
                     <p:menuitem value="Status Options" icon="fa fa-list-alt" url="/cl/admin/status-options.xhtml" />
                 </p:submenu>
             </p:submenu>

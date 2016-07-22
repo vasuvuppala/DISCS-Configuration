@@ -26,13 +26,14 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
+import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Checklist;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
- * Description: State for Manage Process View
+ * Description: State for Manage Phase View
  *
  * Methods:
  * <p>
@@ -58,30 +59,55 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-public class PhaseGroupManager implements Serializable {
+public class ProcessManager implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
     @EJB
     private ChecklistEJB lcEJB;
             
-    private static final Logger LOGGER = Logger.getLogger(PhaseGroupManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProcessManager.class.getName());
 //    @Inject
 //    UserSession userSession;
       
-    private List<Checklist> entities;    
-    private List<Checklist> filteredEntities;    
-    private Checklist inputEntity;
-    private Checklist selectedEntity;
+    private List<Process> entities;    
+    private List<Process> filteredEntities;    
+    private Process inputEntity;
+    private Process selectedEntity;
     private InputAction inputAction;
+    private String selectedType;
     
+    private List<Checklist> statusTypes;
     
-    public PhaseGroupManager() {
+    public ProcessManager() {
     }
     
     @PostConstruct
-    public void init() {      
-        entities = lcEJB.findAllChecklists();     
+    public void init() { 
+        initialize();
+        statusTypes = lcEJB.findAllChecklists();
         resetInput();
+    }
+    
+    /**
+     * Initialize data in view
+     * 
+     * @return 
+     */
+    public String initialize() {
+        String nextView = null;
+        Checklist stype = null;
+        
+        if (selectedType != null) {
+            stype = lcEJB.findChecklist(selectedType);
+        }
+        if (stype == null) {
+            entities = lcEJB.findAllPhases();
+        } else {
+            entities = lcEJB.findPhases(stype);
+        }
+        
+        return nextView;
+    
     }
     
     private void resetInput() {                
@@ -94,7 +120,7 @@ public class PhaseGroupManager implements Serializable {
     }
     
     public void onAddCommand(ActionEvent event) {
-        inputEntity = new Checklist();
+        inputEntity = new Process();
         inputAction = InputAction.CREATE;       
     }
     
@@ -109,16 +135,16 @@ public class PhaseGroupManager implements Serializable {
     public void saveEntity() {
         try {                      
             if (inputAction == InputAction.CREATE) {
-                lcEJB.saveChecklist(inputEntity);
+                lcEJB.savePhase(inputEntity);
                 entities.add(inputEntity);                
             } else {
-                lcEJB.saveChecklist(selectedEntity);
+                lcEJB.savePhase(selectedEntity);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Saved", "");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save ", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
@@ -126,7 +152,7 @@ public class PhaseGroupManager implements Serializable {
     
     public void deleteEntity() {
         try {
-            lcEJB.deleteChecklist(selectedEntity);
+            lcEJB.deletePhase(selectedEntity);
             entities.remove(selectedEntity);  
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
@@ -144,33 +170,51 @@ public class PhaseGroupManager implements Serializable {
         return inputAction;
     }
 
-    public List<Checklist> getEntities() {
+    public List<Process> getEntities() {
         return entities;
     }
 
-    public List<Checklist> getFilteredEntities() {
+    public List<Process> getFilteredEntities() {
         return filteredEntities;
     }
 
-    public void setFilteredEntities(List<Checklist> filteredEntities) {
+    public void setFilteredEntities(List<Process> filteredEntities) {
         this.filteredEntities = filteredEntities;
     }
 
-    public Checklist getInputEntity() {
+    public Process getInputEntity() {
         return inputEntity;
     }
 
-    public void setInputEntity(Checklist inputEntity) {
+    public void setInputEntity(Process inputEntity) {
         this.inputEntity = inputEntity;
     }
 
-    public Checklist getSelectedEntity() {
+    public Process getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(Checklist selectedEntity) {
+    public void setSelectedEntity(Process selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
-    
+    public List<Checklist> getStatusTypes() {
+        return statusTypes;
+    }   
+
+    public ChecklistEJB getLcEJB() {
+        return lcEJB;
+    }
+
+    public void setLcEJB(ChecklistEJB lcEJB) {
+        this.lcEJB = lcEJB;
+    }
+
+    public String getSelectedType() {
+        return selectedType;
+    }
+
+    public void setSelectedType(String selectedType) {
+        this.selectedType = selectedType;
+    }
 }

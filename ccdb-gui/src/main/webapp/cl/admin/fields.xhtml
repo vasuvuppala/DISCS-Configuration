@@ -12,28 +12,38 @@
         <h:form id="crudForm" > 
             <p:panel>
                 <h:outputText value="Checklist Fields" styleClass="heading"/>
-                <p:dataTable id="entityTable" value="#{phaseMemberManager.entities}" var="obj" 
+                <ui:fragment rendered="#{empty fieldManager.checklists or empty fieldManager.processes or empty fieldManager.roles}">
+                    <p:panel>
+                        <p:spacer height="15"/>
+                        <h:outputText value="Unfortunately, no checklist has been defined. Please refer to " rendered="#{empty fieldManager.checklists}"/>
+                        <h:outputText value="Unfortunately, no process  has been defined. Please refer to " rendered="#{empty fieldManager.processes}"/>
+                        <h:outputText value="Unfortunately, no role      has been defined}. Please refer to " rendered="#{empty fieldManager.roles}"/>
+                        <p:link href="/cl/docs/checklist-proc.xhtml" value="the checklists workflow." />
+                    </p:panel>                                    
+                </ui:fragment>
+                <p:dataTable rendered="#{not (empty fieldManager.checklists or empty fieldManager.processes or empty fieldManager.roles)}"
+                             id="entityTable" value="#{fieldManager.entities}" var="obj" 
                              sortMode="multiple"
-                             rowKey="#{obj.id}" selectionMode="single" selection="#{phaseMemberManager.selectedEntity}"                          
-                             filteredValue="#{phaseMemberManager.filteredEntities}"
+                             rowKey="#{obj.id}" selectionMode="single" selection="#{fieldManager.selectedEntity}"                          
+                             filteredValue="#{fieldManager.filteredEntities}"
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">  
-                    <p:ajax event="rowSelect" listener="#{phaseMemberManager.onRowSelect}" update="commandButtons" />
-                    <p:column headerText="Group" sortBy="#{obj.phaseGroup.name}" 
-                              filterBy="#{obj.phaseGroup.name}" filterMatchMode="contains" > 
-                        <h:outputText value="#{obj.phaseGroup.name}" styleClass="colCenter"/>
+                    <p:ajax event="rowSelect" listener="#{fieldManager.onRowSelect}" update="commandButtons" />
+                    <p:column headerText="Group" sortBy="#{obj.checklist.name}" 
+                              filterBy="#{obj.checklist.name}" filterMatchMode="contains" > 
+                        <h:outputText value="#{obj.checklist.name}" styleClass="colCenter"/>
                     </p:column>
-                    <p:column headerText="Phase" sortBy="#{obj.phase.name}" 
-                              filterBy="#{obj.phase.name}" filterMatchMode="contains" >
-                        <h:outputText value="#{obj.phase.name}" styleClass="colCenter"/>
+                    <p:column headerText="Phase" sortBy="#{obj.process.name}" 
+                              filterBy="#{obj.process.name}" filterMatchMode="contains" >
+                        <h:outputText value="#{obj.process.name}" styleClass="colCenter"/>
                     </p:column>
 
                     <p:column headerText="SME" filterBy="#{obj.sme.roleId}" filterMatchMode="contains" >
                         <h:outputText value="#{obj.sme.roleId}" styleClass="colCenter"/>
                     </p:column>
                     <p:column headerText="Summary" >
-                        <h:outputText value="#{obj.summaryPhase}" styleClass="colCenter"/>
+                        <h:outputText value="#{obj.summaryProcess}" styleClass="colCenter"/>
                     </p:column>
                     <p:column headerText="Default" >
                          <h:outputText value="#{obj.defaultStatus.name}" styleClass="colCenter"/>
@@ -48,15 +58,15 @@
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
                                 <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{phaseMemberManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
+                                                 actionListener="#{fieldManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
                                                  disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
                                 <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
-                                                 actionListener="#{phaseMemberManager.onEditCommand}"
+                                                 actionListener="#{fieldManager.onEditCommand}"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty phaseMemberManager.selectedEntity}"/>
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty fieldManager.selectedEntity}"/>
                                 <p:commandButton title="Delete" icon="ui-icon-trash" update=":crudInputDlg" process="@this" 
-                                                 actionListener="#{phaseMemberManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty phaseMemberManager.selectedEntity}"/>
+                                                 actionListener="#{fieldManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty fieldManager.selectedEntity}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>
@@ -70,23 +80,23 @@
                     <f:facet name="header">
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="New Member" rendered="#{phaseMemberManager.inputAction == 'CREATE'}"/>
-                                <h:outputText value="Update Existing Member" rendered="#{phaseMemberManager.inputAction == 'UPDATE'}"/>
-                                <h:outputText value="Delete Member" rendered="#{phaseMemberManager.inputAction == 'DELETE'}"/>
+                                <h:outputText value="New Member" rendered="#{fieldManager.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Member" rendered="#{fieldManager.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Member" rendered="#{fieldManager.inputAction == 'DELETE'}"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="phaseGrp" value="Name"/>
+                            <p:outputLabel for="phaseGrp" value="Checklist"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="phaseGrp" var="grp" converter="#{phaseGroupConverter}"
+                            <p:selectOneMenu id="phaseGrp" var="grp" converter="#{checklistConverter}"
                                              filter="true"
-                                             value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.phaseGroup : phaseMemberManager.selectedEntity.phaseGroup}"                                            
-                                             disabled="#{phaseMemberManager.inputAction == 'DELETE'}">  
-                                <p:ajax listener="#{phaseMemberManager.onGroupChange}" update="defaultStatus" />
-                                <f:selectItems value="#{phaseMemberManager.phaseGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
+                                             value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.checklist : fieldManager.selectedEntity.checklist}"                                            
+                                             disabled="#{fieldManager.inputAction == 'DELETE'}">  
+                                <p:ajax listener="#{fieldManager.onGroupChange}" update="defaultStatus" />
+                                <f:selectItems value="#{fieldManager.checklists}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
                                 <p:column>
                                     <h:outputText value="#{grp.name}" />
                                 </p:column>
@@ -99,15 +109,15 @@
 
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="phase"  value="Phase" />
+                            <p:outputLabel for="phase"  value="Process" />
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="phase" var="grp" converter="#{phaseConverter}"
+                            <p:selectOneMenu id="phase" var="grp" converter="#{processConverter}"
                                              filter="true"
-                                             value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.phase : phaseMemberManager.selectedEntity.phase}"                                            
-                                             disabled="#{phaseMemberManager.inputAction == 'DELETE'}">
+                                             value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.process : fieldManager.selectedEntity.process}"                                            
+                                             disabled="#{fieldManager.inputAction == 'DELETE'}">
 
-                                <f:selectItems value="#{phaseMemberManager.phases}" var="p" itemLabel="#{p.name}" itemValue="#{b}" />
+                                <f:selectItems value="#{fieldManager.processes}" var="p" itemLabel="#{p.name}" itemValue="#{b}" />
                                 <p:column>
                                     <h:outputText value="#{grp.name}" />
                                 </p:column>
@@ -125,10 +135,10 @@
                         <p:column>
                             <p:selectOneMenu id="smeInp" var="role" converter="#{roleConverter}"
                                              filter="true"
-                                             value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.sme : phaseMemberManager.selectedEntity.sme}"                                            
-                                             disabled="#{phaseMemberManager.inputAction == 'DELETE'}">
+                                             value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.sme : fieldManager.selectedEntity.sme}"                                            
+                                             disabled="#{fieldManager.inputAction == 'DELETE'}">
 
-                                <f:selectItems value="#{phaseMemberManager.roles}" var="b" itemLabel="#{b.roleId}" itemValue="#{b}" />
+                                <f:selectItems value="#{fieldManager.roles}" var="b" itemLabel="#{b.roleId}" itemValue="#{b}" />
                                 <p:column>
                                     <h:outputText value="#{role.roleId}" />
                                 </p:column>
@@ -140,12 +150,12 @@
                     </p:row>
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="phaseSum"  value="Summary Phase" />
+                            <p:outputLabel for="phaseSum"  value="Summary Process" />
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox id="phaseSum" value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.summaryPhase : phaseMemberManager.selectedEntity.summaryPhase}" 
+                            <p:selectBooleanCheckbox id="phaseSum" value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.summaryProcess : fieldManager.selectedEntity.summaryProcess}" 
                                                      required="true" 
-                                                     validatorMessage="Value Required" disabled="#{phaseMemberManager.inputAction == 'DELETE'}"/>                            
+                                                     validatorMessage="Value Required" disabled="#{fieldManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
                     <p:row>
@@ -155,10 +165,10 @@
                         <p:column>
                              <p:selectOneMenu id="defaultStatus" var="stat" converter="#{statusOptionConverter}"
                                              filter="true"
-                                             value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.defaultStatus : phaseMemberManager.selectedEntity.defaultStatus}"                                            
-                                             disabled="#{phaseMemberManager.inputAction == 'DELETE'}">
+                                             value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.defaultStatus : fieldManager.selectedEntity.defaultStatus}"                                            
+                                             disabled="#{fieldManager.inputAction == 'DELETE'}">
 
-                                 <f:selectItems value="#{phaseMemberManager.statusOptions}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
+                                 <f:selectItems value="#{fieldManager.statusOptions}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
                                 <p:column>
                                     <h:outputText value="#{stat.name}" />
                                 </p:column>
@@ -173,9 +183,9 @@
                             <p:outputLabel for="phaseOpt"  value="Optional"  title="Is this phase optional?"/>
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox id="phaseOpt" value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.optional : phaseMemberManager.selectedEntity.optional}" 
+                            <p:selectBooleanCheckbox id="phaseOpt" value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.optional : fieldManager.selectedEntity.optional}" 
                                                      required="true" 
-                                                     validatorMessage="Value Required" disabled="#{phaseMemberManager.inputAction == 'DELETE'}"/>                            
+                                                     validatorMessage="Value Required" disabled="#{fieldManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
                     <p:row>
@@ -183,9 +193,9 @@
                             <p:outputLabel for="position"  value="Position" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="position" value="#{phaseMemberManager.inputAction == 'CREATE'? phaseMemberManager.inputEntity.position : phaseMemberManager.selectedEntity.position}" 
+                            <p:inputText id="position" value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.position : fieldManager.selectedEntity.position}" 
                                          required="true" 
-                                         validatorMessage="Description required" disabled="#{phaseMemberManager.inputAction == 'DELETE'}"  converterMessage="Please enter digits only"/>
+                                         validatorMessage="Description required" disabled="#{fieldManager.inputAction == 'DELETE'}"  converterMessage="Please enter digits only"/>
                               
                         </p:column>
                     </p:row>
@@ -195,13 +205,13 @@
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('crudInputWid').hide()"/>
                                 <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{phaseMemberManager.saveEntity()}"  
+                                                 action="#{fieldManager.saveEntity()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{phaseMemberManager.inputAction != 'DELETE'}"/>
+                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{fieldManager.inputAction != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
-                                                 action="#{phaseMemberManager.deleteEntity()}" 
+                                                 action="#{fieldManager.deleteEntity()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:entityTable" rendered="#{phaseMemberManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":crudForm:entityTable" rendered="#{fieldManager.inputAction == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

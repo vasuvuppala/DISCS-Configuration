@@ -35,7 +35,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_checklist" )
+@Table(name = "cl_checklist" )
 @NamedQueries({
     @NamedQuery(name = "Checklist.findAll", query = "SELECT d FROM Checklist d"),
     @NamedQuery(name = "Checklist.findDefaultForSlots", query = "SELECT d FROM Checklist d WHERE d.forDevices = FALSE AND d.defaultList = TRUE"),

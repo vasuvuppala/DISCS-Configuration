@@ -36,7 +36,7 @@ import org.openepics.discs.ccdb.model.auth.Role;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cm_checklist_field", 
+@Table(name = "cl_checklist_field", 
        uniqueConstraints=@UniqueConstraint(columnNames={"process", "checklist"}))
 @XmlRootElement
 @NamedQueries({

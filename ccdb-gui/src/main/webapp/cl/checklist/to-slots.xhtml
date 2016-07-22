@@ -52,7 +52,7 @@
                             <f:facet name="left">
                                 <p:commandButton value="Assign" title="Assign Checklist" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{slotChecklistBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not slotChecklistBean.noneHasChecklists}" />      
+                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not slotChecklistBean.noneHasChecklists or empty slotChecklistBean.defaultChecklist}" />      
                                 <p:commandButton value="Remove" title="Unassign" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{slotChecklistBean.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 

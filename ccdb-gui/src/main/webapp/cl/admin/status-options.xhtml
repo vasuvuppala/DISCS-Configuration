@@ -21,9 +21,9 @@
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">  
 
                     <p:ajax event="rowSelect" listener="#{statusOptionManager.onRowSelect}" update="commandButtons" />
-                    <p:column headerText="Proc Group" sortBy="#{obj.phaseGroup.name}" 
-                              filterBy="#{obj.phaseGroup.name}" filterMatchMode="contains">
-                        <h:outputText value="#{obj.phaseGroup.name}" styleClass="colCenter"/>
+                    <p:column headerText="Proc Group" sortBy="#{obj.checklist.name}" 
+                              filterBy="#{obj.checklist.name}" filterMatchMode="contains">
+                        <h:outputText value="#{obj.checklist.name}" styleClass="colCenter"/>
                     </p:column>
                     <p:column headerText="Name" sortBy="#{obj.name}" 
                               filterBy="#{obj.name}" filterMatchMode="contains" > 
@@ -83,15 +83,15 @@
                     
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="phaseGrp" value="Process Group"/>
+                            <p:outputLabel for="phaseGrp" value="Checklist"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="phaseGrp" var="grp" converter="#{phaseGroupConverter}"
+                            <p:selectOneMenu id="phaseGrp" var="grp" converter="#{checklistConverter}"
                                              filter="true"
-                                             value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.phaseGroup : statusOptionManager.selectedEntity.phaseGroup}"                                            
+                                             value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.checklist : statusOptionManager.selectedEntity.checklist}"                                            
                                              disabled="#{statusOptionManager.inputAction == 'DELETE'}">  
                                 
-                                <f:selectItems value="#{statusOptionManager.phaseGroups}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
+                                <f:selectItems value="#{statusOptionManager.checklists}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
                                 <p:column>
                                     <h:outputText value="#{grp.name}" />
                                 </p:column>
@@ -129,13 +129,13 @@
                         <p:column>
                             <p:selectBooleanCheckbox id="phaseLogic" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.logicalValue : statusOptionManager.selectedEntity.logicalValue}" 
                                                      required="true" 
-                                                     validatorMessage="Description required" disabled="#{statusOptionManager.inputAction == 'DELETE'}"/>                            
+                                                     validatorMessage="Logical Value required" disabled="#{statusOptionManager.inputAction == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
                     
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="completed"  value="Indicates Group Completion" />
+                            <p:outputLabel for="completed"  value="For the summary process, in a checklist, this value indicates completion i.e. a true value will freeze the assignment." />
                         </p:column>
                         <p:column>
                             <p:selectBooleanCheckbox id="completed" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.completed : statusOptionManager.selectedEntity.completed}" 
@@ -157,6 +157,7 @@
                         <p:column>
                             <p:outputLabel for="weight"  value="Relative Weight" />
                         </p:column>
+                        <p:tooltip for="weight" value="For the summary process, in a checklist, this value must be greater than or equal to the rest of the fields." />
                         <p:column>
                             <p:inputText id="weight" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.weight : statusOptionManager.selectedEntity.weight}" 
                                          required="true" 

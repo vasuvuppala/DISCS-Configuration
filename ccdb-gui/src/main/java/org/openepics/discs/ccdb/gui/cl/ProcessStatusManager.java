@@ -74,7 +74,7 @@ import org.primefaces.event.SelectEvent;
  */
 @Named
 @ViewScoped
-public class StatusPivotManager implements Serializable {
+public class ProcessStatusManager implements Serializable {
 
     public static class SelectablePhase implements Serializable {
 
@@ -104,7 +104,6 @@ public class StatusPivotManager implements Serializable {
             this.phase = phase;
         }
     }
-    
 
     @EJB
     private ChecklistEJB lcEJB;
@@ -113,12 +112,12 @@ public class StatusPivotManager implements Serializable {
     @Inject
     private SecurityPolicy securityPolicy;
 
-    private static final Logger LOGGER = Logger.getLogger(StatusPivotManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProcessStatusManager.class.getName());
 
     // request parameters
     private ChecklistEntity entityType = ChecklistEntity.GROUP;
     // private String selectedPhaseGroup;
-    
+
     // view data
     private List<SlotGroup> slotGroups;
     private List<Process> phases;
@@ -130,21 +129,21 @@ public class StatusPivotManager implements Serializable {
     private Boolean allPhasesOptional = false; // are all selected phases optional? or is there a mandatory phase?
     private Boolean phaseSelected = false; // is at least one phase selected?
     private List<Assignment> selectedEntities = new ArrayList<>();
-    
+
     // input data
     private Assignment inputEntity;
     private InputAction inputAction;
     private StatusOption inputStatus;
     private String inputComment;
     private User inputSME;
-    
-    public StatusPivotManager() {
+
+    public ProcessStatusManager() {
     }
 
     @PostConstruct
     public void init() {
         slotGroups = lcEJB.findAllSlotGroups();
-        users = authEJB.findAllUsers();        
+        users = authEJB.findAllUsers();
     }
 
     /**
@@ -154,7 +153,7 @@ public class StatusPivotManager implements Serializable {
      */
     public String initialize() {
         String nextView = null;
- 
+
         switch (entityType) {
             case GROUP:
                 entities = lcEJB.findGroupAssignments();
@@ -168,7 +167,10 @@ public class StatusPivotManager implements Serializable {
             default:
                 entities = lcEJB.findGroupAssignments();
         }
-        
+        if (entities == null || entities.isEmpty()) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No assignments were found", "Did you forget to assign checklists?");
+        }
+
         Checklist checklist = lcEJB.findDefaultChecklist(entityType);
         if (checklist == null) {
             phases = lcEJB.findAllPhases();
@@ -178,58 +180,45 @@ public class StatusPivotManager implements Serializable {
         }
         selectablePhases = phases == null ? Collections.<SelectablePhase>emptyList() : phases.stream().map(p -> new SelectablePhase(p)).collect(Collectors.toList());
         updatePhaseSelected();
-        
+
         return nextView;
     }
 
     /**
-     * Is an assignment locked/frozen i.e. its summary phase is completed (set to Y or YC?
-     * 
+     * Is an assignment locked/frozen i.e. its summary phase is completed (set
+     * to Y or YC?
+     *
      * @param assignment
-     * @return 
+     * @return
      */
     public Boolean lockedAssignment(Assignment assignment) {
-        if (assignment == null) return false;
+        if (assignment == null) {
+            return false;
+        }
         // return assignment.getStatuses().stream().filter(s -> s.getGroupMember().getSummaryPhase()).allMatch(s -> s.getStatus() == null? false: s.getStatus().getCompleted());
         Boolean hasSummary = false;
-        for(ProcessStatus status: assignment.getStatuses()) {
+        for (ProcessStatus status : assignment.getStatuses()) {
             if (status.getField().getSummaryProcess() && status.getStatus() != null) {
                 hasSummary = true;
-                if (! status.getStatus().getCompleted()) {
+                if (!status.getStatus().getCompleted()) {
                     return false;
                 }
             }
         }
         return hasSummary;
     }
-    
-     /**
-     * Is a phase of an assignment locked/frozen?
-     * 
-     * @param assignment
-     * @param phase
-     * @return 
-     */
-    public Boolean lockedAssignment(Assignment assignment, Process phase) {
-        ProcessStatus phaseStatus = getStatusRec(assignment,phase);
-        if (phaseStatus == null) return false;
-        if (phaseStatus.getField().getSummaryProcess()) return false;
-        return lockedAssignment(assignment);
-    }
-    
+
     /**
-     * Is a phase of an assignment locked/frozen or optional?
+     * Is a process of an assignment locked/frozen? A process is locked if the
+     * assignment is locked unless it is a summary process.
      *
      * @param assignment
      * @param phase
      * @return
      */
-    public Boolean lockedOrOptionalAssignment(Assignment assignment, Process phase) {
+    public Boolean lockedAssignment(Assignment assignment, Process phase) {
         ProcessStatus phaseStatus = getStatusRec(assignment, phase);
         if (phaseStatus == null) {
-            return false;
-        }
-        if (phaseStatus.getStatus() == null) { // is the process optional (not required)?
             return true;
         }
         if (phaseStatus.getField().getSummaryProcess()) {
@@ -237,10 +226,38 @@ public class StatusPivotManager implements Serializable {
         }
         return lockedAssignment(assignment);
     }
-    
+
+    /**
+     * Is a process for an assignment required?
+     *
+     * @param assignment
+     * @param phase
+     * @return
+     */
+    public Boolean notRequired(Assignment assignment, Process phase) {
+        ProcessStatus processStatus = getStatusRec(assignment, phase);
+        if (processStatus == null) {
+            return true;
+        }
+        return processStatus.getStatus() == null;
+    }
+
+//    public Boolean lockedOrOptionalAssignment(Assignment assignment, Process phase) {
+//        ProcessStatus phaseStatus = getStatusRec(assignment, phase);
+//        if (phaseStatus == null) {
+//            return false;
+//        }
+//        if (phaseStatus.getStatus() == null) { // is the process optional (not required)?
+//            return true;
+//        }
+//        if (phaseStatus.getField().getSummaryProcess()) {
+//            return false;
+//        }
+//        return lockedAssignment(assignment);
+//    }
     /**
      * reset all input fields
-     * 
+     *
      */
     public void resetInput() {
         inputAction = InputAction.READ;
@@ -249,14 +266,16 @@ public class StatusPivotManager implements Serializable {
             inputStatus = statusOptions.get(0);
         }
         selectedEntities.clear();
-        selectablePhases.forEach(p -> {p.setSelected(false);});
+        selectablePhases.forEach(p -> {
+            p.setSelected(false);
+        });
         updatePhaseSelected();
     }
 
     /**
      * when a row is selected
-     * 
-     * @param event 
+     *
+     * @param event
      */
     public void onRowSelect(SelectEvent event) {
     }
@@ -286,7 +305,7 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * check if at least one phase is selected.
-     * 
+     *
      */
     private void updatePhaseSelected() {
         phaseSelected = selectablePhases.stream().anyMatch(p -> p.selected == true);
@@ -294,8 +313,8 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * when 'add' button is activated
-     * 
-     * @param event 
+     *
+     * @param event
      */
     public void onAddCommand(ActionEvent event) {
         inputEntity = new Assignment();
@@ -304,8 +323,8 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * when Edit button is activated
-     * 
-     * @param event 
+     *
+     * @param event
      */
     public void onEditCommand(ActionEvent event) {
         inputAction = InputAction.UPDATE;
@@ -315,7 +334,8 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * when delete button is activated
-     * @param event 
+     *
+     * @param event
      */
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
@@ -341,19 +361,21 @@ public class StatusPivotManager implements Serializable {
     }
 
     /**
-     * Convert status to 
+     * Convert status to
+     *
      * @param status
      * @return
      */
     private Integer toInt(StatusOption status) {
-        return status == null? 0: status.getWeight();
+        return status == null ? 0 : status.getWeight();
     }
 
     /**
-     * Weight of a given phase status. If it is selected then use the input status, otherwise use the stored status.
-     * 
+     * Weight of a given phase status. If it is selected then use the input
+     * status, otherwise use the stored status.
+     *
      * @param status
-     * @return 
+     * @return
      */
     private Integer toInt(ProcessStatus status) {
         for (SelectablePhase selPhase : selectablePhases) {
@@ -366,7 +388,7 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * is the status of the given phase valid?
-     * 
+     *
      * @param summaryStatus
      * @return
      */
@@ -379,7 +401,7 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * Get the weight of the summary status
-     * 
+     *
      * @param status
      * @return
      */
@@ -397,7 +419,7 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * when a phase is selected/unselected
-     * 
+     *
      * @param phase
      */
     public void onTogglePhase(Process phase) {
@@ -407,7 +429,7 @@ public class StatusPivotManager implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param status
      * @return
      */
@@ -430,7 +452,6 @@ public class StatusPivotManager implements Serializable {
 //
 //        return "Y";
 //    }
-
     /**
      * When a cell is clicked for edits
      *
@@ -446,7 +467,7 @@ public class StatusPivotManager implements Serializable {
             inputSME = statusRec.getAssignedSME();
             inputComment = statusRec.getComment();
         } else {
-            LOGGER.log(Level.WARNING,"Status record not found!");
+            LOGGER.log(Level.WARNING, "Status record not found!");
         }
         selectedEntities.clear();
         selectedEntities.add(assignment);
@@ -459,20 +480,21 @@ public class StatusPivotManager implements Serializable {
 
     /**
      * Check if user is authorized to update the status
-     * 
+     *
      * ToDo: check roles and permissions
-     * 
+     *
      * @param status
      * @param user
-     * @return 
+     * @return
      */
     private boolean isAuthorized(String view, ProcessStatus status, User user) {
         return "sme".equals(view) || status.getAssignedSME() == null || status.getAssignedSME().equals(user);
     }
-    
+
     /**
-     * Update status of the selected entities and phases
+     * Update status of the selected entities and phases 
      * ToDo: Remove 'view' parameter
+     * 
      */
     public void saveEntity(String view) {
         try {
@@ -499,7 +521,7 @@ public class StatusPivotManager implements Serializable {
                 for (Assignment record : selectedEntities) {
                     for (ProcessStatus status : record.getStatuses()) {
                         if (selectedPhase.phase.equals(status.getField().getProcess())) {
-                            if (! isAuthorized(view, status, user)) {
+                            if (!isAuthorized(view, status, user)) {
                                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                                         "You are not authorized to update one or more of the statuses.");
                                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
@@ -522,8 +544,8 @@ public class StatusPivotManager implements Serializable {
                             status.setModifiedBy(user.getUserId());
                             status.setStatus(inputStatus);
                             status.setComment(inputComment);
-                            status.setAssignedSME(inputSME);                           
-                            lcEJB.saveProcessStatus(status);                          
+                            status.setAssignedSME(inputSME);
+                            lcEJB.saveProcessStatus(status);
                             lcEJB.refreshVersion(ProcessStatus.class, status); // ToDo: to update the version field
                             // lcEJB.refreshVersion(status); // ToDo: to update the version field
                         }
@@ -539,17 +561,17 @@ public class StatusPivotManager implements Serializable {
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
 
-        } finally {   
+        } finally {
 //            resetInput();
         }
     }
 
     /**
-     * Find  status record for the given assignment and phase
-     * 
+     * Find status record for the given assignment and phase
+     *
      * @param assignment
      * @param phase
-     * @return 
+     * @return
      */
     public ProcessStatus getStatusRec(Assignment assignment, Process phase) {
 
@@ -566,12 +588,12 @@ public class StatusPivotManager implements Serializable {
 
         return null;
     }
-    
+
     /**
      * Default SMEs of a checklist process
-     * 
+     *
      * @param status
-     * @return 
+     * @return
      */
     public String defaultSME(ProcessStatus status) {
         List<UserRole> userRoles = status.getField().getSme().getUserRoleList();
@@ -579,16 +601,15 @@ public class StatusPivotManager implements Serializable {
             return "Default";
         } else {
 //            return userRoles.get(0).getUser().getUserId();
-            StringJoiner smes = new StringJoiner(", ", "[","]");
-            for(UserRole userRole: userRoles) {
+            StringJoiner smes = new StringJoiner(", ", "", "");
+            for (UserRole userRole : userRoles) {
                 smes.add(userRole.getUser().getName());
             }
             return smes.toString();
         }
     }
-     
-    //-- Getters/Setters 
 
+    //-- Getters/Setters 
     public InputAction getInputAction() {
         return inputAction;
     }
@@ -675,5 +696,9 @@ public class StatusPivotManager implements Serializable {
 
     public ChecklistEntity getEntityType() {
         return entityType;
+    }
+
+    public void setEntityType(ChecklistEntity entityType) {
+        this.entityType = entityType;
     }
 }
