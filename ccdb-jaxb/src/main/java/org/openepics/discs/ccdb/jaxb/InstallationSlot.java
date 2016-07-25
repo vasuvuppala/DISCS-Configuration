@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 
 /**
  * This is data transfer object representing a CCDB installation slot for JSON and XML serialization.
@@ -70,6 +71,10 @@ public class InstallationSlot {
     @XmlAnyElement(lax = true)
     private List<PropertyValue> properties;
     
+    @XmlElementWrapper(name = "status")
+    @XmlAnyElement(lax = true)
+    private List<ProcessStatus> statuses;
+    
     public InstallationSlot() { }
 
     public String getName() { return name; }
@@ -101,4 +106,12 @@ public class InstallationSlot {
 
     public List<PropertyValue> getProperties() { return properties; }
     public void setProperties(List<PropertyValue> properties) { this.properties = properties; }
+
+    public List<ProcessStatus> getStatuses() {
+        return statuses;
+    }
+
+    public void setStatuses(List<ProcessStatus> statuses) {
+        this.statuses = statuses;
+    }
 }

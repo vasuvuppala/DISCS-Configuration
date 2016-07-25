@@ -42,6 +42,7 @@ import org.openepics.discs.ccdb.model.auth.Role;
 @NamedQueries({
     @NamedQuery(name = "ChecklistField.findAll", query = "SELECT d FROM ChecklistField d"),
     @NamedQuery(name = "ChecklistField.findPhasesByChecklist", query = "SELECT d.process FROM ChecklistField d WHERE d.checklist = :checklist ORDER BY d.position ASC"),
+    @NamedQuery(name = "ChecklistField.findOptionalFields", query = "SELECT d.process FROM ChecklistField d WHERE d.checklist = :checklist AND d.optional = TRUE ORDER BY d.position ASC"),
     @NamedQuery(name = "ChecklistField.findDefault", query = "SELECT d.defaultStatus FROM ChecklistField d WHERE d.checklist = :checklist AND d.process = :process"),
     @NamedQuery(name = "ChecklistField.findByChecklist", query = "SELECT d FROM ChecklistField d WHERE d.checklist = :checklist ORDER BY d.position ASC")
 })

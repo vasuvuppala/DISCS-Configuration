@@ -8,14 +8,14 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content"> 
-        <f:metadata>
+        <f:metadata>          
             <f:viewParam name="et" value="#{processStatusManager.entityType}"  />
             <f:viewAction action="#{processStatusManager.initialize(false)}" />
         </f:metadata>
 
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="Subject Matter Experts" styleClass="heading"/>
+                <h:outputText value="Update Status" styleClass="heading"/>
                 <ui:fragment rendered="#{empty processStatusManager.entities}">
                     <p:panel>
                         <p:spacer height="15"/>
@@ -23,63 +23,62 @@
                         <p:link href="/cl/docs/checklist-proc.xhtml" value="the checklists workflow." />
                     </p:panel>                                    
                 </ui:fragment>
-                <p:dataTable rendered="#{not empty processStatusManager.entities}"
+
+                <p:dataTable rendered="#{not empty processStatusManager.entities}" 
                              var="assignment" id="entityTable" 
                              value="#{processStatusManager.entities}"
                              emptyMessage="No records found."  rowSelectMode="checkbox"
                              rowKey="#{assignment.id}" 
                              selection="#{processStatusManager.selectedEntities}"
-                             disabledSelection="#{processStatusManager.lockedAssignment(assignment)}"
                              resizableColumns="true" filteredValue="#{processStatusManager.filteredEntities}" 
+                             disabledSelection="#{processStatusManager.lockedAssignment(assignment)}"
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">   
 
                     <p:ajax event="rowSelectCheckbox" listener="#{processStatusManager.onRowSelect}" update="commandButtons" />
-                    <p:ajax event="toggleSelect"  update="commandButtons" />
+                    <p:ajax event="toggleSelect"  update="commandButtons"  process="@this"/>
                     <p:ajax event="rowUnselectCheckbox"  update="commandButtons" />
+
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"  />
                     <p:column headerText="Group" sortBy="#{assignment.slotGroup.name}" filterBy="#{assignment.slotGroup.name}"
-                              filterMatchMode="contains"  rendered="#{processStatusManager.entityType eq  'GROUP'}">
+                              filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'GROUP'}">
                         <h:outputText value="#{assignment.slotGroup.name}" />
                     </p:column>
-
                     <p:column headerText="Slot" sortBy="#{assignment.slot.name}" filterBy="#{assignment.slot.name}"
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'SLOT'}">
                         <h:outputText value="#{assignment.slot.name}" />
                     </p:column>
-
                     <p:column headerText="Device" sortBy="#{assignment.device.serialNumber}" filterBy="#{assignment.device.serialNumber}"
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'DEVICE'}">
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
-
                     <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
-                              filterMatchMode="contains" >
+                              filterMatchMode="contains"  rendered="false">
                         <h:outputText value="#{assignment.requestor.name}" />
-                    </p:column>   
+                    </p:column>
 
                     <c:forEach items="#{processStatusManager.selectablePhases}" var="selPhase" varStatus="loop">
-                        <p:column style="text-align: center">
+                        <p:column style="text-align: center">                       
                             <f:facet name="header">                          
                                 <p:selectBooleanCheckbox value="#{selPhase.selected}"  itemLabel="#{selPhase.phase.name}">
                                     <p:ajax  listener="#{processStatusManager.onTogglePhase(selPhase.phase)}" update=":crudForm:entityTable:commandButtons" />
-                                </p:selectBooleanCheckbox>                            
+                                </p:selectBooleanCheckbox>                              
                             </f:facet>
 
-                            <ui:include src="sme-disp.xhtml">
+                            <ui:include src="status-disp.xhtml">
                                 <ui:param name="statusRec" value="#{processStatusManager.getStatusRec(assignment, selPhase.phase)}" />
                                 <ui:param name="statusId" value="stat-#{loop.index}" />
-                            </ui:include>    
-                            <p:spacer width="3"/>
-                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"
-                                           rendered="#{not processStatusManager.notRequired(assignment, selPhase.phase)}"
+                            </ui:include>
+                            <p:spacer width="5"/>
+                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}" 
+                                           rendered="#{not processStatusManager.lockedAssignment(assignment, selPhase.phase) and not processStatusManager.notRequired(assignment, selPhase.phase)}"
                                            actionListener="#{processStatusManager.onCellEdit(assignment, selPhase.phase)}" 
-                                           oncomplete="PF('crudInputWid').show()" styleClass="iconDisplay">
+                                           oncomplete="PF('crudInputWid').show()"   styleClass="iconDisplay">                      
                                 <i class="fa fa-pencil-square-o" title="modify" />
                             </p:commandLink>
-                        </p:column>         
-                    </c:forEach>
+                        </p:column>
+                    </c:forEach>                                    
 
                     <f:facet name="footer">
                         <p:toolbar id="commandButtons">
@@ -87,6 +86,7 @@
                                 <p:commandButton title="Update"  value="Modify" icon="ui-icon-document" update=":crudInputDlg" process="@form" 
                                                  actionListener="#{processStatusManager.onEditCommand}" oncomplete="PF('crudInputWid').show()"
                                                  disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty processStatusManager.selectedEntities or not processStatusManager.phaseSelected}" />   
+
                                 <p:commandButton title="Reset" value="Reset" icon="ui-icon-refresh" update=":crudForm:entityTable" process="@this" 
                                                  actionListener="#{processStatusManager.resetInput()}"  
                                                  disabled="#{empty processStatusManager.selectedEntities and not processStatusManager.phaseSelected}"/>
@@ -104,7 +104,7 @@
                         <p:row>
                             <p:column colspan="2">
                                 <!--<h:outputText value="Add" rendered="#{processStatusManager.inputAction == 'CREATE'}"/>-->
-                                <h:outputText value="Update SME" />
+                                <h:outputText value="Update Status" />
                                 <!--<h:outputText value="Delete" rendered="#{processStatusManager.inputAction == 'DELETE'}"/>-->
                             </p:column>                
                         </p:row>
@@ -113,7 +113,7 @@
 
                     <p:row>
                         <p:column>
-                            <p:outputLabel value="Phases"/>                        
+                            <p:outputLabel value="Fields"/>                        
                         </p:column>
                         <p:column> 
                             <ui:repeat var="sp" value="#{processStatusManager.selectablePhases}" >
@@ -127,23 +127,42 @@
 
                     <p:row>
                         <p:column>
-                            <p:outputLabel value="SME"/>                        
+                            <p:outputLabel value="Status"/>                        
                         </p:column>
                         <p:column> 
-                            <p:selectOneMenu id="asme"  converter="#{userConverter}" value="#{processStatusManager.inputSME}"  style="width: 200px;"> 
-                                <f:selectItem itemLabel="Default" itemValue="#{null}" />
-                                <f:selectItems value="#{processStatusManager.users}" var="b" itemLabel="#{b.name}" itemValue="#{b}"/>                               
+                            <p:selectOneMenu id="status1"  converter="#{statusOptionConverter}"                                            
+                                             value="#{processStatusManager.inputStatus}"  rendered="#{not processStatusManager.allPhasesOptional}">                                 
+                                <f:selectItems value="#{processStatusManager.statusOptions}" var="b" itemLabel="#{b.name}: #{b.description}" itemValue="#{b}" />
+                                <p:ajax update="comment" process="status1"/>
+                            </p:selectOneMenu>
+                            <p:selectOneMenu id="status2"  converter="#{statusOptionConverter}"                                            
+                                             value="#{processStatusManager.inputStatus}"  rendered="#{processStatusManager.allPhasesOptional}"> 
+                                <p:ajax update="comment" process="status2"/>
+                                <!--<f:selectItem itemLabel="NA: Not Applicable" itemValue="#{null}" />-->
+                                <f:selectItems value="#{processStatusManager.statusOptions}" var="b" itemLabel="#{b.name}: #{b.description}" itemValue="#{b}" />                               
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
-
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="comment" value="Comment"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputTextarea id="comment" value="#{processStatusManager.inputComment}" 
+                                             rows="5" cols="40" counter="display" maxlength="250" 
+                                             counterTemplate="{0} characters remaining." 
+                                             autoResize="false"  required="#{processStatusManager.inputStatus.commentRequired}"/> 
+                            <br/>
+                            <h:outputText id="display" />
+                        </p:column>
+                    </p:row>
                     <f:facet name="footer">
                         <p:row>
                             <p:column colspan="2">
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
-                                                 actionListener="#{processStatusManager}" onclick="PF('crudInputWid').hide()"/>
+                                                 onclick="PF('crudInputWid').hide()"/>
                                 <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{processStatusManager.saveEntity('sme')}"  
+                                                 action="#{processStatusManager.saveEntity('status')}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
                                                  process="@form"  update="@form :crudForm:entityTable" rendered="#{processStatusManager.inputAction != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"

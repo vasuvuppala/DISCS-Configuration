@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:fragment  rendered="#{not empty statusRec}" >
+        <h:outputText id="#{statusId}" value="#{empty statusRec.status ? 'No': 'Yes'}"/>     
+    </ui:fragment>
+    <h:outputText value="New Field" rendered="#{empty statusRec}" title="This is a new process that was added to the checklist after the assignment was made."/>
+
+</ui:composition>

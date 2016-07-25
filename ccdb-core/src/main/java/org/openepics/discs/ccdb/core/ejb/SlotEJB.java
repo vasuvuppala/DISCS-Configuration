@@ -661,7 +661,9 @@ public class SlotEJB extends DAO<Slot> {
         }
     }
 
-    private SlotPropertyValue getPropertyValue(final Slot slot, final String pvName) {
+    public SlotPropertyValue getPropertyValue(final Slot slot, final String pvName) {
+        if (slot.getSlotPropertyList() == null) return null;
+        
         for (final SlotPropertyValue pv : slot.getSlotPropertyList()) {
             if (pv.getProperty().getName().equals(pvName)) {
                 return pv;

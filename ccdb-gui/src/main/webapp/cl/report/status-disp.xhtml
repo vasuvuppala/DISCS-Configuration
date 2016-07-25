@@ -19,7 +19,8 @@
                 <h:outputText value="#{statusRec.comment}" />                                
             </p:overlayPanel>          
         </ui:fragment>
+        <h:outputText value="NA" title="Not Applicable" rendered="#{empty statusRec.status}" />
     </ui:fragment>
 
-    <h:outputText value="NA"  title="Not Assigned" rendered="#{empty statusRec}"/>
+    <h:outputText value="New Field"  title="New Field" rendered="#{empty statusRec}"/>
 </ui:composition>

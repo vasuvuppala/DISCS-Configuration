@@ -24,11 +24,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
+import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
+import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 import org.openepics.discs.ccdb.model.cl.Checklist;
@@ -167,6 +170,30 @@ public class StatusReport implements Serializable {
         return null;
     }
     
+    /**
+     * approval status
+     * 
+     * @param processName
+     * @param slot
+     * @return 
+     */
+    public String approvalStatus(String processName, Slot slot) {       
+        Process selectedProcess = lcEJB.findPhaseByName(processName);
+        if (selectedProcess == null) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Invalid process name", "not process found");
+        }
+        
+        if ("AM OK".equals(processName)) {
+            ProcessStatus status = getStatusRec(slot, selectedProcess);
+            if (status == null) return "Not Assigned";
+            return status.getStatus().getName();
+        } else {
+            Approval approval = lcEJB.findApproval(selectedProcess, slot);
+            if (approval == null) return "Not Approved";
+            return approval.getApproved() ? "Approved" : "Not Approved"; 
+        }
+         
+    }
     // getters and setters
 
     public List<ProcessStatus> getFilteredStatus() {

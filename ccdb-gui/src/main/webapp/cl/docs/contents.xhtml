@@ -82,7 +82,9 @@
                 interfaces to the larger subsystem, are ready for operation.  Checklists for slots and groups are typically a 
                 verification that the critical and complex beamline devices are now properly installed and configured for use.
             </p>
-
+            
+            <p:graphicImage value="#{resource['images/cm/checklist.png']}"/>
+            
             <h2 id='roles'>
                 Roles and Responsibilities
             </h2>
@@ -121,7 +123,7 @@
                 <ul>
                     <li> When a checklist is assigned, all the fields will get a default status value. 
                         This is defined by the Configuration Manager during setup of checklists.</li>
-                    <li>An Area Manager or Device Owner can set certain fields to NR ('Not Required'). 
+                    <li>An Area Manager or Device Owner can set certain fields to NA ('Not Required'). 
                         However, this cannot be done for some fields (such as AM-OK or DO-OK).</li>
                     <li>Once an Area Manager sets the summary fields (e.g. AM-OK) to a final status (e.g. Y or YC),
                         the Group or Slot is frozen i.e the status of the rest of the fields cannot be updated. Area Manager 
@@ -174,7 +176,7 @@
                 FAQs
             </h2>
             <ul>
-                <li>Why can't I set certain fields to NR?</li>
+                <li>Why can't I set certain fields to NA?</li>
                 <li>Why can't I update status of certain slots, groups, or devices?</li>
                 <li>Why are some slots not listed when updating slot status?</li>
                 <li>How can I unfreeze a slot, group, or device?</li>

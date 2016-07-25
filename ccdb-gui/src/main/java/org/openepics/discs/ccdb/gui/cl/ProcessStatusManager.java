@@ -136,6 +136,7 @@ public class ProcessStatusManager implements Serializable {
     private StatusOption inputStatus;
     private String inputComment;
     private User inputSME;
+    
 
     public ProcessStatusManager() {
     }
@@ -149,9 +150,10 @@ public class ProcessStatusManager implements Serializable {
     /**
      * Initialize data in view
      *
+     * @param onlyOptionalFields initialize with optional processes only
      * @return
      */
-    public String initialize() {
+    public String initialize(Boolean onlyOptionalFields) {
         String nextView = null;
 
         switch (entityType) {
@@ -173,9 +175,10 @@ public class ProcessStatusManager implements Serializable {
 
         Checklist checklist = lcEJB.findDefaultChecklist(entityType);
         if (checklist == null) {
-            phases = lcEJB.findAllPhases();
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No default checklist found", "Make sure checklists are configured properly.");
+            return nextView;
         } else {
-            phases = lcEJB.findPhases(checklist);
+            phases = onlyOptionalFields? lcEJB.findOptionalFields(checklist) : lcEJB.findPhases(checklist);
             statusOptions = lcEJB.findStatusOptions(checklist);
         }
         selectablePhases = phases == null ? Collections.<SelectablePhase>emptyList() : phases.stream().map(p -> new SelectablePhase(p)).collect(Collectors.toList());
@@ -566,6 +569,60 @@ public class ProcessStatusManager implements Serializable {
         }
     }
 
+    /**
+     * Include/exclude processes to/from selected assignments
+     * ToDo: should be combined with saveEntity()
+     * 
+     * @param exclude
+     */
+    public void assignProcesses(Boolean exclude) {
+        try {
+            Preconditions.checkNotNull(selectedEntities);
+            
+            String userId = securityPolicy.getUserId();
+            if (userId == null) {
+                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
+                        "You are not authorized. User Id is null.");
+                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+                return;
+            }
+            User user = new User(userId);        
+
+            // ToDo: Improve. really bad code
+            for (SelectablePhase selectedPhase : selectablePhases) {
+                if (!selectedPhase.selected) {
+                    continue;
+                }
+                for (Assignment record : selectedEntities) {
+                    for (ProcessStatus status : record.getStatuses()) {
+                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
+                            status.setModifiedAt(new Date());
+                            status.setModifiedBy(user.getUserId());
+                            status.setStatus(exclude? null: status.getField().getDefaultStatus());
+                            // status.setComment(inputComment);                        
+                            lcEJB.saveProcessStatus(status);
+                            lcEJB.refreshVersion(ProcessStatus.class, status); // ToDo: to update the version field
+                            // lcEJB.refreshVersion(status); // ToDo: to update the version field
+                        }
+                    }
+                }
+            }
+            RequestContext.getCurrentInstance().addCallbackParam("success", true);
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
+                    "Update successful.");
+            resetInput();
+        } catch (Exception e) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Error. Could not update status.", e.getMessage());
+            RequestContext.getCurrentInstance().addCallbackParam("success", false);
+            System.out.println(e);
+
+        } finally {
+//            resetInput();
+        }
+    }
+    
+    
+    
     /**
      * Find status record for the given assignment and phase
      *

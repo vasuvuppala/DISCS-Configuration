@@ -32,6 +32,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.User;
+import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Assignment;
@@ -79,6 +80,17 @@ public class ChecklistEJB {
         return em.createNamedQuery("ChecklistField.findPhasesByChecklist", Process.class).setParameter("checklist", checklist).getResultList();
     }
     
+    /**
+     * Reviews with a given tag
+     * 
+     * @param checklist
+     * 
+     * @return a list of all {@link Process}s ordered by name.
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<Process> findOptionalFields(Checklist checklist) {
+        return em.createNamedQuery("ChecklistField.findOptionalFields", Process.class).setParameter("checklist", checklist).getResultList();
+    }
     
     /**
      * save a process
@@ -115,6 +127,29 @@ public class ChecklistEJB {
         return em.find(Process.class, id);
     }
     
+    /**
+     * find a process given its id
+     *
+     * @param name
+     * @return the process
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Process findPhaseByName(String name) {
+        List<Process> processes = em.createNamedQuery("Process.findByName", Process.class).setParameter("name", name).getResultList();
+        if (processes == null || processes.isEmpty()) {
+            return null;
+        }
+        return processes.get(0);
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Approval findApproval(Process process, Slot slot) {
+        List<Approval> approvals = em.createNamedQuery("Approval.findBySlotProc", Approval.class).setParameter("slot", slot).setParameter("process", process).getResultList();
+        if (approvals == null || approvals.isEmpty()) {
+            return null;
+        }
+        return approvals.get(0);
+    }
     // ----------------- Assignments 
     /**
      * All assignments
@@ -243,7 +278,7 @@ public class ChecklistEJB {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
      public Long numberOfApprovedSlots(String prefix) {
-        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.groupMember.summaryPhase = TRUE AND p.status.completed = TRUE" , Long.class)
+        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE" , Long.class)
                 .setParameter("prefix", prefix)
                 .getSingleResult();
     }
@@ -444,6 +479,40 @@ public class ChecklistEJB {
            throw new IllegalStateException("Checklists are missing or not configured properly. Inform Configuration Manager about this error.");
        }
        assignChecklist(entities, checklist);
+    }
+    
+    /**
+     * set approvals
+     * ToDo: really inefficient. temporary. improve.
+     * 
+     * @param process
+     * @param slots
+     * @param approved 
+     */
+    public void setApprovals(Process process, List<Slot> slots, Boolean approved) {
+        List<Approval> approvals = em.createNamedQuery("Approval.findBySlots", Approval.class)
+                .setParameter("slots", slots)
+                .setParameter("process", process).
+                getResultList();
+        boolean newApproval;
+        
+        for (Slot slot : slots) {
+            newApproval = true;
+            for (Approval approval : approvals) { // ToDo: not the right way
+                if (slot.equals(approval.getSlot())) {
+                    approval.setApproved(approved);
+                    newApproval = false;
+                    break;
+                }
+            }
+            if (newApproval) {
+                Approval approval = new Approval();
+                approval.setSlot(slot);
+                approval.setProcess(process);
+                approval.setApproved(approved);
+                em.persist(approval);
+            }
+        }
     }
     
      /**

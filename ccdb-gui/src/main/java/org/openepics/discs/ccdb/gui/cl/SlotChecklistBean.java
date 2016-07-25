@@ -27,10 +27,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.openepics.discs.ccdb.core.ejb.AuthEJB;
-import org.openepics.discs.ccdb.core.ejb.DeviceEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
-import org.openepics.discs.ccdb.core.ejb.SlotEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Slot;
@@ -95,6 +92,7 @@ public class SlotChecklistBean implements Serializable {
     @PostConstruct
     public void init() {
         entities = lcEJB.findUngroupedSlots();
+        defaultChecklist = lcEJB.findDefaultChecklist(ENTITY_TYPE);
         resetInput();
     }
 

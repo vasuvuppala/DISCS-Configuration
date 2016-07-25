@@ -70,6 +70,13 @@
                     <p:menuitem value="To Groups" icon="fa fa-list-alt" url="/cl/checklist/to-groups.xhtml" />
                     <p:menuitem value="To Slots" icon="fa fa-list-alt" url="/cl/checklist/to-slots.xhtml" />                    
                 </p:submenu>
+                
+               <p:submenu label="Assign Fields" icon="fa fa-list-alt">
+                    <p:menuitem value="Devices" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=DEVICE" />
+                    <p:menuitem value="Groups" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=GROUP" />
+                    <p:menuitem value="Slots" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=SLOT" />                    
+                </p:submenu>
+                
                 <p:submenu label="Assign SMEs" icon="fa fa-list-alt">
                     <p:menuitem value="To Devices" icon="fa fa-list-alt" url="/cl/sme/smes.xhtml?et=DEVICE" />
                     <p:menuitem value="To Groups" icon="fa fa-list-alt" url="/cl/sme/smes.xhtml?et=GROUP" />
@@ -77,9 +84,9 @@
                 </p:submenu>   
               
                 <p:submenu label="Update Status" icon="fa fa-list-alt">
-                    <p:menuitem value="Of Devices" icon="fa fa-list-alt" url="/cl/status/update-pivot.xhtml?et=DEVICE" />
-                    <p:menuitem value="Of Groups" icon="fa fa-list-alt" url="/cl/status/update-pivot.xhtml?et=GROUP" />
-                    <p:menuitem value="Of Slots" icon="fa fa-list-alt" url="/cl/status/update-pivot.xhtml?et=SLOT" />                    
+                    <p:menuitem value="Of Devices" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=DEVICE" />
+                    <p:menuitem value="Of Groups" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=GROUP" />
+                    <p:menuitem value="Of Slots" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=SLOT" />                    
                 </p:submenu>
                             
                 <p:submenu label="Slot Groups" icon="fa fa-list-alt">
@@ -94,6 +101,11 @@
                     <p:menuitem value="Readiness" icon="fa fa-list-alt" url="/cl/report/readiness.xhtml" /> 
                 </p:submenu>    
                 <p:menuitem value="User Manual" icon="fa fa-list-alt" url="/cl/docs/usermanual.xhtml" />
+            </p:submenu>
+             <p:submenu label="Approvals" icon="fa fa-thumbs-o-up ">
+                <p:menuitem value="DHR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=DHR" />             
+                <p:menuitem value="ARR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=ARR" />        
+                <p:menuitem value="Status Report" icon="fa  fa-thumbs-o-up " url="/cl/report/overall-status.xhtml" />
             </p:submenu>
            <p:menuitem value="Paths"  url="/paths" icon="fa fa-road" />
             <p:submenu label="Import" icon="fa fa-upload" rendered="false">               

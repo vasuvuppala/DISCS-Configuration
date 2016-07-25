@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.ComptypeEJB;
 import org.openepics.discs.ccdb.core.ejb.InstallationEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
@@ -45,6 +46,8 @@ import org.openepics.discs.ccdb.jaxb.PropertyKind;
 import org.openepics.discs.ccdb.jaxb.PropertyValue;
 import org.openepics.discs.ccdb.jaxrs.InstallationSlotResource;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
+import org.openepics.discs.ccdb.model.cl.Assignment;
+import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 
 /**
  * An implementation of the InstallationSlotResource interface.
@@ -54,6 +57,7 @@ import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
 public class InstallationSlotResourceImpl implements InstallationSlotResource {
     @Inject private SlotEJB slotEJB;
     @Inject private ComptypeEJB compTypeEJB;
+    @Inject private ChecklistEJB clEJB;
     @Inject private InstallationEJB installationEJB;
 
     @FunctionalInterface
@@ -148,6 +152,7 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                         SlotRelationName.CONTROLS,
                         pair -> pair.getChildSlot()));
 
+        installationSlot.setStatuses(slotStatus(slot));
         installationSlot.setProperties(getPropertyValues(slot));
         return installationSlot;
     }
@@ -222,5 +227,13 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
             throw new UnhandledCaseException();
         }
         return propertyValue;
+    }
+    
+    private List<ProcessStatus> slotStatus(Slot slot) {
+        List<Assignment> assignments = clEJB.findAssignments(slot);
+        if (assignments != null && ! assignments.isEmpty()) {
+            return assignments.get(0).getStatuses();
+        }
+        return null;
     }
 }

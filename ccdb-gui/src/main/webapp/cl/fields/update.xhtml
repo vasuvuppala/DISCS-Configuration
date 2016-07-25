@@ -10,12 +10,12 @@
     <ui:define name="content"> 
         <f:metadata>          
             <f:viewParam name="et" value="#{processStatusManager.entityType}"  />
-            <f:viewAction action="#{processStatusManager.initialize()}" />
+            <f:viewAction action="#{processStatusManager.initialize(true)}" />
         </f:metadata>
 
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="Update Status" styleClass="heading"/>
+                <h:outputText value="Processes in a Checklist" styleClass="heading"/>
                 <ui:fragment rendered="#{empty processStatusManager.entities}">
                     <p:panel>
                         <p:spacer height="15"/>
@@ -53,7 +53,7 @@
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'DEVICE'}">
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
-                    <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
+                    <p:column headerText="Assignee" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
                               filterMatchMode="contains"  rendered="false">
                         <h:outputText value="#{assignment.requestor.name}" />
                     </p:column>
@@ -83,7 +83,7 @@
                     <f:facet name="footer">
                         <p:toolbar id="commandButtons">
                             <f:facet name="left">
-                                <p:commandButton title="Update"  value="Modify" icon="ui-icon-document" update=":crudInputDlg" process="@form" 
+                                <p:commandButton title="Modify"  value="Modify" icon="ui-icon-document" update=":crudInputDlg" process="@form" 
                                                  actionListener="#{processStatusManager.onEditCommand}" oncomplete="PF('crudInputWid').show()"
                                                  disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty processStatusManager.selectedEntities or not processStatusManager.phaseSelected}" />   
 
@@ -104,7 +104,7 @@
                         <p:row>
                             <p:column colspan="2">
                                 <!--<h:outputText value="Add" rendered="#{processStatusManager.inputAction == 'CREATE'}"/>-->
-                                <h:outputText value="Update Status" />
+                                <h:outputText value="Include/Exclude Fields" />
                                 <!--<h:outputText value="Delete" rendered="#{processStatusManager.inputAction == 'DELETE'}"/>-->
                             </p:column>                
                         </p:row>
@@ -125,24 +125,14 @@
                         </p:column>
                     </p:row>
 
-                    <p:row>
+                    <p:row  rendered="false">
                         <p:column>
-                            <p:outputLabel value="Status"/>                        
+                            <p:outputLabel value="Applicable"/>                        
                         </p:column>
                         <p:column> 
-                            <p:selectOneMenu id="status1"  converter="#{statusOptionConverter}"                                            
-                                             value="#{processStatusManager.inputStatus}"  rendered="#{not processStatusManager.allPhasesOptional}">                                 
-                                <f:selectItems value="#{processStatusManager.statusOptions}" var="b" itemLabel="#{b.name}: #{b.description}" itemValue="#{b}" />
-                                <p:ajax update="comment" process="status1"/>
-                            </p:selectOneMenu>
-                            <p:selectOneMenu id="status2"  converter="#{statusOptionConverter}"                                            
-                                             value="#{processStatusManager.inputStatus}"  rendered="#{processStatusManager.allPhasesOptional}"> 
-                                <p:ajax update="comment" process="status2"/>
-                                <f:selectItem itemLabel="NR: Not Required" itemValue="#{null}" />
-                                <f:selectItems value="#{processStatusManager.statusOptions}" var="b" itemLabel="#{b.name}: #{b.description}" itemValue="#{b}" />                               
-                            </p:selectOneMenu>
+                            
                         </p:column>
-                    </p:row>
+                    </p:row >
                     <p:row>
                         <p:column>
                             <p:outputLabel for="comment" value="Comment"/>
@@ -161,14 +151,16 @@
                             <p:column colspan="2">
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('crudInputWid').hide()"/>
-                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{processStatusManager.saveEntity('status')}"  
+                                <p:commandButton id="incButton" icon="ui-icon-disk" value="Include" style="float: right;"
+                                                 action="#{processStatusManager.assignProcesses(false)}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
                                                  process="@form"  update="@form :crudForm:entityTable" rendered="#{processStatusManager.inputAction != 'DELETE'}"/>
-                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
-                                                 action="#{processStatusManager.deleteEntity()}" 
+                                <p:tooltip for="incButton" value="Include the selected fields in the checklist"/>
+                                <p:commandButton id="excButton" icon="ui-icon-disk" value="Exclude" style="float: right;"
+                                                 action="#{processStatusManager.assignProcesses(true)}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('crudInputWid').hide()"
-                                                 process="@form" update=":crudForm:entityTable" rendered="#{processStatusManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form"  update="@form :crudForm:entityTable" rendered="#{processStatusManager.inputAction != 'DELETE'}"/>
+                                <p:tooltip for="excButton" value="Exclude the selected fields from the checklist"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
