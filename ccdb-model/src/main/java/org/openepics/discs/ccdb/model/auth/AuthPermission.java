@@ -14,12 +14,17 @@
  */
 package org.openepics.discs.ccdb.model.auth;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 
@@ -33,23 +38,28 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 @NamedQueries({
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
     @NamedQuery(name = "AuthPermission.findByResource", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource"),
-     @NamedQuery(name = "AuthPermission.findByRole", query = "SELECT a FROM AuthPermission a WHERE a.role = :role"),
+    @NamedQuery(name = "AuthPermission.findByRole", query = "SELECT a FROM AuthPermission a WHERE a.role = :role"),
     @NamedQuery(name = "AuthPermission.findByOperation", query = "SELECT a FROM AuthPermission a WHERE a.operation = :operation")
 })
 public class AuthPermission extends ConfigurationEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @JoinColumn(name = "resource", referencedColumnName = "resource_id")
-    @ManyToOne(optional = false)
+    @Basic(optional=false)
+    @NotNull
+    @Column(name="resource")
+    @Enumerated(EnumType.STRING)
     private AuthResource resource;
 
-    @JoinColumn(name = "operation", referencedColumnName = "operation_id")
-    @ManyToOne(optional = false)
+    @Basic(optional=false)
+    @NotNull
+    @Column(name="operation")
+    @Enumerated(EnumType.STRING)
     private AuthOperation operation;
 
     @JoinColumn(name = "role", referencedColumnName = "role_id")
     @ManyToOne(optional = false)
+    @NotNull
     private AuthRole role;
 
     public AuthPermission() {
@@ -77,11 +87,6 @@ public class AuthPermission extends ConfigurationEntity {
 
     public void setRole(AuthRole role) {
         this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "org.openepics.discs.ccdb.model.auth.AuthPermission[ privilegeId=" + id + " ]";
     }
 
 }

@@ -43,7 +43,6 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 public class AuthUserRole extends ConfigurationEntity {
     private static final long serialVersionUID = 1L;
     
-    
     @Basic(optional = false)
     @NotNull
     @Column(name = "can_delegate")
@@ -72,7 +71,7 @@ public class AuthUserRole extends ConfigurationEntity {
     
     @JoinColumn(name = "user")
     @ManyToOne(optional = false)
-    private User user;
+    private AuthUser user;
     
     @JoinColumn(name = "role")
     @ManyToOne(optional = false)
@@ -80,8 +79,6 @@ public class AuthUserRole extends ConfigurationEntity {
 
     public AuthUserRole() {
     }
-
-   
 
     public boolean getCanDelegate() {
         return canDelegate;
@@ -123,11 +120,11 @@ public class AuthUserRole extends ConfigurationEntity {
         this.comment = comment;
     }
 
-    public User getUser() {
+    public AuthUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(AuthUser user) {
         this.user = user;
     }
 
@@ -137,13 +134,6 @@ public class AuthUserRole extends ConfigurationEntity {
 
     public void setRole(AuthRole role) {
         this.role = role;
-    }
-
- 
-
-    @Override
-    public String toString() {
-        return "org.openepics.discs.ccdb.model.auth.AuthUserRole[ id=" + id + " ]";
     }
     
 }

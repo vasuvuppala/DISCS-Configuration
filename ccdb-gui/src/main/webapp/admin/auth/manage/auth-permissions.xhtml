@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/template/hourlogTemplate.xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+
+        <h:form id="authRoleForm" >
+            
+            <p:dataTable id="authRoleTable" value="#{managePermissionView.permissions}" var="obj" 
+                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                         rowKey="#{obj.privilegeId}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
+                <f:facet name="header" >
+                    <h:outputText value="Manage Permissions"/>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{managePermissionView.onRowSelect}" update="commandButtons" />
+                <p:column headerText="Role">
+                    <h:outputText value="#{obj.role.roleName}" title="#{obj.role.description}"/>
+                </p:column>
+                <p:column headerText="Operation">
+                    <h:outputText value="#{obj.operation.name}" title="#{obj.operation.description}"/>
+                </p:column>
+                <p:column headerText="Resource">
+                    <h:outputText value="#{obj.resource.name}" title="#{obj.resource.description}"/>
+                </p:column>
+                <f:facet name="footer">
+                    <p:toolbar id="commandButtons">
+                        <f:facet name="left">
+                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                             actionListener="#{managePermissionView.onEditCommand}"
+                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty managePermissionView.selectedPermission}"/>
+                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{managePermissionView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{empty managePermissionView.selectedPermission}"/>
+                        </f:facet>
+                    </p:toolbar>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
+            <h:form id="authROleInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Create New Permission" rendered="#{managePermissionView.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Permission" rendered="#{managePermissionView.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Permission" rendered="#{managePermissionView.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="role" value="Role"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="role" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.role : managePermissionView.selectedPermission.role}"  
+                                             converter="#{authRoleConverter}"
+                                             disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.roles}" var="r" itemLabel="#{r.roleName}" itemValue="#{r}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="oper"  value="Operation"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="oper" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.operation : managePermissionView.selectedPermission.operation}" 
+                                             converter="#{authOperationConverter}" disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.operations}" var="o" itemLabel="#{o.name}" itemValue="#{o}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="res"  value="Resource"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="res" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.resource : managePermissionView.selectedPermission.resource}" 
+                                             converter="#{authResourceConverter}" disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.resources}" var="s" itemLabel="#{s.name}" itemValue="#{s}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('authRoleInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{managePermissionView.saveEntity()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form"  update="@form :authRoleForm:authRoleTable" rendered="#{managePermissionView.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
+                                                 action="#{managePermissionView.deleteEntity()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form" update=":authRoleForm:authRoleTable" rendered="#{managePermissionView.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

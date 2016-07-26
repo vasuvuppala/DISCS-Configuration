@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/template/hourlogTemplate.xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+
+        <h:form id="authUserForm" >
+           
+            <p:dataTable id="authUserTable" value="#{manageUserView.users}" var="obj" 
+                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                         filteredValue="#{manageUserView.filteredUsers}"
+                         rowKey="#{obj.userId}" selectionMode="single" selection="#{manageUserView.selectedUser}">  
+                <f:facet name="header" >
+                    <h:outputText value="Manage Users"/>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{manageUserView.onRowSelect}" update="commandButtons" />
+                <p:column headerText="ID" sortBy="#{obj.userId}" filterBy="#{obj.userId}">
+                    <h:outputText value="#{obj.userId}"/>
+                </p:column>
+                <p:column headerText="LoginId" sortBy="#{obj.loginId}" filterBy="#{obj.loginId}">
+                    <h:outputText value="#{obj.loginId}"/>
+                </p:column>
+                <p:column headerText="First Name" filterBy="#{obj.firstName}">
+                    <h:outputText value="#{obj.firstName}"/>
+                </p:column>
+                <p:column headerText="Last Name" filterBy="#{obj.lastName}">
+                    <h:outputText value="#{obj.lastName}"/>
+                </p:column>
+                <p:column headerText="Email">
+                    <h:outputText value="#{obj.email}"/>
+                </p:column>
+                <p:column headerText="Department" filterBy="#{obj.department}">
+                    <h:outputText value="#{obj.department}"/>
+                </p:column>
+                <p:column headerText="SMS">
+                    <h:outputText value="#{obj.smsAddress}"/>
+                </p:column>
+                <p:column headerText="Ops Staff">
+                    <h:outputText value="#{obj.operationsStaff}"/>
+                </p:column>
+
+                <p:column headerText="Current Emp">
+                    <h:outputText value="#{obj.currentEmployee}"/>
+                </p:column>
+
+
+                <f:facet name="footer">
+                    <p:toolbar id="commandButtons">
+                        <f:facet name="left">
+                            <p:commandButton title="New" icon="ui-icon-document" update=":authInputDlg" process="@this" 
+                                             actionListener="#{manageUserView.onAddCommand}" oncomplete="PF('authInputWid').show()"/>   
+                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authInputDlg"  process="@this"                                          
+                                             actionListener="#{manageUserView.onEditCommand}"
+                                             oncomplete="PF('authInputWid').show()" disabled="#{empty manageUserView.selectedUser}"/>
+                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authInputDlg" process="@this" 
+                                             actionListener="#{manageUserView.onDeleteCommand}" oncomplete="PF('authInputWid').show()" 
+                                             disabled="#{empty manageUserView.selectedUser}"/>
+                        </f:facet>
+                    </p:toolbar>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="authInputDlg" widgetVar="authInputWid">
+            <h:form id="authInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="New User" rendered="#{manageUserView.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing User" rendered="#{manageUserView.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete User" rendered="#{manageUserView.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="userId" value="ID"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="userId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.userId: manageUserView.selectedUser.userId}"  
+                                         required="true" 
+                                         validatorMessage="User id is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="loginId" value="Login ID"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="loginId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.loginId: manageUserView.selectedUser.loginId}"  
+                                         required="true" 
+                                         validatorMessage="Login id is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="firstName" value="First Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="firstName" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.firstName : manageUserView.selectedUser.firstName}"  
+                                         required="true" 
+                                         validatorMessage="First Name is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="lastName" value="Last Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="lastName" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.lastName : manageUserView.selectedUser.lastName}"  
+                                         required="true" 
+                                         validatorMessage="Last Name is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="email" value="Email"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="email" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.email : manageUserView.selectedUser.email}"                                          
+                                         disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="dept" value="Department"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="dept" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.department : manageUserView.selectedUser.department}"                                          
+                                         disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="sms" value="SMS"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="sms" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.smsAddress : manageUserView.selectedUser.smsAddress}"                                          
+                                         disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="opstaff"  value="Operations Staff?"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox id="opstaff" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.operationsStaff : manageUserView.selectedUser.operationsStaff}" 
+                                                     disabled="#{manageUserView.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="curemp"  value="Current Employee?"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox id="curemp" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.currentEmployee : manageUserView.selectedUser.currentEmployee}" 
+                                                     disabled="#{manageUserView.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('authInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{manageUserView.saveUser()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authInputWid').hide()"
+                                                 process="@form"  update="@form :authUserForm:authUserTable" rendered="#{manageUserView.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
+                                                 action="#{manageUserView.deleteUser()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authInputWid').hide()"
+                                                 process="@form" update=":authUserForm:authUserTable" rendered="#{manageUserView.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

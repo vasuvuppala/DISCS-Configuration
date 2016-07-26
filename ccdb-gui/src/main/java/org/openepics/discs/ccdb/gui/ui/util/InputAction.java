@@ -12,7 +12,7 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
-package org.openepics.discs.ccdb.gui.cl;
+package org.openepics.discs.ccdb.gui.ui.util;
 
 /**
  * The CRUD Operations

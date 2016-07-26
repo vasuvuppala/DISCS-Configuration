@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/template/hourlogTemplate.xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+
+        <h:form id="authRoleForm" >
+           
+            <p:dataTable id="authRoleTable" value="#{manageRoleView.roles}" var="obj" 
+                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                         rowKey="#{obj.roleId}" selectionMode="single" selection="#{manageRoleView.selectedRole}">  
+                <f:facet name="header" >
+                    <h:outputText value="Manage Roles"/>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{manageRoleView.onRowSelect}" update="commandButtons" />
+                <p:column headerText="Name">
+                    <h:outputText value="#{obj.roleName}"/>
+                </p:column>
+                <p:column headerText="Description">
+                    <h:outputText value="#{obj.description}"/>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:toolbar id="commandButtons">
+                        <f:facet name="left">
+                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                             actionListener="#{manageRoleView.onEditCommand}"
+                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty manageRoleView.selectedRole}"/>
+                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageRoleView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{empty manageRoleView.selectedRole}"/>
+                        </f:facet>
+                    </p:toolbar>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
+            <h:form id="authROleInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="New Role" rendered="#{manageRoleView.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Role" rendered="#{manageRoleView.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Role" rendered="#{manageRoleView.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="roleName" value="Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="roleName" value="#{manageRoleView.inputAction == 'CREATE'? manageRoleView.inputRole.roleName: manageRoleView.selectedRole.roleName}"  
+                                         required="true" 
+                                         validatorMessage="Role name is required" disabled="#{manageRoleView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="roleDeec"  value="Description"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="roleDeec" value="#{manageRoleView.inputAction == 'CREATE'? manageRoleView.inputRole.description: manageRoleView.selectedRole.description}" 
+                                         required="true" 
+                                         validatorMessage="Role desription is required" disabled="#{manageRoleView.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('authRoleInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{manageRoleView.saveRole()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form"  update="@form :authRoleForm:authRoleTable" rendered="#{manageRoleView.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
+                                                 action="#{manageRoleView.deleteRole()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form" update=":authRoleForm:authRoleTable" rendered="#{manageRoleView.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

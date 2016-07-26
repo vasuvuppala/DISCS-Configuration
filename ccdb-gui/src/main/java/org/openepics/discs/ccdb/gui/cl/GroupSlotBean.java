@@ -14,6 +14,7 @@
  */
 package org.openepics.discs.ccdb.gui.cl;
 
+import org.openepics.discs.ccdb.gui.ui.util.InputAction;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;

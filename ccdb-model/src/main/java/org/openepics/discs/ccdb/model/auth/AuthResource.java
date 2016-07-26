@@ -14,64 +14,30 @@
  */
 package org.openepics.discs.ccdb.model.auth;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.openepics.discs.ccdb.model.ConfigurationEntity;
-
 /**
  *
  * @author vuppala
  */
-@Entity
-@Table(name = "auth_resource")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "AuthResource.findAll", query = "SELECT a FROM AuthResource a"),   
-    @NamedQuery(name = "AuthResource.findByName", query = "SELECT a FROM AuthResource a WHERE a.name = :name")})
-public class AuthResource extends ConfigurationEntity  {
-    private static final long serialVersionUID = 1L;
-      
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "name", unique = true)
-    private String name;
-    
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "description")
-    private String description;
-    
-    public AuthResource() {
+
+public enum AuthResource   {
+    DEVICE("Device"),
+    SLOT("Slot"),
+    COMPONENT_TYPE("Device type"),
+    USER("User"),
+    INSTALLATION_RECORD("Installation record"),
+    ALIGNMENT_RECORD("Alignment record"),
+    MENU("Menu"),
+    UNIT("Unit"),
+    PROPERTY("Property"),
+    DATA_TYPE("Enumeration");
+
+    private final String label;
+
+    private AuthResource(String label) {
+        this.label = label;
     }
 
-    public String getName() {
-        return name;
+    public String getLabel() {
+        return label;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return "org.openepics.discs.ccdb.model.auth.AuthResource[ resourceId=" + id + " ]";
-    }
-    
 }

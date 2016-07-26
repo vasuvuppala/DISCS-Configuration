@@ -14,6 +14,7 @@
  */
 package org.openepics.discs.ccdb.gui.cl;
 
+import org.openepics.discs.ccdb.gui.ui.util.InputAction;
 import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import java.io.Serializable;
 import java.util.List;

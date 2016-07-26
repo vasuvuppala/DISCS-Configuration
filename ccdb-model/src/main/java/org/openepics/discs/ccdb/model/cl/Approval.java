@@ -16,20 +16,17 @@
 
 package org.openepics.discs.ccdb.model.cl;
 
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
-import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
-import org.openepics.discs.ccdb.model.auth.User;
 
 /**
  * Assignment of a checklist to a slot, device or group.
@@ -42,7 +39,8 @@ import org.openepics.discs.ccdb.model.auth.User;
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
 @Entity
-@Table(name = "cl_approval")
+@Table(name = "cl_approval", 
+        uniqueConstraints=@UniqueConstraint(columnNames={"slot", "process"}))
 @NamedQueries({
     @NamedQuery(name = "Approval.findAll", query = "SELECT d FROM Approval d"),
     @NamedQuery(name = "Approval.findBySlotProc", query = "SELECT d FROM Approval d WHERE d.slot = :slot AND d.process = :process"),
@@ -62,6 +60,7 @@ public class Approval extends ConfigurationEntity {
     private Process process;
     
     @Basic(optional=false)
+    @Column(name="approved")
     private Boolean approved = false;
     
     // getters and setters

@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/template/hourlogTemplate.xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+
+        <h:form id="authForm" >
+           
+            <p:dataTable id="authTable" value="#{manageUserRoleView.userRoles}" var="obj" 
+                         scrollRows="40" scrollable="true" scrollHeight="400" liveScroll="true"
+                         rowKey="#{obj.userRoleId}" selectionMode="single" selection="#{manageUserRoleView.selectedUserRole}">  
+                <f:facet name="header" >
+                    <h:outputText value="Manage User Roles"/>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{manageUserRoleView.onRowSelect}" update="commandButtons" />
+                <p:column headerText="Role" sortBy="#{obj.role.roleName}">
+                    <h:outputText value="#{obj.role.roleName}" title="#{obj.role.description}"/>
+                </p:column>
+                <p:column headerText="User" sortBy="#{obj.user.lastName}">
+                    <h:outputText value="#{obj.user.lastName} #{obj.user.firstName}" />
+                </p:column>
+                <p:column headerText="Manager"  rendered="false">
+                    <h:outputText value="#{obj.isRoleManager}"/>
+                </p:column>
+                <f:facet name="footer">
+                    <p:toolbar id="commandButtons">
+                        <f:facet name="left">
+                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageUserRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                             actionListener="#{manageUserRoleView.onEditCommand}"
+                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty manageUserRoleView.selectedUserRole}"/>
+                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageUserRoleView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{empty manageUserRoleView.selectedUserRole}"/>
+                        </f:facet>
+                    </p:toolbar>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
+            <h:form id="authROleInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Create New User Role" rendered="#{manageUserRoleView.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing User Role" rendered="#{manageUserRoleView.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete User Role" rendered="#{manageUserRoleView.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="role" value="Role"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="role" value="#{manageUserRoleView.inputAction == 'CREATE'? manageUserRoleView.inputUserRole.role : manageUserRoleView.selectedUserRole.role}"  
+                                             converter="#{authRoleConverter}"
+                                             disabled="#{manageUserRoleView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{manageUserRoleView.roles}" var="r" itemLabel="#{r.roleName}" itemValue="#{r}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="user"  value="User"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="user" value="#{manageUserRoleView.inputAction == 'CREATE'? manageUserRoleView.inputUserRole.user : manageUserRoleView.selectedUserRole.user}" 
+                                             converter="#{userConverter}" disabled="#{manageUserRoleView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{manageUserRoleView.users}" var="u" itemLabel="#{u.lastName}, #{u.firstName}" itemValue="#{u}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="rolemgr" value="Role Manager"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox id="rolemgr" value="#{manageUserRoleView.inputAction == 'CREATE'? manageUserRoleView.inputUserRole.isRoleManager: manageUserRoleView.selectedUserRole.isRoleManager}"  
+                                                     disabled="#{manageRoleView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('authRoleInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{manageUserRoleView.saveEntity()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form"  update="@form :authForm:authTable" rendered="#{manageUserRoleView.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
+                                                 action="#{manageUserRoleView.deleteEntity()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form" update=":authForm:authTable" rendered="#{manageUserRoleView.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/template/hourlogTemplate.xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+
+        <h:form id="authRoleForm" >
+            
+            <p:dataTable id="authRoleTable" value="#{manageResourceView.resources}" var="obj" 
+                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                         rowKey="#{obj.resourceId}" selectionMode="single" selection="#{manageResourceView.selectedResource}">  
+                <f:facet name="header" >
+                    <h:outputText value="Manage Resources"/>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{manageResourceView.onRowSelect}" update="commandButtons" />
+                <p:column headerText="Name">
+                    <h:outputText value="#{obj.name}"/>
+                </p:column>
+                <p:column headerText="Description">
+                    <h:outputText value="#{obj.description}"/>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:toolbar id="commandButtons">
+                        <f:facet name="left">
+                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageResourceView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                             actionListener="#{manageResourceView.onEditCommand}"
+                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty manageResourceView.selectedResource}"/>
+                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                             actionListener="#{manageResourceView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{empty manageResourceView.selectedResource}"/>
+                        </f:facet>
+                    </p:toolbar>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
+            <h:form id="authROleInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Create New Resource" rendered="#{manageResourceView.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Resource" rendered="#{manageResourceView.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Resource" rendered="#{manageResourceView.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="roleName" value="Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="roleName" value="#{manageResourceView.inputAction == 'CREATE'? manageResourceView.inputResource.name : manageResourceView.selectedResource.name}"  
+                                         required="true" 
+                                         validatorMessage="Role name is required" disabled="#{manageResourceView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="roleDeec"  value="Description"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="roleDeec" value="#{manageResourceView.inputAction == 'CREATE'? manageResourceView.inputResource.description: manageResourceView.selectedResource.description}" 
+                                         required="true" 
+                                         validatorMessage="Role desription is required" disabled="#{manageResourceView.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('authRoleInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{manageResourceView.saveRole()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form"  update="@form :authRoleForm:authRoleTable" rendered="#{manageResourceView.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm Delete" style="float: right;"
+                                                 action="#{manageResourceView.deleteRole()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('authRoleInputWid').hide()"
+                                                 process="@form" update=":authRoleForm:authRoleTable" rendered="#{manageResourceView.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define> 
+</ui:composition>

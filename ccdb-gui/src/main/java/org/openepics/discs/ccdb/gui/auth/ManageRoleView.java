@@ -12,10 +12,8 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
+package org.openepics.discs.ccdb.gui.auth;
 
-package org.openepics.discs.ccdb.gui.cl;
-
-import org.openepics.discs.ccdb.gui.ui.util.InputAction;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,15 +23,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
+import javax.inject.Inject;
+import org.openepics.discs.ccdb.core.auth.AnAEJB;
+import org.openepics.discs.ccdb.gui.ui.util.InputAction;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
-import org.openepics.discs.ccdb.model.cl.Checklist;
-
+import org.openepics.discs.ccdb.model.auth.AuthRole;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /**
- * Description: State for Manage Process View
+ * Description: State for Manage Role View
  *
  * Methods:
  * <p>
@@ -56,122 +55,107 @@ import org.primefaces.event.SelectEvent;
  * @author vuppala
  *
  */
-
 @Named
 @ViewScoped
-public class ChecklistManager implements Serializable {
-//    @EJB
-//    private AuthEJB authEJB;
+public class ManageRoleView implements Serializable {
+
     @EJB
-    private ChecklistEJB lcEJB;
-            
-    private static final Logger LOGGER = Logger.getLogger(ChecklistManager.class.getName());
-//    @Inject
-//    UserSession userSession;
-      
-    private List<Checklist> entities;    
-    private List<Checklist> filteredEntities;    
-    private Checklist inputEntity;
-    private Checklist selectedEntity;
+    private AnAEJB authEJB;
+    private static final Logger logger = Logger.getLogger(ManageRoleView.class.getName());
+    @Inject
+    UserSession userSession;
+
+    private List<AuthRole> roles;
+    private AuthRole selectedRole;
+    private AuthRole inputRole;
     private InputAction inputAction;
-    
-    
-    public ChecklistManager() {
+
+    public ManageRoleView() {
     }
-    
+
     @PostConstruct
-    public void init() {      
-        entities = lcEJB.findAllChecklists();     
+    public void init() {
+        roles = authEJB.findRoles();
         resetInput();
     }
-    
-    private void resetInput() {                
+
+    private void resetInput() {
         inputAction = InputAction.READ;
     }
-    
+
     public void onRowSelect(SelectEvent event) {
         // inputRole = selectedRole;
         // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Role Selected", "");
     }
-    
+
     public void onAddCommand(ActionEvent event) {
-        inputEntity = new Checklist();
-        inputAction = InputAction.CREATE;       
+        inputRole = new AuthRole();
+        inputAction = InputAction.CREATE;
     }
-    
+
     public void onEditCommand(ActionEvent event) {
         inputAction = InputAction.UPDATE;
     }
-    
+
     public void onDeleteCommand(ActionEvent event) {
         inputAction = InputAction.DELETE;
     }
-    
-    public void saveEntity() {
-        try {                      
+
+    public void saveRole() {
+        try {
             if (inputAction == InputAction.CREATE) {
-                lcEJB.saveChecklist(inputEntity);
-                entities.add(inputEntity);                
+                authEJB.saveAuthRole(inputRole);
+                roles.add(inputRole);
             } else {
-                lcEJB.saveChecklist(selectedEntity);
+                authEJB.saveAuthRole(selectedRole);
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Saved", "");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role saved", "");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save ", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save role", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
     }
-    
-    public void deleteEntity() {
+
+    public void deleteRole() {
         try {
-            lcEJB.deleteChecklist(selectedEntity);
-            entities.remove(selectedEntity);  
+            authEJB.deleteAuthRole(selectedRole);
+            roles.remove(selectedRole);
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Deletion successful", "You may have to refresh the page.");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role deleted", "");
             resetInput();
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not complete deletion", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not delete role", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
     }
-    
-    //-- Getters/Setters 
-    
+
+    // ----- Getters/Setters
+    public List<AuthRole> getRoles() {
+        return roles;
+    }
+
+    public AuthRole getSelectedRole() {
+        return selectedRole;
+    }
+
+    public void setSelectedRole(AuthRole selectedRole) {
+        this.selectedRole = selectedRole;
+    }
+
+    public AuthRole getInputRole() {
+        return inputRole;
+    }
+
+    public void setInputRole(AuthRole inputRole) {
+        this.inputRole = inputRole;
+    }
+
     public InputAction getInputAction() {
         return inputAction;
     }
 
-    public List<Checklist> getEntities() {
-        return entities;
-    }
-
-    public List<Checklist> getFilteredEntities() {
-        return filteredEntities;
-    }
-
-    public void setFilteredEntities(List<Checklist> filteredEntities) {
-        this.filteredEntities = filteredEntities;
-    }
-
-    public Checklist getInputEntity() {
-        return inputEntity;
-    }
-
-    public void setInputEntity(Checklist inputEntity) {
-        this.inputEntity = inputEntity;
-    }
-
-    public Checklist getSelectedEntity() {
-        return selectedEntity;
-    }
-
-    public void setSelectedEntity(Checklist selectedEntity) {
-        this.selectedEntity = selectedEntity;
-    }
-
-    
 }

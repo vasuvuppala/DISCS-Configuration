@@ -87,6 +87,18 @@
                 </p:column>
             </p:row>
             
+            <p:row>              
+                <p:column style="vertical-align: top;">
+                   <!--<h:outputText value="#{request.requestURL}?#{request.queryString}" />-->
+                    <p:barcode value="#{request.requestURL}?#{request.queryString}" alt="#{request.requestURI}"  type="qr"/>  
+                </p:column>
+                 <p:column style="vertical-align: top;">
+                   
+                </p:column>
+                <p:column style="vertical-align: top;">                   
+                   
+                </p:column>
+            </p:row>
            
         </p:panelGrid>
         

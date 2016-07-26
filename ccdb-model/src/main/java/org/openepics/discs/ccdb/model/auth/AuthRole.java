@@ -56,10 +56,6 @@ public class AuthRole extends ConfigurationEntity {
     @Column(name = "description")
     private String description;
     
-   
-    
-//    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "role")
-//    private List<AuthPermission> authPermissionList;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "role")
     private List<AuthUserRole> authUserRoleList;
 
@@ -74,8 +70,6 @@ public class AuthRole extends ConfigurationEntity {
         this.name = name;
     }
 
-   
-
     public String getDescription() {
         return description;
     }
@@ -84,17 +78,6 @@ public class AuthRole extends ConfigurationEntity {
         this.description = description;
     }
                                                                                                                                                                                           
-
-//    @XmlTransient
-//    @JsonIgnore
-//    public List<AuthPermission> getAuthPermissionList() {
-//        return authPermissionList;
-//    }
-//
-//    public void setAuthPermissionList(List<AuthPermission> authPermissionList) {
-//        this.authPermissionList = authPermissionList;
-//    }
-//
     @XmlTransient
     @JsonIgnore
     public List<AuthUserRole> getAuthUserRoleList() {
@@ -104,11 +87,4 @@ public class AuthRole extends ConfigurationEntity {
     public void setAuthUserRoleList(List<AuthUserRole> authUserRoleList) {
         this.authUserRoleList = authUserRoleList;
     }
-
-
-    @Override
-    public String toString() {
-        return "org.openepics.discs.ccdb.model.auth.AuthRole[ roleId=" + id + " ]";
-    }
-    
 }
