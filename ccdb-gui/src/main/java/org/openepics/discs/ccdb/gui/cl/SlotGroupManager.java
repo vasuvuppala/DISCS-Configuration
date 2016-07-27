@@ -26,12 +26,11 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.openepics.discs.ccdb.core.ejb.AuthEJB;
+import org.openepics.discs.ccdb.core.auth.LocalAuthEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
-import org.openepics.discs.ccdb.model.auth.Role;
-import org.openepics.discs.ccdb.model.auth.User;
+import org.openepics.discs.ccdb.model.auth.AuthUser;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 import org.primefaces.context.RequestContext;
@@ -68,9 +67,9 @@ public class SlotGroupManager implements Serializable {
     @EJB
     private ChecklistEJB lcEJB;
     @EJB
-    private AuthEJB authEJB;            
-    @Inject
-    private SecurityPolicy securityPolicy;
+    private LocalAuthEJB authEJB;            
+//    @Inject
+//    private SecurityPolicy securityPolicy;
      
     private static final Logger LOGGER = Logger.getLogger(SlotGroupManager.class.getName());
 //    @Inject
@@ -81,7 +80,7 @@ public class SlotGroupManager implements Serializable {
     private SlotGroup inputEntity;
     private SlotGroup selectedEntity;
     private InputAction inputAction;
-    private User currentUser;
+    private AuthUser currentUser;
     
     public SlotGroupManager() {
     }
@@ -116,15 +115,14 @@ public class SlotGroupManager implements Serializable {
     }
     
     private Boolean isAuthorized() {
-        String userId = securityPolicy.getUserId();
-        if (userId == null) {
-            currentUser = null;
+         currentUser = authEJB.getCurrentUser();
+        if (currentUser == null) {         
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                     "You are not authorized. User Id is null.");
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             return false;
         }
-        currentUser = authEJB.findUser(userId);
+       
         return true;
     }
     

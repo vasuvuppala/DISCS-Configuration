@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
-import org.openepics.discs.ccdb.model.auth.User;
+import org.openepics.discs.ccdb.model.auth.AuthUser;
 
 /**
  * Status of a checklist assignment 
@@ -60,7 +60,7 @@ public class ProcessStatus extends ConfigurationEntity {
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "assigned_sme")
-    private User assignedSME;
+    private AuthUser assignedSME;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "status")
@@ -88,11 +88,11 @@ public class ProcessStatus extends ConfigurationEntity {
         this.assignment = assignment;
     }
 
-    public User getAssignedSME() {
+    public AuthUser getAssignedSME() {
         return assignedSME;
     }
 
-    public void setAssignedSME(User assignedSME) {
+    public void setAssignedSME(AuthUser assignedSME) {
         this.assignedSME = assignedSME;
     }
 

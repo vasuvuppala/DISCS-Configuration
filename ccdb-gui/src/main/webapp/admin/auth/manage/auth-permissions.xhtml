@@ -10,7 +10,7 @@
     <ui:define name="content"> 
 
         <h:form id="authRoleForm" >
-            
+
             <p:dataTable id="authRoleTable" value="#{managePermissionView.permissions}" var="obj" 
                          scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
                          rowKey="#{obj.id}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
@@ -18,14 +18,18 @@
                     <h:outputText value="Manage Permissions"/>
                 </f:facet>
                 <p:ajax event="rowSelect" listener="#{managePermissionView.onRowSelect}" update="commandButtons" />
-                <p:column headerText="Role">
-                    <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
+
+                <p:column headerText="Resource">
+                    <h:outputText value="#{obj.resource}" title="#{obj.resource}"/>
                 </p:column>
                 <p:column headerText="Operation">
                     <h:outputText value="#{obj.authOperation}" title="#{obj.authOperation}"/>
                 </p:column>
-                <p:column headerText="Resource">
-                    <h:outputText value="#{obj.resource}" title="#{obj.resource}"/>
+                <p:column headerText="Role">
+                    <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
+                </p:column>
+                <p:column headerText="Property">
+                    <h:outputText value="#{obj.property.name}" title="#{obj.property.description}"/>
                 </p:column>
                 <f:facet name="footer">
                     <p:toolbar id="commandButtons">
@@ -55,6 +59,38 @@
                             </p:column>                
                         </p:row>
                     </f:facet>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="res"  value="Resource"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="res" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.resource : managePermissionView.selectedPermission.resource}" 
+                                             disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.resources}" var="s" itemLabel="#{s.label}" itemValue="#{s}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="oper"  value="Operation"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="oper" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.authOperation : managePermissionView.selectedPermission.authOperation}" 
+                                             var="oper" filterMatchMode="contains" filter="true"
+                                             disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.operations}" var="o" itemLabel="#{o}" itemValue="#{o}" />
+                                <p:column>
+                                    #{oper}
+                                </p:column>
+                                <p:column>
+                                    #{oper.description}
+                                </p:column>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
                     <p:row>
                         <p:column>
                             <p:outputLabel for="role" value="Role"/>
@@ -62,30 +98,35 @@
                         <p:column>
                             <p:selectOneMenu id="role" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.role : managePermissionView.selectedPermission.role}"  
                                              converter="#{authRoleConverter}"
+                                             var="role" filterMatchMode="contains" filter="true"
                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItem itemLabel="None" itemValue="#{null}" />
                                 <f:selectItems value="#{managePermissionView.roles}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
                             </p:selectOneMenu>
+                            <p:column>
+                                    #{role.name}
+                                </p:column>
+                                <p:column>
+                                    #{role.description}
+                                </p:column>
                         </p:column>
                     </p:row>
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="oper"  value="Operation"/>
+                            <p:outputLabel for="indrole" value="Indirect Role"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="oper" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.authOperation : managePermissionView.selectedPermission.authOperation}" 
-                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{managePermissionView.operations}" var="o" itemLabel="#{o.description}" itemValue="#{o}" />
-                            </p:selectOneMenu>
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="res"  value="Resource"/>
-                        </p:column>
-                        <p:column>
-                            <p:selectOneMenu id="res" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.resource : managePermissionView.selectedPermission.resource}" 
-                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{managePermissionView.resources}" var="s" itemLabel="#{s.label}" itemValue="#{s}" />
+                            <p:selectOneMenu id="indrole" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.property : managePermissionView.selectedPermission.property}"  
+                                             converter="#{propertyConverter}" var="indr" filterMatchMode="contains" filter="true"
+                                             disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItem itemLabel="None" itemValue="#{null}" />
+                                <f:selectItems value="#{managePermissionView.properties}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
+                                <p:column>
+                                    #{indr.name}
+                                </p:column>
+                                <p:column>
+                                    #{indr.description}
+                                </p:column>
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>

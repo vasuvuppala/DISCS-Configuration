@@ -57,7 +57,7 @@ public class AuthRole extends ConfigurationEntity {
     private String description;
     
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "role")
-    private List<AuthUserRole> authUserRoleList;
+    private List<AuthUserRole> userRoleList;
 
     public AuthRole() {
     }
@@ -80,11 +80,11 @@ public class AuthRole extends ConfigurationEntity {
                                                                                                                                                                                           
     @XmlTransient
     @JsonIgnore
-    public List<AuthUserRole> getAuthUserRoleList() {
-        return authUserRoleList;
+    public List<AuthUserRole> getUserRoleList() {
+        return userRoleList;
     }
 
-    public void setAuthUserRoleList(List<AuthUserRole> authUserRoleList) {
-        this.authUserRoleList = authUserRoleList;
+    public void setUserRoleList(List<AuthUserRole> authUserRoleList) {
+        this.userRoleList = authUserRoleList;
     }
 }

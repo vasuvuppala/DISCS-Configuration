@@ -25,8 +25,10 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.openepics.discs.ccdb.core.auth.AnAEJB;
+import org.openepics.discs.ccdb.core.ejb.PropertyEJB;
 import org.openepics.discs.ccdb.gui.ui.util.InputAction;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
+import org.openepics.discs.ccdb.model.Property;
 import org.openepics.discs.ccdb.model.auth.AuthOperation;
 import org.openepics.discs.ccdb.model.auth.AuthPermission;
 import org.openepics.discs.ccdb.model.auth.AuthResource;
@@ -64,10 +66,12 @@ public class ManagePermissionView implements Serializable {
 
     @EJB
     private AnAEJB authEJB;
+    @EJB
+    private PropertyEJB propEJB;
 
     @Inject
     UserSession userSession;
-    private static final Logger logger = Logger.getLogger(ManagePermissionView.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ManagePermissionView.class.getName());
 
     private List<AuthPermission> permissions;
     private AuthPermission selectedPermission;
@@ -77,6 +81,7 @@ public class ManagePermissionView implements Serializable {
     private List<AuthRole> roles;
     private List<AuthOperation> operations;
     private List<AuthResource> resources;
+    private List<Property> properties;
 
     public ManagePermissionView() {
     }
@@ -87,6 +92,7 @@ public class ManagePermissionView implements Serializable {
         operations = authEJB.findAuthOperations();
         resources = authEJB.findAuthResources();
         permissions = authEJB.findAuthPermissions();
+        properties = propEJB.findAllOrderedByName();
         resetInput();
     }
 
@@ -112,8 +118,25 @@ public class ManagePermissionView implements Serializable {
         inputAction = InputAction.DELETE;
     }
 
+    private boolean isInputValid() {
+        AuthPermission perm = inputAction == InputAction.CREATE ? inputPermission : selectedPermission;
+
+        if ((perm.getRole() == null && perm.getProperty() == null)
+                || (perm.getRole() != null && perm.getRole() != null)) {
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Both role and indrect role cannot be null or non-null", "One of them has to be null and the other not");
+            return false;
+        }
+
+        return true;
+    }
+
     public void saveEntity() {
         try {
+            if (!isInputValid()) {
+                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Validation error", "Fix input values");
+                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+                return;
+            }
             if (inputAction == InputAction.CREATE) {
                 authEJB.saveAuthPermission(inputPermission);
                 permissions.add(inputPermission);
@@ -122,9 +145,9 @@ public class ManagePermissionView implements Serializable {
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role saved", "");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Permission saved", "");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save role", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save permission", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
@@ -135,10 +158,10 @@ public class ManagePermissionView implements Serializable {
             authEJB.deleteAuthPermission(selectedPermission);
             permissions.remove(selectedPermission);
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role deleted", "");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Permission deleted", "");
             resetInput();
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not delete role", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not delete permission", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
@@ -179,6 +202,10 @@ public class ManagePermissionView implements Serializable {
 
     public List<AuthResource> getResources() {
         return resources;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
     }
 
 }

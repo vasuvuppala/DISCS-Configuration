@@ -37,11 +37,12 @@ import org.openepics.discs.ccdb.model.Property;
  */
 @Entity
 @Table(name = "auth_permission",
-        uniqueConstraints=@UniqueConstraint(columnNames={"resource", "authOperation", "role", "property"}) )
+        uniqueConstraints=@UniqueConstraint(columnNames={"resource", "auth_operation", "role", "property"}) )
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
     @NamedQuery(name = "AuthPermission.findByResource", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource"),
+    @NamedQuery(name = "AuthPermission.findByResourceOp", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource AND a.authOperation = :operation"),
     @NamedQuery(name = "AuthPermission.findByRole", query = "SELECT a FROM AuthPermission a WHERE a.role = :role"),
     @NamedQuery(name = "AuthPermission.findByOperation", query = "SELECT a FROM AuthPermission a WHERE a.authOperation = :operation")
 })

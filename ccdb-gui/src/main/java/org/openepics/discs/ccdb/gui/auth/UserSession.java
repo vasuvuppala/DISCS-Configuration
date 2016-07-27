@@ -37,7 +37,7 @@ public class UserSession implements Serializable {
     @EJB
     private AnAEJB authEJB;
     
-    private static final Logger logger = Logger.getLogger(UserSession.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserSession.class.getName());
 
     private String userId; // user unique login name
     private String token;   // auth token
@@ -54,10 +54,10 @@ public class UserSession implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            logger.log(Level.INFO, "UserSession: PostConstruct: initializing");
+            LOGGER.log(Level.INFO, "UserSession: PostConstruct: initializing");
             // currentTheme = prefEJB.defaultThemeName();                        
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "UserSession: Can not initialize: {0}", e.getMessage());
+            LOGGER.log(Level.SEVERE, "UserSession: Can not initialize: {0}", e.getMessage());
         }
     }
 
@@ -80,7 +80,7 @@ public class UserSession implements Serializable {
 //                currentTheme = pref.getPrefValue();
 //            }
         } else {
-            logger.log(Level.WARNING, "User not defined in the CCDB database: {0}", userId);
+            LOGGER.log(Level.WARNING, "User not defined in the CCDB database: {0}", userId);
             // Utility.showMessage(FacesMessage.SEVERITY_FATAL, "You are not registered as Hour Log user", "Please contact Hour Log administrator.");
         }
         

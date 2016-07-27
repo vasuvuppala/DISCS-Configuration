@@ -28,6 +28,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
+import org.openepics.discs.ccdb.model.auth.AuthRole;
 import org.openepics.discs.ccdb.model.auth.Role;
 
 /**
@@ -60,7 +61,7 @@ public class ChecklistField extends ConfigurationEntity {
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "sme")
-    private Role sme; // Subject Matter Expert
+    private AuthRole sme; // Subject Matter Expert
     
     @Basic(optional = false)
     @NotNull
@@ -108,11 +109,11 @@ public class ChecklistField extends ConfigurationEntity {
     }
 
 
-    public Role getSme() {
+    public AuthRole getSme() {
         return sme;
     }
 
-    public void setSme(Role sme) {
+    public void setSme(AuthRole sme) {
         this.sme = sme;
     }
 

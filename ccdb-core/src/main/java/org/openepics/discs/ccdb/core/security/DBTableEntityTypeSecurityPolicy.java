@@ -67,7 +67,7 @@ public class DBTableEntityTypeSecurityPolicy extends AbstractEnityTypeSecurityPo
         try {
             if (servletRequest.getUserPrincipal() == null) {
                 servletRequest.login(userName, password);
-                LOGGER.log(Level.INFO, "Login successful for " + userName);
+                LOGGER.log(Level.INFO, "Login successful for {0}", userName);
             }
         } catch (Exception e) {
             throw new SecurityException("Login Failed !", e);

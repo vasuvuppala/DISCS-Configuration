@@ -37,6 +37,8 @@ import org.openepics.discs.ccdb.core.ejb.AuthEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
+import org.openepics.discs.ccdb.model.auth.AuthUser;
+import org.openepics.discs.ccdb.model.auth.AuthUserRole;
 import org.openepics.discs.ccdb.model.auth.User;
 import org.openepics.discs.ccdb.model.auth.UserRole;
 import org.openepics.discs.ccdb.model.cl.Process;
@@ -136,7 +138,7 @@ public class ProcessStatusManager implements Serializable {
     private InputAction inputAction;
     private StatusOption inputStatus;
     private String inputComment;
-    private User inputSME;
+    private AuthUser inputSME;
     
 
     public ProcessStatusManager() {
@@ -648,19 +650,19 @@ public class ProcessStatusManager implements Serializable {
     }
 
     /**
-     * Default SMEs of a checklist process
+     * Default SMEs of a checklist field
      *
      * @param status
      * @return
      */
     public String defaultSME(ProcessStatus status) {
-        List<UserRole> userRoles = status.getField().getSme().getUserRoleList();
+        List<AuthUserRole> userRoles = status.getField().getSme().getUserRoleList();
         if (userRoles == null || userRoles.isEmpty()) {
             return "Default";
         } else {
 //            return userRoles.get(0).getUser().getUserId();
             StringJoiner smes = new StringJoiner(", ", "", "");
-            for (UserRole userRole : userRoles) {
+            for (AuthUserRole userRole : userRoles) {
                 smes.add(userRole.getUser().getName());
             }
             return smes.toString();
@@ -740,11 +742,11 @@ public class ProcessStatusManager implements Serializable {
         return phaseSelected;
     }
 
-    public User getInputSME() {
+    public AuthUser getInputSME() {
         return inputSME;
     }
 
-    public void setInputSME(User inputSME) {
+    public void setInputSME(AuthUser inputSME) {
         this.inputSME = inputSME;
     }
 

@@ -40,7 +40,8 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
         uniqueConstraints=@UniqueConstraint(columnNames={"user", "role"}))
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AuthUserRole.findAll", query = "SELECT a FROM AuthUserRole a")
+    @NamedQuery(name = "AuthUserRole.findAll", query = "SELECT a FROM AuthUserRole a"),
+    @NamedQuery(name = "AuthUserRole.findByUserRole", query = "SELECT a FROM AuthUserRole a WHERE a.user = :user AND a.role IN :roles")
     })
 public class AuthUserRole extends ConfigurationEntity {
     private static final long serialVersionUID = 1L;

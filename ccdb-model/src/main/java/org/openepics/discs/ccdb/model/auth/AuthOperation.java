@@ -12,6 +12,7 @@ package org.openepics.discs.ccdb.model.auth;
 public enum AuthOperation {
     MANAGE_CHECKLISTS("Add, modfiy, delete processes, status options, and checklists"),
     ASSIGN_CHECKLISTS("Assign checklists to slots, groups, and devices"),
+    MANAGE_GROUPS("Create, modify, delete groups"),
     APPROVE_DHR("Approve Device Hazard Review"),  // ToDo: lab specific. how to make it generic?
     APPROVE_ARR("Approve Accelerator Readines Review"),  // ToDo: lab specific. how to make it generic?    
     ;

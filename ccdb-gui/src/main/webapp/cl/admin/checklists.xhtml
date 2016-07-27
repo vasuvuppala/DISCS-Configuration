@@ -46,7 +46,7 @@
                             <f:facet name="left">
                                 <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{checklistManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
+                                                 disabled="#{not authorizationManager.canManageChecklists()}"/>   
                                 <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{checklistManager.onEditCommand}"
                                                  oncomplete="PF('crudInputWid').show()" 

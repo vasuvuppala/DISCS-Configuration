@@ -62,7 +62,7 @@ public class AuthView implements Serializable {
     }
     
     @Inject private AuthEJB authEJB;
-    private static final Logger logger = Logger.getLogger(AuthView.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AuthView.class.getName());
 
     private List<Role> roles;
     private List<Privilege> privileges;
@@ -84,7 +84,7 @@ public class AuthView implements Serializable {
         }
 //        permissions.add(new Permission("FE_AreaManager", "MANAGE", "FrontEnd"));
 //        permissions.add(new Permission("PS_Manager", "UPDATE", "PowerSupplies"));
-        logger.log(Level.FINE, "Found number of users: {0}", users.size());       
+        LOGGER.log(Level.FINE, "Found number of users: {0}", users.size());       
     }
     
     // --- getters/setters
