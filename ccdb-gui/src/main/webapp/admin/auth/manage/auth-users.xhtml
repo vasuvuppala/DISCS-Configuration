@@ -19,7 +19,7 @@
                     <h:outputText value="Manage Users"/>
                 </f:facet>
                 <p:ajax event="rowSelect" listener="#{manageUserView.onRowSelect}" update="commandButtons" />
-                <p:column headerText="ID" sortBy="#{obj.userId}" filterBy="#{obj.userId}">
+                <p:column headerText="ID" sortBy="#{obj.userId}" filterBy="#{obj.userId}" rendered="false">
                     <h:outputText value="#{obj.userId}"/>
                 </p:column>
                 <p:column headerText="LoginId" sortBy="#{obj.userId}" filterBy="#{obj.userId}">
@@ -64,7 +64,7 @@
                             </p:column>                
                         </p:row>
                     </f:facet>
-                    <p:row>
+                    <p:row rendered="false">
                         <p:column>
                             <p:outputLabel for="userId" value="ID"/>
                         </p:column>
@@ -79,7 +79,7 @@
                             <p:outputLabel for="loginId" value="Login ID"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="loginId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.loginId: manageUserView.selectedUser.loginId}"  
+                            <p:inputText id="loginId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.userId : manageUserView.selectedUser.userId}"  
                                          required="true" 
                                          validatorMessage="Login id is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
                         </p:column>
@@ -113,42 +113,7 @@
                                          disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
                         </p:column>
                     </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="dept" value="Department"/>
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="dept" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.department : manageUserView.selectedUser.department}"                                          
-                                         disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="sms" value="SMS"/>
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="sms" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.smsAddress : manageUserView.selectedUser.smsAddress}"                                          
-                                         disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="opstaff"  value="Operations Staff?"/>
-                        </p:column>
-                        <p:column>
-                            <p:selectBooleanCheckbox id="opstaff" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.operationsStaff : manageUserView.selectedUser.operationsStaff}" 
-                                                     disabled="#{manageUserView.inputAction == 'DELETE'}"/>                            
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="curemp"  value="Current Employee?"/>
-                        </p:column>
-                        <p:column>
-                            <p:selectBooleanCheckbox id="curemp" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.currentEmployee : manageUserView.selectedUser.currentEmployee}" 
-                                                     disabled="#{manageUserView.inputAction == 'DELETE'}"/>                            
-                        </p:column>
-                    </p:row>
+                    
                     <f:facet name="footer">
                         <p:row>
                             <p:column colspan="2">
