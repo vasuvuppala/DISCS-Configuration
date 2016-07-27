@@ -124,12 +124,18 @@
                 <p:menuitem value="Units" icon="fa fa-database" outcome="units" />
             </p:submenu>
 
-            <p:submenu label="Admin" icon="fa fa-cubes">               
+            <p:submenu label="Admin" icon="fa fa-cubes"> 
+                <p:submenu label="Authorizations" icon="fa fa fa-cubes">
+                    <p:menuitem value="Users" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-users.xhtml" />
+                    <p:menuitem value="Roles" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-roles.xhtml" /> 
+                    <p:menuitem value="User Roles" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-user-roles.xhtml" />                
+                    <p:menuitem value="Permissions" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-permissions.xhtml" />
+                </p:submenu>
                 <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth"/>   
                 <p:submenu label="Checklists" icon="fa fa-list-alt">
-                    <p:menuitem value="Processes" icon="fa fa-list-alt" outcome="/cl/admin/processes.xhtml" />
-                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" outcome="/cl/admin/checklists.xhtml" /> 
-                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" outcome="/cl/admin/fields.xhtml" />                
+                    <p:menuitem value="Processes" icon="fa fa-list-alt" url="/cl/admin/processes.xhtml" />
+                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" url="/cl/admin/checklists.xhtml" /> 
+                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" url="/cl/admin/fields.xhtml" />                
                     <p:menuitem value="Status Options" icon="fa fa-list-alt" url="/cl/admin/status-options.xhtml" />
                 </p:submenu>
             </p:submenu>

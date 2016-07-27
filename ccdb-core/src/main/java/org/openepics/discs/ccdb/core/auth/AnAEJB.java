@@ -191,7 +191,7 @@ public class AnAEJB {
      * @return the role
      */
      @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public AuthRole findAuthRole(int id) {
+    public AuthRole findAuthRole(Long id) {
         return em.find(AuthRole.class, id);
     }
     
@@ -211,7 +211,8 @@ public class AnAEJB {
      * @param id
      * @return the operation
      */
-    public AuthOperation findAuthOperation(int id) {
+     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public AuthOperation findAuthOperation(Long id) {
         return em.find(AuthOperation.class, id);
     }
     
@@ -251,7 +252,7 @@ public class AnAEJB {
      * @return the user 
      */
      @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public AuthUser findUser(int id) {
+    public AuthUser findUser(Long id) {
         return em.find(AuthUser.class, id);
     }
 
@@ -288,7 +289,7 @@ public class AnAEJB {
             return;
         }
         
-        if (user.getUserId() == null) {
+        if (user.getId() == null) {
             em.persist(user);
         } else {
             em.merge(user);
@@ -302,7 +303,7 @@ public class AnAEJB {
      * @param user 
      */
     public void deleteUser(AuthUser user) {
-        AuthUser muser = em.find(AuthUser.class, user.getUserId());
+        AuthUser muser = em.find(AuthUser.class, user.getId());
         em.remove(muser);
     }
      

@@ -127,9 +127,9 @@ public class ManageUserRoleView implements Serializable {
             }
             resetInput();
             RequestContext.getCurrentInstance().addCallbackParam("success", true);
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role saved", "");
+            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "User Role saved", "");
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save role", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save user role", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }
@@ -143,7 +143,7 @@ public class ManageUserRoleView implements Serializable {
             UiUtility.showMessage(FacesMessage.SEVERITY_INFO, "Role deleted", "");
             resetInput();
         } catch (Exception e) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not delete role", e.getMessage());
+            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not delete user role", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
         }

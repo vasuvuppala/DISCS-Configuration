@@ -18,8 +18,8 @@
                     <h:outputText value="Manage User Roles"/>
                 </f:facet>
                 <p:ajax event="rowSelect" listener="#{manageUserRoleView.onRowSelect}" update="commandButtons" />
-                <p:column headerText="Role" sortBy="#{obj.role.roleName}">
-                    <h:outputText value="#{obj.role.roleName}" title="#{obj.role.description}"/>
+                <p:column headerText="Role" sortBy="#{obj.role.name}">
+                    <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
                 </p:column>
                 <p:column headerText="User" sortBy="#{obj.user.lastName}">
                     <h:outputText value="#{obj.user.lastName} #{obj.user.firstName}" />
@@ -44,7 +44,7 @@
             </p:dataTable>
         </h:form>
         <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
-            <h:form id="authROleInputForm">              
+            <h:form id="authROleInputForm" rendered="#{manageUserRoleView.inputAction != 'READ'}">              
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>
@@ -63,7 +63,7 @@
                             <p:selectOneMenu id="role" value="#{manageUserRoleView.inputAction == 'CREATE'? manageUserRoleView.inputUserRole.role : manageUserRoleView.selectedUserRole.role}"  
                                              converter="#{authRoleConverter}"
                                              disabled="#{manageUserRoleView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{manageUserRoleView.roles}" var="r" itemLabel="#{r.roleName}" itemValue="#{r}" />
+                                <f:selectItems value="#{manageUserRoleView.roles}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
@@ -73,7 +73,7 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="user" value="#{manageUserRoleView.inputAction == 'CREATE'? manageUserRoleView.inputUserRole.user : manageUserRoleView.selectedUserRole.user}" 
-                                             converter="#{userConverter}" disabled="#{manageUserRoleView.inputAction == 'DELETE'}">
+                                             converter="#{authUserConverter}" disabled="#{manageUserRoleView.inputAction == 'DELETE'}">
                                 <f:selectItems value="#{manageUserRoleView.users}" var="u" itemLabel="#{u.lastName}, #{u.firstName}" itemValue="#{u}" />
                             </p:selectOneMenu>
                         </p:column>

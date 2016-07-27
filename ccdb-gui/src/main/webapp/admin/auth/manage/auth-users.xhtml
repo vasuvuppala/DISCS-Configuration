@@ -106,6 +106,16 @@
                     </p:row>
                     <p:row>
                         <p:column>
+                            <p:outputLabel for="nickName" value="Nickname"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="nickName" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.name : manageUserView.selectedUser.name}"  
+                                         required="true" 
+                                         validatorMessage="Nickname is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
                             <p:outputLabel for="email" value="Email"/>
                         </p:column>
                         <p:column>

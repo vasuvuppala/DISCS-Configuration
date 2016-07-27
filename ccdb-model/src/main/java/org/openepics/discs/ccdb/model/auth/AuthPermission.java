@@ -24,16 +24,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
+import org.openepics.discs.ccdb.model.Property;
 
 /**
- *
+ * Permissions for authorization
+ * 
  * @author vuppala
  */
 @Entity
-@Table(name = "auth_permission")
+@Table(name = "auth_permission",
+        uniqueConstraints=@UniqueConstraint(columnNames={"resource", "authOperation", "role", "property"}) )
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
@@ -53,15 +57,18 @@ public class AuthPermission extends ConfigurationEntity {
 
     @Basic(optional=false)
     @NotNull
-    @Column(name="operation")
+    @Column(name="auth_operation")
     @Enumerated(EnumType.STRING)
     private AuthOperation authOperation;
 
-    @JoinColumn(name = "role", referencedColumnName = "role_id")
-    @ManyToOne(optional = false)
-    @NotNull
+    @JoinColumn(name = "role")
+    @ManyToOne(optional = true)
     private AuthRole role;
 
+    @JoinColumn(name = "property")
+    @ManyToOne(optional = true)
+    private Property property; // indirect role. value of the property is the role.
+    
     public AuthPermission() {
     }
 
@@ -87,6 +94,14 @@ public class AuthPermission extends ConfigurationEntity {
 
     public void setRole(AuthRole role) {
         this.role = role;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
 }

@@ -25,6 +25,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,13 +36,22 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
  * @author vuppala
  */
 @Entity
-@Table(name = "auth_user_role")
+@Table(name = "auth_user_role", 
+        uniqueConstraints=@UniqueConstraint(columnNames={"user", "role"}))
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthUserRole.findAll", query = "SELECT a FROM AuthUserRole a")
     })
 public class AuthUserRole extends ConfigurationEntity {
     private static final long serialVersionUID = 1L;
+    
+    @JoinColumn(name = "user")
+    @ManyToOne(optional = false)
+    private AuthUser user;
+    
+    @JoinColumn(name = "role")
+    @ManyToOne(optional = false)
+    private AuthRole role;
     
     @Basic(optional = false)
     @NotNull
@@ -69,13 +79,7 @@ public class AuthUserRole extends ConfigurationEntity {
     @Column(name = "comment")
     private String comment;
     
-    @JoinColumn(name = "user")
-    @ManyToOne(optional = false)
-    private AuthUser user;
     
-    @JoinColumn(name = "role")
-    @ManyToOne(optional = false)
-    private AuthRole role;
 
     public AuthUserRole() {
     }
