@@ -3,7 +3,7 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://java.sun.com/jsf/html"
-                template="/template/hourlogTemplate.xhtml" 
+                template="/WEB-INF/template/template.xhtml" 
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
@@ -22,8 +22,8 @@
                 <p:column headerText="ID" sortBy="#{obj.userId}" filterBy="#{obj.userId}">
                     <h:outputText value="#{obj.userId}"/>
                 </p:column>
-                <p:column headerText="LoginId" sortBy="#{obj.loginId}" filterBy="#{obj.loginId}">
-                    <h:outputText value="#{obj.loginId}"/>
+                <p:column headerText="LoginId" sortBy="#{obj.userId}" filterBy="#{obj.userId}">
+                    <h:outputText value="#{obj.userId}"/>
                 </p:column>
                 <p:column headerText="First Name" filterBy="#{obj.firstName}">
                     <h:outputText value="#{obj.firstName}"/>
@@ -34,20 +34,7 @@
                 <p:column headerText="Email">
                     <h:outputText value="#{obj.email}"/>
                 </p:column>
-                <p:column headerText="Department" filterBy="#{obj.department}">
-                    <h:outputText value="#{obj.department}"/>
-                </p:column>
-                <p:column headerText="SMS">
-                    <h:outputText value="#{obj.smsAddress}"/>
-                </p:column>
-                <p:column headerText="Ops Staff">
-                    <h:outputText value="#{obj.operationsStaff}"/>
-                </p:column>
-
-                <p:column headerText="Current Emp">
-                    <h:outputText value="#{obj.currentEmployee}"/>
-                </p:column>
-
+                
 
                 <f:facet name="footer">
                     <p:toolbar id="commandButtons">

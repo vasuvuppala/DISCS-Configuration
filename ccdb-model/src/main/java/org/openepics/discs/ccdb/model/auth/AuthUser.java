@@ -19,20 +19,15 @@
  */
 package org.openepics.discs.ccdb.model.auth;
 
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 
 /**
@@ -85,9 +80,6 @@ public class AuthUser extends ConfigurationEntity {
     @Size(max = 255)
     @Column(name = "comment")
     private String comment;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<UserRole> userRoles;
 
     public AuthUser() {
     }
@@ -163,15 +155,5 @@ public class AuthUser extends ConfigurationEntity {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoleList(List<UserRole> userRoles) {
-        this.userRoles = userRoles;
     }
 }

@@ -3,7 +3,7 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://java.sun.com/jsf/html"
-                template="/template/hourlogTemplate.xhtml" 
+                template="/WEB-INF/template/template.xhtml" 
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
@@ -13,13 +13,13 @@
            
             <p:dataTable id="authRoleTable" value="#{manageRoleView.roles}" var="obj" 
                          scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
-                         rowKey="#{obj.roleId}" selectionMode="single" selection="#{manageRoleView.selectedRole}">  
+                         rowKey="#{obj.id}" selectionMode="single" selection="#{manageRoleView.selectedRole}">  
                 <f:facet name="header" >
                     <h:outputText value="Manage Roles"/>
                 </f:facet>
                 <p:ajax event="rowSelect" listener="#{manageRoleView.onRowSelect}" update="commandButtons" />
                 <p:column headerText="Name">
-                    <h:outputText value="#{obj.roleName}"/>
+                    <h:outputText value="#{obj.name}"/>
                 </p:column>
                 <p:column headerText="Description">
                     <h:outputText value="#{obj.description}"/>
@@ -58,7 +58,7 @@
                             <p:outputLabel for="roleName" value="Name"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="roleName" value="#{manageRoleView.inputAction == 'CREATE'? manageRoleView.inputRole.roleName: manageRoleView.selectedRole.roleName}"  
+                            <p:inputText id="roleName" value="#{manageRoleView.inputAction == 'CREATE'? manageRoleView.inputRole.name: manageRoleView.selectedRole.name}"  
                                          required="true" 
                                          validatorMessage="Role name is required" disabled="#{manageRoleView.inputAction == 'DELETE'}"/>                           
                         </p:column>

@@ -19,7 +19,6 @@
  */
 package org.openepics.discs.ccdb.model.auth;
 
-import org.openepics.discs.ccdb.model.auth.Role;
 import java.io.Serializable;
 
 import javax.persistence.Basic;

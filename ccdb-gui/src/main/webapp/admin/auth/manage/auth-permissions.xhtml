@@ -3,7 +3,7 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://java.sun.com/jsf/html"
-                template="/template/hourlogTemplate.xhtml" 
+                template="/WEB-INF/template/template.xhtml" 
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
@@ -13,19 +13,19 @@
             
             <p:dataTable id="authRoleTable" value="#{managePermissionView.permissions}" var="obj" 
                          scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
-                         rowKey="#{obj.privilegeId}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
+                         rowKey="#{obj.id}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
                 <f:facet name="header" >
                     <h:outputText value="Manage Permissions"/>
                 </f:facet>
                 <p:ajax event="rowSelect" listener="#{managePermissionView.onRowSelect}" update="commandButtons" />
                 <p:column headerText="Role">
-                    <h:outputText value="#{obj.role.roleName}" title="#{obj.role.description}"/>
+                    <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
                 </p:column>
                 <p:column headerText="Operation">
-                    <h:outputText value="#{obj.operation.name}" title="#{obj.operation.description}"/>
+                    <h:outputText value="#{obj.authOperation}" title="#{obj.authOperation}"/>
                 </p:column>
                 <p:column headerText="Resource">
-                    <h:outputText value="#{obj.resource.name}" title="#{obj.resource.description}"/>
+                    <h:outputText value="#{obj.resource}" title="#{obj.resource}"/>
                 </p:column>
                 <f:facet name="footer">
                     <p:toolbar id="commandButtons">
@@ -44,7 +44,7 @@
             </p:dataTable>
         </h:form>
         <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
-            <h:form id="authROleInputForm">              
+            <h:form id="authROleInputForm" rendered="#{managePermissionView.inputAction != 'READ'}">              
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>
@@ -63,7 +63,7 @@
                             <p:selectOneMenu id="role" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.role : managePermissionView.selectedPermission.role}"  
                                              converter="#{authRoleConverter}"
                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{managePermissionView.roles}" var="r" itemLabel="#{r.roleName}" itemValue="#{r}" />
+                                <f:selectItems value="#{managePermissionView.roles}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
@@ -72,9 +72,9 @@
                             <p:outputLabel for="oper"  value="Operation"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="oper" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.operation : managePermissionView.selectedPermission.operation}" 
-                                             converter="#{authOperationConverter}" disabled="#{managePermissionView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{managePermissionView.operations}" var="o" itemLabel="#{o.name}" itemValue="#{o}" />
+                            <p:selectOneMenu id="oper" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.authOperation : managePermissionView.selectedPermission.authOperation}" 
+                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.operations}" var="o" itemLabel="#{o.description}" itemValue="#{o}" />
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
@@ -84,8 +84,8 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="res" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.resource : managePermissionView.selectedPermission.resource}" 
-                                             converter="#{authResourceConverter}" disabled="#{managePermissionView.inputAction == 'DELETE'}">
-                                <f:selectItems value="#{managePermissionView.resources}" var="s" itemLabel="#{s.name}" itemValue="#{s}" />
+                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
+                                <f:selectItems value="#{managePermissionView.resources}" var="s" itemLabel="#{s.label}" itemValue="#{s}" />
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>

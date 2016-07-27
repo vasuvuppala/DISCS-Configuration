@@ -39,7 +39,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
     @NamedQuery(name = "AuthPermission.findByResource", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource"),
     @NamedQuery(name = "AuthPermission.findByRole", query = "SELECT a FROM AuthPermission a WHERE a.role = :role"),
-    @NamedQuery(name = "AuthPermission.findByOperation", query = "SELECT a FROM AuthPermission a WHERE a.operation = :operation")
+    @NamedQuery(name = "AuthPermission.findByOperation", query = "SELECT a FROM AuthPermission a WHERE a.authOperation = :operation")
 })
 public class AuthPermission extends ConfigurationEntity {
 
@@ -55,7 +55,7 @@ public class AuthPermission extends ConfigurationEntity {
     @NotNull
     @Column(name="operation")
     @Enumerated(EnumType.STRING)
-    private AuthOperation operation;
+    private AuthOperation authOperation;
 
     @JoinColumn(name = "role", referencedColumnName = "role_id")
     @ManyToOne(optional = false)
@@ -73,12 +73,12 @@ public class AuthPermission extends ConfigurationEntity {
         this.resource = resource;
     }
 
-    public AuthOperation getOperation() {
-        return operation;
+    public AuthOperation getAuthOperation() {
+        return authOperation;
     }
 
-    public void setOperation(AuthOperation operation) {
-        this.operation = operation;
+    public void setAuthOperation(AuthOperation authOperation) {
+        this.authOperation = authOperation;
     }
 
     public AuthRole getRole() {

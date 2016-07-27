@@ -3,7 +3,7 @@
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://java.sun.com/jsf/html"
-                template="/template/hourlogTemplate.xhtml" 
+                template="/WEB-INF/template/template.xhtml" 
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
@@ -13,7 +13,7 @@
            
             <p:dataTable id="authTable" value="#{manageUserRoleView.userRoles}" var="obj" 
                          scrollRows="40" scrollable="true" scrollHeight="400" liveScroll="true"
-                         rowKey="#{obj.userRoleId}" selectionMode="single" selection="#{manageUserRoleView.selectedUserRole}">  
+                         rowKey="#{obj.id}" selectionMode="single" selection="#{manageUserRoleView.selectedUserRole}">  
                 <f:facet name="header" >
                     <h:outputText value="Manage User Roles"/>
                 </f:facet>
