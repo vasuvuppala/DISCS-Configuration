@@ -40,13 +40,15 @@
                     <p:toolbar id="commandButtons">
                         <f:facet name="left">
                             <p:commandButton title="New" icon="ui-icon-document" update=":authInputDlg" process="@this" 
-                                             actionListener="#{manageUserView.onAddCommand}" oncomplete="PF('authInputWid').show()"/>   
+                                             actionListener="#{manageUserView.onAddCommand}" oncomplete="PF('authInputWid').show()"
+                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
                             <p:commandButton title="Edit" icon="ui-icon-disk" update=":authInputDlg"  process="@this"                                          
                                              actionListener="#{manageUserView.onEditCommand}"
-                                             oncomplete="PF('authInputWid').show()" disabled="#{empty manageUserView.selectedUser}"/>
+                                             oncomplete="PF('authInputWid').show()" 
+                                             disabled="#{not authorizationManager.canAuthorize() or empty manageUserView.selectedUser}"/>
                             <p:commandButton title="Delete" icon="ui-icon-trash" update=":authInputDlg" process="@this" 
                                              actionListener="#{manageUserView.onDeleteCommand}" oncomplete="PF('authInputWid').show()" 
-                                             disabled="#{empty manageUserView.selectedUser}"/>
+                                             disabled="#{not authorizationManager.canAuthorize() or empty manageUserView.selectedUser}"/>
                         </f:facet>
                     </p:toolbar>
                 </f:facet>

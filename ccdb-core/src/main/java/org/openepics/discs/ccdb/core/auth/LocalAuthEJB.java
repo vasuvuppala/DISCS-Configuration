@@ -25,11 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +48,7 @@ import org.openepics.discs.ccdb.model.auth.AuthUserRole;
  *
  * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
-@RequestScoped
-@Named
+@Stateless
 public class LocalAuthEJB implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -128,7 +126,7 @@ public class LocalAuthEJB implements Serializable {
                 .setParameter("resource", resource)
                 .setParameter("operation", operation)
                 .getResultList();
-        List<AuthRole> roles = Collections.EMPTY_LIST;
+        List<AuthRole> roles = new ArrayList<>();
 
         AuthRole indRole;
         for (AuthPermission perm : perms) {
@@ -203,6 +201,24 @@ public class LocalAuthEJB implements Serializable {
          }
          
          return belongsTo(roles);
+    }
+    
+    /**
+     * Is the current user logged in?
+     * 
+     * @return 
+     */
+    public boolean isLoggedIn() {
+        return getCurrentUser() != null;
+    }
+    
+    /**
+     * All users
+     * 
+     * @return 
+     */
+    public List<AuthUser> findAllUsers() {
+        return em.createNamedQuery("AuthUser.findAll", AuthUser.class).getResultList();
     }
     
 //    protected boolean hasPermission(EntityType entityType, EntityTypeOperation operationType) {

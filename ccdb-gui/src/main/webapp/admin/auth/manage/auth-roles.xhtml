@@ -29,13 +29,15 @@
                     <p:toolbar id="commandButtons">
                         <f:facet name="left">
                             <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{manageRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                                             actionListener="#{manageRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
+                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
                             <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
                                              actionListener="#{manageRoleView.onEditCommand}"
-                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty manageRoleView.selectedRole}"/>
+                                             oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
                             <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
                                              actionListener="#{manageRoleView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{empty manageRoleView.selectedRole}"/>
+                                             disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
                         </f:facet>
                     </p:toolbar>
                 </f:facet>

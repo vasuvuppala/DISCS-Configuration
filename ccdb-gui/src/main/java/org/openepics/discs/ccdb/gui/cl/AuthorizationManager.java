@@ -79,9 +79,13 @@ public class AuthorizationManager implements Serializable {
         currentUser = authEJB.getCurrentUser();
     }
     
+    public boolean isLoggedIn() {
+        return authEJB.isLoggedIn();
+    }
+    
     public boolean canManageChecklists() {
         LOGGER.log(Level.INFO, "Checking can mcanage checklists");
-        return authEJB.hasPermission(AuthResource.SLOT, null, AuthOperation.MANAGE_CHECKLISTS);
+        return authEJB.hasPermission(AuthResource.CHECKLIST, null, AuthOperation.MANAGE);
     }
     
     public boolean canAssignChecklists(List<Slot>  slots) {
@@ -103,10 +107,10 @@ public class AuthorizationManager implements Serializable {
     }
     
     public boolean canManageGroups() {
-        return authEJB.hasPermission(AuthResource.SLOT, null, AuthOperation.MANAGE_GROUPS);
+        return authEJB.hasPermission(AuthResource.SLOT_GROUP, null, AuthOperation.MANAGE);
     }
     
-    public boolean canApproveDHR(List<Slot>  slots) {
+    private boolean canApproveDHR(List<Slot>  slots) {
         for(Slot slot: slots) {
             if (! authEJB.hasPermission(AuthResource.SLOT, slot, AuthOperation.APPROVE_DHR)) {
                 return false;
@@ -115,7 +119,7 @@ public class AuthorizationManager implements Serializable {
         return true;
     }   
     
-    public boolean canApproveARR(List<Slot>  slots) {
+    private boolean canApproveARR(List<Slot>  slots) {
         for(Slot slot: slots) {
             if (! authEJB.hasPermission(AuthResource.SLOT, slot, AuthOperation.APPROVE_ARR)) {
                 return false;
@@ -123,5 +127,23 @@ public class AuthorizationManager implements Serializable {
         }
         return true;
     }  
+    
+    public boolean canAuthorize() {
+        return authEJB.hasPermission(AuthResource.AUTHORIZATIONS, null, AuthOperation.MANAGE);
+    }
+    
+    public boolean canApprove(String processName, List<Slot> slots) {
+        switch (processName) {
+            case "DHR":
+                return canApproveDHR(slots);
+            case "ARR":
+                return canApproveARR(slots);
+            default:
+                LOGGER.log(Level.SEVERE, "Invalid process name {0}", processName);
+                break;
+        }
+        
+        return false;
+    }
     //-- Getters/Setters     
 }

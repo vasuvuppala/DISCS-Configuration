@@ -21,17 +21,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.openepics.discs.ccdb.core.security.SecurityPolicy;
+import org.openepics.discs.ccdb.core.auth.LocalAuthEJB;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
-import org.openepics.discs.ccdb.model.auth.User;
+import org.openepics.discs.ccdb.model.auth.AuthUser;
 import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import org.openepics.discs.ccdb.model.cl.Process;
@@ -51,9 +51,12 @@ import org.openepics.discs.ccdb.model.cl.StatusOption;
  */
 @Stateless
 public class ChecklistEJB {       
-    @Inject
-    private SecurityPolicy securityPolicy;
+//    @Inject
+//    private SecurityPolicy securityPolicy;
 
+    @EJB
+    private LocalAuthEJB authEJB;
+    
     private static final Logger LOGGER = Logger.getLogger(ChecklistEJB.class.getName());   
     @PersistenceContext private EntityManager em;
     
@@ -436,12 +439,12 @@ public class ChecklistEJB {
      */
     public <T> void assignChecklist(List<T> entities, Checklist checklist) {   
         LOGGER.log(Level.INFO, "Creating checklist for {0} entities", entities.size());
-        String userId = securityPolicy.getUserId();
-        if (userId == null) {
+        AuthUser currentUser = authEJB.getCurrentUser();
+        
+        if (currentUser == null) {
             throw new SecurityException();
         }
-        User currentUser = new User(userId); // ToDo: Improve the security/authentication code
-        
+                
         for (T entity : entities) {
             Assignment assignment = new Assignment();
             if (entity instanceof Slot) { // may not be safe due to different class loaders across the application

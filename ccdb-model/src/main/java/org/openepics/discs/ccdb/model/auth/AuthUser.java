@@ -40,10 +40,8 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthUser.findAll", query = "SELECT u FROM AuthUser u"),
-    @NamedQuery(name = "AuthUser.findByUserId", query = "SELECT u FROM AuthUser u WHERE u.userid = :userid"),
-    @NamedQuery(name = "AuthUser.findByName", query = "SELECT u FROM AuthUser u WHERE u.name = :name"),
-    @NamedQuery(name = "AuthUser.findByEmail", query = "SELECT u FROM AuthUser u WHERE u.email = :email"),
-    @NamedQuery(name = "AuthUser.findByComment", query = "SELECT u FROM AuthUser u WHERE u.comment = :comment")
+    @NamedQuery(name = "AuthUser.findByUserId", query = "SELECT u FROM AuthUser u WHERE u.userId = :userid"),
+    @NamedQuery(name = "AuthUser.findByName", query = "SELECT u FROM AuthUser u WHERE u.name = :name")
 })
 public class AuthUser extends ConfigurationEntity {
     private static final long serialVersionUID = 1L;

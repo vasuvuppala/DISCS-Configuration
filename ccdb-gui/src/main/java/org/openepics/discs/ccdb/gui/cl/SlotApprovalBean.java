@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -30,12 +29,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
-import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.SlotPropertyValue;
 import org.openepics.discs.ccdb.model.cl.Approval;
-import org.openepics.discs.ccdb.model.cl.Checklist;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.primefaces.context.RequestContext;
 
@@ -73,8 +70,10 @@ public class SlotApprovalBean implements Serializable {
     private ChecklistEJB lcEJB;
     @EJB
     private SlotEJB slotEJB;
+//    @Inject
+//    private SecurityPolicy securityPolicy;
     @Inject
-    private SecurityPolicy securityPolicy;
+    private AuthorizationManager authManager;
 
     private static final Logger LOGGER = Logger.getLogger(SlotApprovalBean.class.getName());
     private final ChecklistEntity ENTITY_TYPE = ChecklistEntity.SLOT;
@@ -154,13 +153,11 @@ public class SlotApprovalBean implements Serializable {
      * @return 
      */
      public boolean isAuthorized() {
-        String userId = securityPolicy.getUserId();
-        if (userId == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
-                    "Not authorized. User Id is null.");
-            return false;
+        if (! authManager.canApprove(processName, selectedEntities)) {
+           UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Authorization Failure", "You are not authorized to approve one or more of the selected slots"); 
+           return false;
         }
-        // User user = new User(userId);
+        
         return true;
     }
      

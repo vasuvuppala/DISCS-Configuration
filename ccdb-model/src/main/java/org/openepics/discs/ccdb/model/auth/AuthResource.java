@@ -20,16 +20,19 @@ package org.openepics.discs.ccdb.model.auth;
  */
 
 public enum AuthResource   {
-    DEVICE("Device"),
-    SLOT("Slot"),
-    COMPONENT_TYPE("Device type"),
-    USER("User"),
-    INSTALLATION_RECORD("Installation record"),
     ALIGNMENT_RECORD("Alignment record"),
+    AUTHORIZATIONS("Authorizations"),
+    CHECKLIST("Checklist"),
+    COMPONENT_TYPE("Device type"),
+    DATA_TYPE("Enumeration"),
+    DEVICE("Device"),  
+    INSTALLATION_RECORD("Installation record"),
     MENU("Menu"),
-    UNIT("Unit"),
     PROPERTY("Property"),
-    DATA_TYPE("Enumeration");
+    SLOT("Slot"),
+     SLOT_GROUP("Slot Group"),
+    UNIT("Unit"),
+    USER("User");
 
     private final String label;
 

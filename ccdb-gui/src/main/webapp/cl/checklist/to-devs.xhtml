@@ -48,11 +48,11 @@
                             <f:facet name="left">
                                 <p:commandButton value="Assign" title="Assign Checklist" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{deviceChecklistBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not deviceChecklistBean.noneHasChecklists or empty deviceChecklistBean.defaultChecklist}" />      
+                                                 disabled="#{not isLoggedIn() or  not deviceChecklistBean.noneHasChecklists or empty deviceChecklistBean.defaultChecklist}" />      
                                 <p:commandButton value="Remove" title="Unassign" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{deviceChecklistBean.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not deviceChecklistBean.allHaveChecklists}"/>
+                                                 disabled="#{not isLoggedIn() or not deviceChecklistBean.allHaveChecklists}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>

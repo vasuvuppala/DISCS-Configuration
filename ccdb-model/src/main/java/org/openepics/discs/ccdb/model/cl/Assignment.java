@@ -28,6 +28,7 @@ import javax.persistence.Table;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
+import org.openepics.discs.ccdb.model.auth.AuthUser;
 import org.openepics.discs.ccdb.model.auth.User;
 
 /**
@@ -81,18 +82,18 @@ public class Assignment extends ConfigurationEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "requestor")
-    private User requestor; 
+    private AuthUser requestor; 
     
     @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "assignment")
     private List<ProcessStatus> statuses;
     
     // getters and setters
 
-    public User getRequestor() {
+    public AuthUser getRequestor() {
         return requestor;
     }
 
-    public void setRequestor(User requestor) {
+    public void setRequestor(AuthUser requestor) {
         this.requestor = requestor;
     }
 

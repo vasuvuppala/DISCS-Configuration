@@ -33,21 +33,18 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.openepics.discs.ccdb.core.ejb.AuthEJB;
+import org.openepics.discs.ccdb.core.auth.LocalAuthEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
-import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
 import org.openepics.discs.ccdb.model.auth.AuthUser;
 import org.openepics.discs.ccdb.model.auth.AuthUserRole;
 import org.openepics.discs.ccdb.model.auth.User;
-import org.openepics.discs.ccdb.model.auth.UserRole;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Assignment;
 import org.openepics.discs.ccdb.model.cl.Checklist;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 import org.openepics.discs.ccdb.model.cl.SlotGroup;
 import org.openepics.discs.ccdb.model.cl.StatusOption;
-
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
@@ -111,9 +108,11 @@ public class ProcessStatusManager implements Serializable {
     @EJB
     private ChecklistEJB lcEJB;
     @EJB
-    private AuthEJB authEJB;
+    private LocalAuthEJB authEJB;
+//    @Inject
+//    private SecurityPolicy securityPolicy;
     @Inject
-    private SecurityPolicy securityPolicy;
+    private AuthorizationManager authManager;
 
     private static final Logger LOGGER = Logger.getLogger(ProcessStatusManager.class.getName());
 
@@ -128,7 +127,7 @@ public class ProcessStatusManager implements Serializable {
     private List<Assignment> entities;
     private List<Assignment> filteredEntities;
     private List<StatusOption> statusOptions;
-    private List<User> users;
+    private List<AuthUser> users;
     private Boolean allPhasesOptional = false; // are all selected phases optional? or is there a mandatory phase?
     private Boolean phaseSelected = false; // is at least one phase selected?
     private List<Assignment> selectedEntities = new ArrayList<>();
@@ -225,6 +224,9 @@ public class ProcessStatusManager implements Serializable {
     public Boolean lockedAssignment(Assignment assignment, Process phase) {
         ProcessStatus phaseStatus = getStatusRec(assignment, phase);
         if (phaseStatus == null) {
+            return true;
+        }
+        if (! authManager.canUpdateStatus(phaseStatus)) {
             return true;
         }
         if (phaseStatus.getField().getSummaryProcess()) {
@@ -510,33 +512,32 @@ public class ProcessStatusManager implements Serializable {
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
             }
-            String userId = securityPolicy.getUserId();
-            if (userId == null) {
+            AuthUser currentUser = authEJB.getCurrentUser();         
+            if (currentUser == null) {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                         "You are not authorized. User Id is null.");
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
-            }
-            User user = new User(userId);
+            }         
 
-            // ToDo: Improve. really bad code
-            for (SelectablePhase selectedPhase : selectablePhases) {
-                if (!selectedPhase.selected) {
-                    continue;
-                }
-                for (Assignment record : selectedEntities) {
-                    for (ProcessStatus status : record.getStatuses()) {
-                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
-                            if (!isAuthorized(view, status, user)) {
-                                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
-                                        "You are not authorized to update one or more of the statuses.");
-                                RequestContext.getCurrentInstance().addCallbackParam("success", false);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
+//            // ToDo: Improve. really bad code
+//            for (SelectablePhase selectedPhase : selectablePhases) {
+//                if (!selectedPhase.selected) {
+//                    continue;
+//                }
+//                for (Assignment record : selectedEntities) {
+//                    for (ProcessStatus status : record.getStatuses()) {
+//                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
+//                            if (!isAuthorized(view, status, user)) {
+//                                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
+//                                        "You are not authorized to update one or more of the statuses.");
+//                                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+//                                return;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
             // ToDo: Improve. really bad code
             for (SelectablePhase selectedPhase : selectablePhases) {
@@ -547,7 +548,7 @@ public class ProcessStatusManager implements Serializable {
                     for (ProcessStatus status : record.getStatuses()) {
                         if (selectedPhase.phase.equals(status.getField().getProcess())) {
                             status.setModifiedAt(new Date());
-                            status.setModifiedBy(user.getUserId());
+                            status.setModifiedBy(currentUser.getUserId());
                             status.setStatus(inputStatus);
                             status.setComment(inputComment);
                             status.setAssignedSME(inputSME);
@@ -582,14 +583,13 @@ public class ProcessStatusManager implements Serializable {
         try {
             Preconditions.checkNotNull(selectedEntities);
             
-            String userId = securityPolicy.getUserId();
-            if (userId == null) {
+            AuthUser currentUser = authEJB.getCurrentUser();         
+            if (currentUser == null) {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                         "You are not authorized. User Id is null.");
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
-            }
-            User user = new User(userId);        
+            }           
 
             // ToDo: Improve. really bad code
             for (SelectablePhase selectedPhase : selectablePhases) {
@@ -600,7 +600,7 @@ public class ProcessStatusManager implements Serializable {
                     for (ProcessStatus status : record.getStatuses()) {
                         if (selectedPhase.phase.equals(status.getField().getProcess())) {
                             status.setModifiedAt(new Date());
-                            status.setModifiedBy(user.getUserId());
+                            status.setModifiedBy(currentUser.getUserId());
                             status.setStatus(exclude? null: status.getField().getDefaultStatus());
                             // status.setComment(inputComment);                        
                             lcEJB.saveProcessStatus(status);
@@ -750,7 +750,7 @@ public class ProcessStatusManager implements Serializable {
         this.inputSME = inputSME;
     }
 
-    public List<User> getUsers() {
+    public List<AuthUser> getUsers() {
         return users;
     }
 

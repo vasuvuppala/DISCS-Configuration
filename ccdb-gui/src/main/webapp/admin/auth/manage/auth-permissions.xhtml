@@ -25,23 +25,25 @@
                 <p:column headerText="Operation">
                     <h:outputText value="#{obj.authOperation}" title="#{obj.authOperation}"/>
                 </p:column>
-                <p:column headerText="Role">
+                <p:column headerText="Direct Role">
                     <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
                 </p:column>
-                <p:column headerText="Property">
+                <p:column headerText="Indirect Role">
                     <h:outputText value="#{obj.property.name}" title="#{obj.property.description}"/>
                 </p:column>
                 <f:facet name="footer">
                     <p:toolbar id="commandButtons">
                         <f:facet name="left">
                             <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"/>   
+                                             actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
+                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
                             <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
                                              actionListener="#{managePermissionView.onEditCommand}"
-                                             oncomplete="PF('authRoleInputWid').show()" disabled="#{empty managePermissionView.selectedPermission}"/>
+                                             oncomplete="PF('authRoleInputWid').show()" 
+                                             disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
                             <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
                                              actionListener="#{managePermissionView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{empty managePermissionView.selectedPermission}"/>
+                                             disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
                         </f:facet>
                     </p:toolbar>
                 </f:facet>
@@ -93,7 +95,7 @@
 
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="role" value="Role"/>
+                            <p:outputLabel for="role" value="Direct Role"/>
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="role" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.role : managePermissionView.selectedPermission.role}"  
