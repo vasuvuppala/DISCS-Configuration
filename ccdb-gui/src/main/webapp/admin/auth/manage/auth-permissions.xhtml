@@ -36,7 +36,7 @@
                         <f:facet name="left">
                             <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
                                              actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
-                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
+                                             disabled="#{false and not authorizationManager.canAuthorize()}"/>   
                             <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
                                              actionListener="#{managePermissionView.onEditCommand}"
                                              oncomplete="PF('authRoleInputWid').show()" 
@@ -99,18 +99,12 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="role" value="#{managePermissionView.inputAction == 'CREATE'? managePermissionView.inputPermission.role : managePermissionView.selectedPermission.role}"  
-                                             converter="#{authRoleConverter}"
-                                             var="role" filterMatchMode="contains" filter="true"
+                                             converter="#{authRoleConverter}"                                           
                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
                                 <f:selectItem itemLabel="None" itemValue="#{null}" />
-                                <f:selectItems value="#{managePermissionView.roles}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
-                            </p:selectOneMenu>
-                            <p:column>
-                                    #{role.name}
-                                </p:column>
-                                <p:column>
-                                    #{role.description}
-                                </p:column>
+                                <f:selectItems value="#{managePermissionView.roles}" var="ro" itemLabel="#{ro.name}" itemValue="#{ro}" />
+                                
+                            </p:selectOneMenu>                           
                         </p:column>
                     </p:row>
                     <p:row>
@@ -122,7 +116,7 @@
                                              converter="#{propertyConverter}" var="indr" filterMatchMode="contains" filter="true"
                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
                                 <f:selectItem itemLabel="None" itemValue="#{null}" />
-                                <f:selectItems value="#{managePermissionView.properties}" var="r" itemLabel="#{r.name}" itemValue="#{r}" />
+                                <f:selectItems value="#{managePermissionView.properties}" var="pr" itemLabel="#{pr.name}" itemValue="#{pr}" />
                                 <p:column>
                                     #{indr.name}
                                 </p:column>

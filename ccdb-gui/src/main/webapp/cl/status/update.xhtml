@@ -85,7 +85,7 @@
                             <f:facet name="left">
                                 <p:commandButton title="Update"  value="Modify" icon="ui-icon-document" update=":crudInputDlg" process="@form" 
                                                  actionListener="#{processStatusManager.onEditCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty processStatusManager.selectedEntities or not processStatusManager.phaseSelected}" />   
+                                                 disabled="#{not authorizationManager.loggedIn or empty processStatusManager.selectedEntities or not processStatusManager.phaseSelected}" />   
 
                                 <p:commandButton title="Reset" value="Reset" icon="ui-icon-refresh" update=":crudForm:entityTable" process="@this" 
                                                  actionListener="#{processStatusManager.resetInput()}"  

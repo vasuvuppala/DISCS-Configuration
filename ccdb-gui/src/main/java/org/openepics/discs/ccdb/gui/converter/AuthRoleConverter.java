@@ -14,7 +14,6 @@ import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 import org.openepics.discs.ccdb.core.auth.AnAEJB;
 import org.openepics.discs.ccdb.model.auth.AuthRole;
-import org.openepics.discs.ccdb.model.auth.AuthUser;
 
 /**
  * Converter for AuthUser

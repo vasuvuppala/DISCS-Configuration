@@ -38,14 +38,14 @@
                             <f:facet name="left">
                                 <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{slotGroupManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
+                                                 disabled="#{not authorizationManager.canManageGroups()}"/>   
                                 <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{slotGroupManager.onEditCommand}"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty slotGroupManager.selectedEntity}"/>
+                                                 disabled="#{not authorizationManager.canManageGroups() or empty slotGroupManager.selectedEntity}"/>
                                 <p:commandButton title="Delete" icon="ui-icon-trash" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{slotGroupManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty slotGroupManager.selectedEntity}"/>
+                                                 disabled="#{not authorizationManager.canManageGroups() or empty slotGroupManager.selectedEntity}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>

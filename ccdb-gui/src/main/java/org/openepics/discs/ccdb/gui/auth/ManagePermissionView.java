@@ -122,7 +122,7 @@ public class ManagePermissionView implements Serializable {
         AuthPermission perm = inputAction == InputAction.CREATE ? inputPermission : selectedPermission;
 
         if ((perm.getRole() == null && perm.getProperty() == null)
-                || (perm.getRole() != null && perm.getRole() != null)) {
+                || (perm.getRole() != null && perm.getProperty() != null)) {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Both role and indrect role cannot be null or non-null", "One of them has to be null and the other not");
             return false;
         }
