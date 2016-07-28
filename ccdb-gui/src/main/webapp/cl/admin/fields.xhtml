@@ -39,8 +39,8 @@
                         <h:outputText value="#{obj.process.name}" styleClass="colCenter"/>
                     </p:column>
 
-                    <p:column headerText="SME" filterBy="#{obj.sme.roleId}" filterMatchMode="contains" >
-                        <h:outputText value="#{obj.sme.roleId}" styleClass="colCenter"/>
+                    <p:column headerText="SME" filterBy="#{obj.sme.name}" filterMatchMode="contains" >
+                        <h:outputText value="#{obj.sme.name}" styleClass="colCenter"/>
                     </p:column>
                     <p:column headerText="Summary" >
                         <h:outputText value="#{obj.summaryProcess}" styleClass="colCenter"/>
@@ -59,14 +59,14 @@
                             <f:facet name="left">
                                 <p:commandButton title="Add" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{fieldManager.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"/>   
+                                                 disabled="#{not authorizationManager.canManageChecklists()}"/>   
                                 <p:commandButton title="Edit" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{fieldManager.onEditCommand}"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty fieldManager.selectedEntity}"/>
+                                                 disabled="#{not authorizationManager.canManageChecklists() or empty fieldManager.selectedEntity}"/>
                                 <p:commandButton title="Delete" icon="ui-icon-trash" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{fieldManager.onDeleteCommand}" oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or empty fieldManager.selectedEntity}"/>
+                                                 disabled="#{not authorizationManager.canManageChecklists() or empty fieldManager.selectedEntity}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>

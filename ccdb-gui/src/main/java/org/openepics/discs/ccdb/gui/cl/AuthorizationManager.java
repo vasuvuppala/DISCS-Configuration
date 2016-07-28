@@ -24,10 +24,12 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.openepics.discs.ccdb.core.auth.LocalAuthEJB;
+import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.AuthOperation;
 import org.openepics.discs.ccdb.model.auth.AuthResource;
 import org.openepics.discs.ccdb.model.auth.AuthUser;
+import org.openepics.discs.ccdb.model.cl.Assignment;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 
 
@@ -97,10 +99,35 @@ public class AuthorizationManager implements Serializable {
         return true;
     }
     
+    public boolean canAssignDevChecklists(List<Device>  devices) {
+        for(Device device: devices) {
+            if (! authEJB.hasPermission(AuthResource.DEVICE, device, AuthOperation.ASSIGN_CHECKLISTS)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean canAssignProcesses(List<Assignment>  assignments) {
+        for(Assignment assignment: assignments) {
+            if (assignment.getSlot() != null && ! authEJB.hasPermission(AuthResource.SLOT, assignment.getSlot(), AuthOperation.ASSIGN_CHECKLISTS)) {
+                return false;
+            }
+            if (assignment.getSlotGroup() != null && assignment.getSlotGroup().getOwner() != null 
+                    && ! assignment.getSlotGroup().getOwner().equals(currentUser)) {
+                return false;
+            }
+            if (assignment.getDevice() != null && ! authEJB.hasPermission(AuthResource.SLOT, assignment.getDevice(), AuthOperation.ASSIGN_CHECKLISTS)) {
+                return false;
+            }
+        }
+        return true;
+    }
+     
     public boolean canUpdateStatus(ProcessStatus procStatus) { 
         if (procStatus == null || currentUser == null) return false;
-        if (procStatus.getAssignedSME() != null) {
-            procStatus.getAssignedSME().equals(currentUser);
+        if (procStatus.getAssignedSME() != null && procStatus.getAssignedSME().equals(currentUser)) {
+            return true;
         }
         
         return (authEJB.belongsTo(procStatus.getField().getSme()));
@@ -129,6 +156,7 @@ public class AuthorizationManager implements Serializable {
     }  
     
     public boolean canAuthorize() {
+        if (authEJB.needAuthBoostrap()) return true; // if there are no auth records (users, roles, permissions etc), allow to bootstrap
         return authEJB.hasPermission(AuthResource.AUTHORIZATIONS, null, AuthOperation.MANAGE);
     }
     

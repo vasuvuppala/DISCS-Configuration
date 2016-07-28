@@ -47,10 +47,12 @@ public class AuthUserRole extends ConfigurationEntity {
     private static final long serialVersionUID = 1L;
     
     @JoinColumn(name = "user")
+    @NotNull
     @ManyToOne(optional = false)
     private AuthUser user;
     
     @JoinColumn(name = "role")
+    @NotNull
     @ManyToOne(optional = false)
     private AuthRole role;
     

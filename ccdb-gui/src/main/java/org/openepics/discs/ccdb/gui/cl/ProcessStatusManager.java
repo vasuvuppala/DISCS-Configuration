@@ -582,7 +582,10 @@ public class ProcessStatusManager implements Serializable {
     public void assignProcesses(Boolean exclude) {
         try {
             Preconditions.checkNotNull(selectedEntities);
-            
+            if (!authManager.canAssignProcesses(selectedEntities)) {
+                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Authorization Failure", "You are not authorized to assign checklists to one or more of the selected entities");
+                return;
+            }
             AuthUser currentUser = authEJB.getCurrentUser();         
             if (currentUser == null) {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",

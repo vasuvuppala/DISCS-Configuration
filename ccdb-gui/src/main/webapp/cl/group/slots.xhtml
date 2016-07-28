@@ -50,11 +50,11 @@
                             <f:facet name="left">
                                 <p:commandButton value="Assign" title="Assign Group" icon="ui-icon-document" update=":crudInputDlg" process="@this" 
                                                  actionListener="#{groupSlotBean.onAddCommand}" oncomplete="PF('crudInputWid').show()"
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not groupSlotBean.noneHasGroup or empty groupSlotBean.slotGroups}" />      
+                                                 disabled="#{not authorizationManager.canManageGroups() or not groupSlotBean.noneHasGroup or empty groupSlotBean.slotGroups}" />      
                                 <p:commandButton value="Remove" title="Unassign Group" icon="ui-icon-disk" update=":crudInputDlg"  process="@this"                                          
                                                  actionListener="#{groupSlotBean.onDeleteCommand}" style="float: right"
                                                  oncomplete="PF('crudInputWid').show()" 
-                                                 disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY') or not groupSlotBean.allHaveGroup}"/>
+                                                 disabled="#{not authorizationManager.canManageGroups() or not groupSlotBean.allHaveGroup}"/>
                             </f:facet>
                         </p:toolbar>
                     </f:facet>

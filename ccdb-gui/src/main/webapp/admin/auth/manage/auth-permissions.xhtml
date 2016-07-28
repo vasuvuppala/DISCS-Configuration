@@ -36,7 +36,7 @@
                         <f:facet name="left">
                             <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
                                              actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
-                                             disabled="#{false and not authorizationManager.canAuthorize()}"/>   
+                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
                             <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
                                              actionListener="#{managePermissionView.onEditCommand}"
                                              oncomplete="PF('authRoleInputWid').show()" 

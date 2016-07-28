@@ -41,6 +41,7 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 @NamedQueries({
     @NamedQuery(name = "AuthUser.findAll", query = "SELECT u FROM AuthUser u"),
     @NamedQuery(name = "AuthUser.findByUserId", query = "SELECT u FROM AuthUser u WHERE u.userId = :userid"),
+    @NamedQuery(name = "AuthUser.countUsers", query = "SELECT COUNT(u) FROM AuthUser u"),
     @NamedQuery(name = "AuthUser.findByName", query = "SELECT u FROM AuthUser u WHERE u.name = :name")
 })
 public class AuthUser extends ConfigurationEntity {
