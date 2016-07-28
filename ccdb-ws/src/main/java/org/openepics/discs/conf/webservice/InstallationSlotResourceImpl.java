@@ -46,8 +46,6 @@ import org.openepics.discs.ccdb.jaxb.PropertyKind;
 import org.openepics.discs.ccdb.jaxb.PropertyValue;
 import org.openepics.discs.ccdb.jaxrs.InstallationSlotResource;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
-import org.openepics.discs.ccdb.model.cl.Assignment;
-import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 
 /**
  * An implementation of the InstallationSlotResource interface.
