@@ -151,8 +151,7 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                 getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
                         SlotRelationName.CONTROLS,
                         pair -> pair.getChildSlot()));
-
-        installationSlot.setStatuses(slotStatus(slot));
+      
         installationSlot.setProperties(getPropertyValues(slot));
         return installationSlot;
     }
@@ -229,11 +228,11 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         return propertyValue;
     }
     
-    private List<ProcessStatus> slotStatus(Slot slot) {
-        List<Assignment> assignments = clEJB.findAssignments(slot);
-        if (assignments != null && ! assignments.isEmpty()) {
-            return assignments.get(0).getStatuses();
-        }
-        return null;
-    }
+//    private List<ProcessStatus> slotStatus(Slot slot) {
+//        List<Assignment> assignments = clEJB.findAssignments(slot);
+//        if (assignments != null && ! assignments.isEmpty()) {
+//            return assignments.get(0).getStatuses();
+//        }
+//        return null;
+//    }
 }

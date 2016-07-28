@@ -42,7 +42,7 @@ public interface ReportResource {
      * @return all paths from start to end
      */
     @GET
-    @Path("slot")
+    @Path("status")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<SlotReportEntry> getSlotStatus(
         @DefaultValue("") @QueryParam("prefix") String prefix);   

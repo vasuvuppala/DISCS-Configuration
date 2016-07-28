@@ -37,15 +37,15 @@
                                       
                 </p:dataTable>
 
-                <h:commandLink title="Export to Excel">  
+                <h:commandLink title="Export to Excel" disabled="true">  
                     <p:graphicImage value="#{resource['images/excel.png']}" />                      
                     <p:dataExporter type="xls"  target="statusTable" fileName="status-report"  />  
                 </h:commandLink>  
-                <h:commandLink title="Export to CSV">  
+                <h:commandLink title="Export to CSV" disabled="true">  
                     <p:graphicImage value="#{resource['images/csv.png']}" />  
                     <p:dataExporter type="csv" target="statusTable" fileName="status-report"  /> 
                 </h:commandLink>  
-                <h:commandLink title="Export to XML">  
+                <h:commandLink title="Export to XML" disabled="true">  
                     <p:graphicImage value="#{resource['images/xml.png']}" />  
                     <p:dataExporter type="xml" target="statusTable" fileName="status-report" />  
                 </h:commandLink>

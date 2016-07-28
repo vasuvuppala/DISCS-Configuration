@@ -135,7 +135,7 @@ public class AuthorizationManager implements Serializable {
                     && ! assignment.getSlotGroup().getOwner().equals(currentUser)) {
                 return false;
             }
-            if (assignment.getDevice() != null && ! authEJB.hasPermission(AuthResource.SLOT, assignment.getDevice(), AuthOperation.ASSIGN_CHECKLISTS)) {
+            if (assignment.getDevice() != null && ! authEJB.hasPermission(AuthResource.DEVICE, assignment.getDevice(), AuthOperation.ASSIGN_CHECKLISTS)) {
                 return false;
             }
         }

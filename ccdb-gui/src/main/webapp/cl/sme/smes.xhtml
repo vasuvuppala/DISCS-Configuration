@@ -130,19 +130,9 @@
                             <p:outputLabel value="SME"/>                        
                         </p:column>
                         <p:column> 
-                            <p:selectOneMenu id="asme"  converter="#{authUserConverter}" value="#{processStatusManager.inputSME}"  style="width: 200px;"
-                                             var="sme"  filter="true"> 
-                                <f:selectItem itemLabel="None" itemValue="#{null}" />
-                                <f:selectItems value="#{processStatusManager.users}" var="b" itemLabel="#{b.name}" itemValue="#{b}"/>
-                                <p:column>
-                                    #{sme.userId}
-                                </p:column>
-                                 <p:column>
-                                    #{sme.firstName}
-                                </p:column>
-                                <p:column>
-                                    #{sme.lastName}
-                                </p:column>
+                            <p:selectOneMenu id="asme"  converter="#{authUserConverter}" value="#{processStatusManager.inputSME}" > 
+                                <f:selectItem itemLabel="Default" itemValue="#{null}" />
+                                <f:selectItems value="#{processStatusManager.users}" var="au" itemLabel="#{au.firstName} #{au.lastName}" itemValue="#{au}"/>                               
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>

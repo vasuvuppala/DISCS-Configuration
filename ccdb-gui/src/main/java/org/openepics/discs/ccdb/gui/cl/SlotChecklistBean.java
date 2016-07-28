@@ -76,6 +76,7 @@ public class SlotChecklistBean implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(SlotChecklistBean.class.getName());
     private final ChecklistEntity ENTITY_TYPE = ChecklistEntity.SLOT;
 
+    private boolean showAllSlots = false;
   
     // view data
     private List<Slot> entities;
@@ -94,7 +95,7 @@ public class SlotChecklistBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        entities = lcEJB.findUngroupedSlots();
+        entities = lcEJB.findUngroupedSlots(showAllSlots);
         defaultChecklist = lcEJB.findDefaultChecklist(ENTITY_TYPE);
         resetInput();
     }

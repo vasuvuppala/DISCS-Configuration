@@ -100,12 +100,18 @@
                     <p:menuitem value="Slot Status" icon="fa fa-list-alt" url="/cl/report/slot-status.xhtml?et=GROUP" />   
                     <p:menuitem value="Readiness" icon="fa fa-list-alt" url="/cl/report/readiness.xhtml" /> 
                 </p:submenu>    
+                <p:submenu label="Configure" icon="fa fa-list-alt">
+                    <p:menuitem value="Processes" icon="fa fa-list-alt" url="/cl/admin/processes.xhtml" />
+                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" url="/cl/admin/checklists.xhtml" /> 
+                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" url="/cl/admin/fields.xhtml" />                
+                    <p:menuitem value="Status Options" icon="fa fa-list-alt" url="/cl/admin/status-options.xhtml" />
+                </p:submenu>
                 <p:menuitem value="User Manual" icon="fa fa-list-alt" url="/cl/docs/usermanual.xhtml" />
             </p:submenu>
              <p:submenu label="Approvals" icon="fa fa-thumbs-o-up ">
                 <p:menuitem value="DHR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=DHR" />             
                 <p:menuitem value="ARR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=ARR" />        
-                <p:menuitem value="Status Report" icon="fa  fa-thumbs-o-up " url="/cl/report/overall-status.xhtml" />
+                <p:menuitem value="Status Report" icon="fa  fa-thumbs-o-up " url="/cl/report/approval-status.xhtml" />
             </p:submenu>
            <p:menuitem value="Paths"  url="/paths" icon="fa fa-road" />
             <p:submenu label="Import" icon="fa fa-upload" rendered="false">               
@@ -131,13 +137,8 @@
                     <p:menuitem value="User Roles" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-user-roles.xhtml" />                
                     <p:menuitem value="Permissions" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-permissions.xhtml" />
                 </p:submenu>
-                <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth"/>   
-                <p:submenu label="Checklists" icon="fa fa-list-alt">
-                    <p:menuitem value="Processes" icon="fa fa-list-alt" url="/cl/admin/processes.xhtml" />
-                    <p:menuitem value="Checklists" icon="fa fa-crosshairs" url="/cl/admin/checklists.xhtml" /> 
-                    <p:menuitem value="Checklist Fields" icon="fa fa-crosshairs" url="/cl/admin/fields.xhtml" />                
-                    <p:menuitem value="Status Options" icon="fa fa-list-alt" url="/cl/admin/status-options.xhtml" />
-                </p:submenu>
+                <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth" rendered="false"/>   
+                
             </p:submenu>
 
             <p:submenu label="Links" icon="fa fa-external-link" >

@@ -380,13 +380,17 @@ public class ChecklistEJB {
     }
     
     /**
-     * Find slots that are not internal system slots
+     * Find slots that do not belong to a group and are not internal system slots
      * 
+     * @param allSlots find only device-hosting slots
      * @return 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public List<Slot> findUngroupedSlots() {
-        return em.createNamedQuery("Slot.findUngroupedSlots").getResultList();
+    public List<Slot> findUngroupedSlots(boolean allSlots) {
+        if (allSlots) {
+            return em.createNamedQuery("Slot.findUngroupedSlots").getResultList();
+        }
+        return em.createNamedQuery("Slot.findUngroupedNonContainerSlots").getResultList();       
     }
     
     /**

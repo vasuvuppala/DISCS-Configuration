@@ -35,15 +35,15 @@
                     </p:columns>              
                 </p:dataTable>
 
-                <h:commandLink title="Export to Excel">  
+                <h:commandLink title="Export to Excel" disabled="true">  
                     <p:graphicImage value="#{resource['images/excel.png']}" />                      
                     <p:dataExporter type="xls"  target="statusDevTable" fileName="tatus-report-dev"  />  
                 </h:commandLink>  
-                <h:commandLink title="Export to CSV">  
+                <h:commandLink title="Export to CSV" disabled="true">  
                     <p:graphicImage value="#{resource['images/csv.png']}" />  
                     <p:dataExporter type="csv" target="statusDevTable" fileName="status-report-dev"  /> 
                 </h:commandLink>  
-                <h:commandLink title="Export to XML">  
+                <h:commandLink title="Export to XML" disabled="true">  
                     <p:graphicImage value="#{resource['images/xml.png']}" />  
                     <p:dataExporter type="xml" target="statusDevTable" fileName="status-report-dev" />  
                 </h:commandLink>

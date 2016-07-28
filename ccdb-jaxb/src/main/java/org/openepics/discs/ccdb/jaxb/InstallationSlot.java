@@ -71,10 +71,6 @@ public class InstallationSlot {
     @XmlAnyElement(lax = true)
     private List<PropertyValue> properties;
     
-    @XmlElementWrapper(name = "status")
-    @XmlAnyElement(lax = true)
-    private List<ProcessStatus> statuses;
-    
     public InstallationSlot() { }
 
     public String getName() { return name; }
@@ -107,11 +103,4 @@ public class InstallationSlot {
     public List<PropertyValue> getProperties() { return properties; }
     public void setProperties(List<PropertyValue> properties) { this.properties = properties; }
 
-    public List<ProcessStatus> getStatuses() {
-        return statuses;
-    }
-
-    public void setStatuses(List<ProcessStatus> statuses) {
-        this.statuses = statuses;
-    }
 }

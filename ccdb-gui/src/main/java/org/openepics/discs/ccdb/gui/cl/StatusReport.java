@@ -96,7 +96,9 @@ public class StatusReport implements Serializable {
     }
 
     /**
-     * Initialize data in view
+     * Overall status report
+     * 
+     * ToDo: really preliminary. pretty bad. improve.
      * 
      * @return 
      */
@@ -183,10 +185,10 @@ public class StatusReport implements Serializable {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Invalid process name", "not process found");
         }
         
-        if ("AM OK".equals(processName)) {
+        if ("AM-OK".equals(processName)) {
             ProcessStatus status = getStatusRec(slot, selectedProcess);
             if (status == null) return "Not Assigned";
-            return status.getStatus().getName();
+            return status.getStatus().getDescription();
         } else {
             Approval approval = lcEJB.findApproval(selectedProcess, slot);
             if (approval == null) return "Not Approved";

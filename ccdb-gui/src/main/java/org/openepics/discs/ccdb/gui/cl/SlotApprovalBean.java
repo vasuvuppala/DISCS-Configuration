@@ -15,7 +15,6 @@
 package org.openepics.discs.ccdb.gui.cl;
 
 import org.openepics.discs.ccdb.gui.ui.util.InputAction;
-import org.openepics.discs.ccdb.model.cl.ChecklistEntity;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,10 +75,11 @@ public class SlotApprovalBean implements Serializable {
     private AuthorizationManager authManager;
 
     private static final Logger LOGGER = Logger.getLogger(SlotApprovalBean.class.getName());
-    private final ChecklistEntity ENTITY_TYPE = ChecklistEntity.SLOT;
+    // private final ChecklistEntity ENTITY_TYPE = ChecklistEntity.SLOT;
 
     // request data
     private String processName;
+    private Boolean showAllSlots = false;
     
     // view data
     private List<Slot> entities;
@@ -94,7 +94,8 @@ public class SlotApprovalBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        entities = lcEJB.findUngroupedSlots();  
+//        entities = lcEJB.findUngroupedSlots();
+        entities = showAllSlots ? slotEJB.findNonSystemSlots() : slotEJB.findByIsHostingSlot(true);
         resetInput();
     }
 

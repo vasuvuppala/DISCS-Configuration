@@ -524,6 +524,16 @@ public class ProcessStatusManager implements Serializable {
         allPhasesOptional = findOptional();
     }
 
+    private boolean canAssignSME(ProcessStatus processStatus) {
+        if (processStatus == null) {
+            return false;
+        }
+        if (processStatus.getStatus() == null) {
+            return false; // Field has been excluded from the checklist
+        }
+        return authManager.canAssignSME(processStatus.getAssignment());
+    }
+    
     /**
      * Check if user is authorized to update the status
      *
@@ -536,7 +546,7 @@ public class ProcessStatusManager implements Serializable {
     private boolean isAuthorized(String view, ProcessStatus status) {
         switch (view) {
             case "sme":
-                return authManager.canAssignSME(status.getAssignment());
+                return canAssignSME(status);
             case "status":
                 return canEditField(status);
             default:
