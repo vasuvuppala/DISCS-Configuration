@@ -16,13 +16,14 @@
 package org.openepics.discs.ccdb.gui.cl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 import org.openepics.discs.ccdb.core.auth.LocalAuthEJB;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
@@ -31,6 +32,7 @@ import org.openepics.discs.ccdb.model.auth.AuthResource;
 import org.openepics.discs.ccdb.model.auth.AuthUser;
 import org.openepics.discs.ccdb.model.cl.Assignment;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
+import org.openepics.discs.ccdb.model.cl.SlotGroup;
 
 
 /**
@@ -59,7 +61,7 @@ import org.openepics.discs.ccdb.model.cl.ProcessStatus;
  */
 
 @Named
-@ViewScoped
+@RequestScoped
 public class AuthorizationManager implements Serializable {
 //    @EJB
 //    private AuthEJB authEJB;
@@ -70,7 +72,7 @@ public class AuthorizationManager implements Serializable {
 //    @Inject
 //    UserSession userSession;
       
-    private AuthUser currentUser;
+    // private AuthUser currentUser;
     
     
     public AuthorizationManager() {
@@ -78,7 +80,7 @@ public class AuthorizationManager implements Serializable {
     
     @PostConstruct
     public void init() {       
-        currentUser = authEJB.getCurrentUser();
+        // currentUser = authEJB.getCurrentUser();
     }
     
     public boolean isLoggedIn() {
@@ -90,7 +92,10 @@ public class AuthorizationManager implements Serializable {
         return authEJB.hasPermission(AuthResource.CHECKLIST, null, AuthOperation.MANAGE);
     }
     
-    public boolean canAssignChecklists(List<Slot>  slots) {
+
+    
+    // ToDo: Make it generic for slots, devices, and groups
+    public boolean canAssignSlotChecklists(List<Slot>  slots) {
         for(Slot slot: slots) {
             if (! authEJB.hasPermission(AuthResource.SLOT, slot, AuthOperation.ASSIGN_CHECKLISTS)) {
                 return false;
@@ -99,6 +104,7 @@ public class AuthorizationManager implements Serializable {
         return true;
     }
     
+    // ToDo: Make it generic for slots, devices, and groups
     public boolean canAssignDevChecklists(List<Device>  devices) {
         for(Device device: devices) {
             if (! authEJB.hasPermission(AuthResource.DEVICE, device, AuthOperation.ASSIGN_CHECKLISTS)) {
@@ -108,7 +114,19 @@ public class AuthorizationManager implements Serializable {
         return true;
     }
     
+    // ToDo: Make it generic for slots, devices, and groups
+    public boolean canAssignGroupChecklists(List<SlotGroup>  groups) {
+        AuthUser currentUser = authEJB.getCurrentUser();
+        for(SlotGroup group: groups) {
+            if (! group.getOwner().equals(currentUser)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public boolean canAssignProcesses(List<Assignment>  assignments) {
+        AuthUser currentUser = authEJB.getCurrentUser();
         for(Assignment assignment: assignments) {
             if (assignment.getSlot() != null && ! authEJB.hasPermission(AuthResource.SLOT, assignment.getSlot(), AuthOperation.ASSIGN_CHECKLISTS)) {
                 return false;
@@ -124,7 +142,20 @@ public class AuthorizationManager implements Serializable {
         return true;
     }
      
+    public boolean canAssignSME(Assignment assignment) {
+        List<Assignment> assignments  = new ArrayList<>();
+        assignments.add(assignment);
+        return canAssignProcesses(assignments);
+    }
+    
+    public boolean canAssignProcess(Assignment assignment) {
+        List<Assignment> assignments  = new ArrayList<>();
+        assignments.add(assignment);
+        return canAssignProcesses(assignments);
+    }
+    
     public boolean canUpdateStatus(ProcessStatus procStatus) { 
+        AuthUser currentUser = authEJB.getCurrentUser();
         if (procStatus == null || currentUser == null) return false;
         if (procStatus.getAssignedSME() != null && procStatus.getAssignedSME().equals(currentUser)) {
             return true;

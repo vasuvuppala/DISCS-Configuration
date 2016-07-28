@@ -15,7 +15,7 @@
 
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="Subject Matter Experts" styleClass="heading"/>
+                <h:outputText value="Assign Subject Matter Experts" styleClass="heading"/>
                 <ui:fragment rendered="#{empty processStatusManager.entities}">
                     <p:panel>
                         <p:spacer height="15"/>
@@ -29,7 +29,7 @@
                              emptyMessage="No records found."  rowSelectMode="checkbox"
                              rowKey="#{assignment.id}" 
                              selection="#{processStatusManager.selectedEntities}"
-                             disabledSelection="#{processStatusManager.lockedAssignment(assignment)}"
+                             disabledSelection="#{processStatusManager.lockedAssignment(assignment) or not authorizationManager.canAssignSME(assignment)}"
                              resizableColumns="true" filteredValue="#{processStatusManager.filteredEntities}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
@@ -72,8 +72,8 @@
                                 <ui:param name="statusId" value="stat-#{loop.index}" />
                             </ui:include>    
                             <p:spacer width="3"/>
-                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"
-                                           rendered="#{not processStatusManager.notRequired(assignment, selPhase.phase)}"
+                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" 
+                                           rendered="#{not processStatusManager.notRequired(assignment, selPhase.phase) and authorizationManager.canAssignSME(assignment)}"
                                            actionListener="#{processStatusManager.onCellEdit(assignment, selPhase.phase)}" 
                                            oncomplete="PF('crudInputWid').show()" styleClass="iconDisplay">
                                 <i class="fa fa-pencil-square-o" title="modify" />

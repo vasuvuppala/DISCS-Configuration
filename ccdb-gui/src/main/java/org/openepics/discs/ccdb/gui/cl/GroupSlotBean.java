@@ -67,7 +67,7 @@ public class GroupSlotBean implements Serializable {
     @EJB
     private ChecklistEJB lcEJB;
     @Inject
-    private SecurityPolicy securityPolicy;
+    private AuthorizationManager authManager;
 
     private static final Logger LOGGER = Logger.getLogger(GroupSlotBean.class.getName());
 
@@ -157,13 +157,11 @@ public class GroupSlotBean implements Serializable {
      * @return
      */
     public boolean isAuthorized() {
-        String userId = securityPolicy.getUserId();
-        if (userId == null) {
-            UiUtility.showMessage(FacesMessage.SEVERITY_INFO, UiUtility.MESSAGE_SUMMARY_SUCCESS,
-                    "Not authorized. User Id is null.");
-            return false;
+        if (! authManager.canAssignSlotChecklists(selectedEntities)) {
+           UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Authorization Failure", "You are not authorized to assign groups to one or more of the selected slots"); 
+           return false;
         }
-        // User user = new User(userId);
+        
         return true;
     }
 

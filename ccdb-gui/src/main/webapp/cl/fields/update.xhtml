@@ -31,7 +31,7 @@
                              rowKey="#{assignment.id}" 
                              selection="#{processStatusManager.selectedEntities}"
                              resizableColumns="true" filteredValue="#{processStatusManager.filteredEntities}" 
-                             disabledSelection="#{processStatusManager.lockedAssignment(assignment)}"
+                             disabledSelection="#{processStatusManager.lockedAssignment(assignment) or not authorizationManager.canAssignProcess(assignment)}"
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">   
@@ -71,8 +71,8 @@
                                 <ui:param name="statusId" value="stat-#{loop.index}" />
                             </ui:include>
                             <p:spacer width="5"/>
-                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}" 
-                                           rendered="#{not processStatusManager.lockedAssignment(assignment, selPhase.phase) or not processStatusManager.notRequired(assignment, selPhase.phase)}"
+                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" 
+                                           rendered="#{not processStatusManager.lockedAssignment(assignment, selPhase.phase) and not processStatusManager.notRequired(assignment, selPhase.phase)}"
                                            actionListener="#{processStatusManager.onCellEdit(assignment, selPhase.phase)}" 
                                            oncomplete="PF('crudInputWid').show()"   styleClass="iconDisplay">                      
                                 <i class="fa fa-pencil-square-o" title="modify" />

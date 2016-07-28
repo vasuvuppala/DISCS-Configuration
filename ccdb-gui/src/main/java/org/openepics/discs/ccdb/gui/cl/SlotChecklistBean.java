@@ -152,7 +152,7 @@ public class SlotChecklistBean implements Serializable {
      * @return 
      */
      public boolean isAuthorized() {
-        if (! authManager.canAssignChecklists(selectedEntities)) {
+        if (! authManager.canAssignSlotChecklists(selectedEntities)) {
            UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Authorization Failure", "You are not authorized to assign checklists to one or more of the selected slots"); 
            return false;
         }
