@@ -33,8 +33,8 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Property;
+import org.openepics.discs.ccdb.model.PropertyValue;
 import org.openepics.discs.ccdb.model.Slot;
-import org.openepics.discs.ccdb.model.SlotPropertyValue;
 import org.openepics.discs.ccdb.model.auth.AuthOperation;
 import org.openepics.discs.ccdb.model.auth.AuthPermission;
 import org.openepics.discs.ccdb.model.auth.AuthResource;
@@ -114,7 +114,7 @@ public class LocalAuthEJB implements Serializable {
     
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     private <T> AuthRole indirectRole(T entity, Property property) {
-        List<SlotPropertyValue> props = null;
+        List<PropertyValue> props = null;
         if (entity instanceof Slot) {
             props = em.createQuery("SELECT pv FROM Slot s JOIN s.slotPropertyList pv WHERE s = :slot AND pv.property = :property")
                     .setParameter("slot", entity)
@@ -294,7 +294,8 @@ public class LocalAuthEJB implements Serializable {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public boolean needAuthBoostrap() {
-        if (! isLoggedIn()) return false;
+        String userId = servletRequest.getUserPrincipal() != null ? servletRequest.getUserPrincipal().getName() : null;
+        if (userId == null) return false; // not logged in at all      
         Long num = em.createNamedQuery("AuthUser.countUsers", Long.class).getSingleResult();
         return num <= 1;
     }

@@ -161,7 +161,8 @@ public class AuthorizationManager implements Serializable {
             return true;
         }
         
-        return (authEJB.belongsTo(procStatus.getField().getSme()));
+        if (authEJB.belongsTo(procStatus.getField().getSme())) return true;
+        return canAssignProcess(procStatus.getAssignment()); // if the user can assign processes then she can update the status i.e she is the owner
     }
     
     public boolean canManageGroups() {

@@ -138,7 +138,6 @@ public class ProcessStatusManager implements Serializable {
     private StatusOption inputStatus;
     private String inputComment;
     private AuthUser inputSME;
-    
 
     public ProcessStatusManager() {
     }
@@ -180,7 +179,7 @@ public class ProcessStatusManager implements Serializable {
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No default checklist found", "Make sure checklists are configured properly.");
             return nextView;
         } else {
-            phases = onlyOptionalFields? lcEJB.findOptionalFields(checklist) : lcEJB.findPhases(checklist);
+            phases = onlyOptionalFields ? lcEJB.findOptionalFields(checklist) : lcEJB.findPhases(checklist);
             statusOptions = lcEJB.findStatusOptions(checklist);
         }
         selectablePhases = phases == null ? Collections.<SelectablePhase>emptyList() : phases.stream().map(p -> new SelectablePhase(p)).collect(Collectors.toList());
@@ -226,9 +225,9 @@ public class ProcessStatusManager implements Serializable {
         if (phaseStatus == null) {
             return true;
         }
-        if (! authManager.canUpdateStatus(phaseStatus)) {
-            return true;
-        }
+//        if (! authManager.canUpdateStatus(phaseStatus)) {
+//            return true;
+//        }
         if (phaseStatus.getField().getSummaryProcess()) {
             return false;
         }
@@ -248,6 +247,45 @@ public class ProcessStatusManager implements Serializable {
             return true;
         }
         return processStatus.getStatus() == null;
+    }
+
+    /**
+     * Can the user edit the given field?
+     * 
+     * @param processStatus
+     * @return 
+     */
+    public Boolean canEditField(ProcessStatus processStatus) {      
+        if (processStatus == null) {
+            return false;
+        }
+        if (processStatus.getStatus() == null) {
+            return false; // Field has been excluded from the checklist
+        }
+
+        if (!authManager.canUpdateStatus(processStatus)) { // is user authorized?
+            LOGGER.log(Level.WARNING, "User not authorized to edit the field/process");
+            return false;
+        }
+        if (processStatus.getField().getSummaryProcess()) { // simmary processes are always editable
+            return true;
+        }
+        if (lockedAssignment(processStatus.getAssignment())) { // is the entire assignment locked
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Can the user edit the given assignment and process?
+     * 
+     * @param assignment
+     * @param phase
+     * @return 
+     */
+    public Boolean canEditField(Assignment assignment, Process phase) {
+        ProcessStatus processStatus = getStatusRec(assignment, phase);
+        return canEditField(processStatus);
     }
 
 //    public Boolean lockedOrOptionalAssignment(Assignment assignment, Process phase) {
@@ -489,20 +527,30 @@ public class ProcessStatusManager implements Serializable {
     /**
      * Check if user is authorized to update the status
      *
-     * ToDo: check roles and permissions
+     * ToDo: Remove 'view' or make is enum
      *
      * @param status
      * @param user
      * @return
      */
-    private boolean isAuthorized(String view, ProcessStatus status, User user) {
-        return "sme".equals(view) || status.getAssignedSME() == null || status.getAssignedSME().equals(user);
+    private boolean isAuthorized(String view, ProcessStatus status) {
+        switch (view) {
+            case "sme":
+                return authManager.canAssignSME(status.getAssignment());
+            case "status":
+                return canEditField(status);
+            default:
+                LOGGER.log(Level.SEVERE, "Invallid view {0}", view);
+                break;
+        }
+        return false;
     }
 
     /**
-     * Update status of the selected entities and phases 
-     * ToDo: Remove 'view' parameter
-     * 
+     * Update status of the selected entities and phases ToDo: Remove 'view'
+     * parameter
+     *
+     * @param view
      */
     public void saveEntity(String view) {
         try {
@@ -512,33 +560,33 @@ public class ProcessStatusManager implements Serializable {
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
             }
-            AuthUser currentUser = authEJB.getCurrentUser();         
-            if (currentUser == null) {
-                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
-                        "You are not authorized. User Id is null.");
-                RequestContext.getCurrentInstance().addCallbackParam("success", false);
-                return;
-            }         
 
-//            // ToDo: Improve. really bad code
-//            for (SelectablePhase selectedPhase : selectablePhases) {
-//                if (!selectedPhase.selected) {
-//                    continue;
-//                }
-//                for (Assignment record : selectedEntities) {
-//                    for (ProcessStatus status : record.getStatuses()) {
-//                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
-//                            if (!isAuthorized(view, status, user)) {
-//                                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
-//                                        "You are not authorized to update one or more of the statuses.");
-//                                RequestContext.getCurrentInstance().addCallbackParam("success", false);
-//                                return;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            // ToDo: Improve. really bad code
+            for (SelectablePhase selectedPhase : selectablePhases) {
+                if (!selectedPhase.selected) {
+                    continue;
+                }
+                for (Assignment record : selectedEntities) {
+                    for (ProcessStatus status : record.getStatuses()) {
+                        if (selectedPhase.phase.equals(status.getField().getProcess())) {
+                            if (!isAuthorized(view, status)) {
+                                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
+                                        "You are not authorized to update one or more of status fields.");
+                                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
 
+            AuthUser currentUser = authEJB.getCurrentUser();
+//            if (currentUser == null) {
+//                UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
+//                        "You are not authorized. User Id is null.");
+//                RequestContext.getCurrentInstance().addCallbackParam("success", false);
+//                return;
+//            }     
             // ToDo: Improve. really bad code
             for (SelectablePhase selectedPhase : selectablePhases) {
                 if (!selectedPhase.selected) {
@@ -574,9 +622,9 @@ public class ProcessStatusManager implements Serializable {
     }
 
     /**
-     * Include/exclude processes to/from selected assignments
-     * ToDo: should be combined with saveEntity()
-     * 
+     * Include/exclude processes to/from selected assignments ToDo: should be
+     * combined with saveEntity()
+     *
      * @param exclude
      */
     public void assignProcesses(Boolean exclude) {
@@ -586,13 +634,13 @@ public class ProcessStatusManager implements Serializable {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Authorization Failure", "You are not authorized to assign checklists to one or more of the selected entities");
                 return;
             }
-            AuthUser currentUser = authEJB.getCurrentUser();         
+            AuthUser currentUser = authEJB.getCurrentUser();
             if (currentUser == null) {
                 UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "Update Failed",
                         "You are not authorized. User Id is null.");
                 RequestContext.getCurrentInstance().addCallbackParam("success", false);
                 return;
-            }           
+            }
 
             // ToDo: Improve. really bad code
             for (SelectablePhase selectedPhase : selectablePhases) {
@@ -604,7 +652,7 @@ public class ProcessStatusManager implements Serializable {
                         if (selectedPhase.phase.equals(status.getField().getProcess())) {
                             status.setModifiedAt(new Date());
                             status.setModifiedBy(currentUser.getUserId());
-                            status.setStatus(exclude? null: status.getField().getDefaultStatus());
+                            status.setStatus(exclude ? null : status.getField().getDefaultStatus());
                             // status.setComment(inputComment);                        
                             lcEJB.saveProcessStatus(status);
                             lcEJB.refreshVersion(ProcessStatus.class, status); // ToDo: to update the version field
@@ -626,9 +674,7 @@ public class ProcessStatusManager implements Serializable {
 //            resetInput();
         }
     }
-    
-    
-    
+
     /**
      * Find status record for the given assignment and phase
      *
@@ -659,9 +705,9 @@ public class ProcessStatusManager implements Serializable {
      * @return
      */
     public String defaultSME(ProcessStatus status) {
-        List<AuthUserRole> userRoles = status.getField().getSme().getUserRoleList();
+        List<AuthUserRole> userRoles = status.getField().getSme() == null ? null : status.getField().getSme().getUserRoleList();
         if (userRoles == null || userRoles.isEmpty()) {
-            return "Default";
+            return "None";
         } else {
 //            return userRoles.get(0).getUser().getUserId();
             StringJoiner smes = new StringJoiner(", ", "", "");

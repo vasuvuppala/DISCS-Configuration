@@ -26,9 +26,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.openepics.discs.ccdb.core.auth.AnAEJB;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.AuthEJB;
 import org.openepics.discs.ccdb.gui.ui.util.UiUtility;
+import org.openepics.discs.ccdb.model.auth.AuthRole;
 import org.openepics.discs.ccdb.model.auth.Role;
 import org.openepics.discs.ccdb.model.cl.Process;
 import org.openepics.discs.ccdb.model.cl.Checklist;
@@ -66,16 +68,12 @@ import org.primefaces.event.SelectEvent;
 @Named
 @ViewScoped
 public class FieldManager implements Serializable {
-//    @EJB
-//    private AuthEJB authEJB;
     @EJB
     private ChecklistEJB lcEJB;
     @EJB
-    private AuthEJB authEJB;
+    private AnAEJB authEJB;
             
     private static final Logger LOGGER = Logger.getLogger(FieldManager.class.getName());
-//    @Inject
-//    UserSession userSession;
       
     private List<ChecklistField> entities;    
     private List<ChecklistField> filteredEntities;    
@@ -84,7 +82,7 @@ public class FieldManager implements Serializable {
     private InputAction inputAction;
     private List<Checklist> checklists;
     private List<Process> processes;
-    private List<Role> roles ;
+    private List<AuthRole> roles ;
     private List<StatusOption> statusOptions;
     
     public FieldManager() {
@@ -95,7 +93,7 @@ public class FieldManager implements Serializable {
         entities = lcEJB.findAllChecklistFields();    
         checklists = lcEJB.findAllChecklists();
         processes = lcEJB.findAllPhases();
-        roles = authEJB.findAllRoles();
+        roles = authEJB.findRoles();
         if (checklists == null || checklists.isEmpty()) {
             LOGGER.log(Level.SEVERE, "There are no phase groups!");
             UiUtility.showMessage(FacesMessage.SEVERITY_ERROR, "No Phase Groups", "You must first add one ore more phase groups");
@@ -218,7 +216,7 @@ public class FieldManager implements Serializable {
         return processes;
     }
 
-    public List<Role> getRoles() {
+    public List<AuthRole> getRoles() {
         return roles;
     }
 

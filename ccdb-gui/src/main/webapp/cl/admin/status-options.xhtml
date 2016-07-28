@@ -124,8 +124,9 @@
                     </p:row>
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="phaseLogic"  value="Logical Value" />
+                            <p:outputLabel for="phaseLogic"  value="Logical Value"/>
                         </p:column>
+                        <p:tooltip for="phaseLogic" value="Used in computing approval logic. A check means true, otherwise false." />
                         <p:column>
                             <p:selectBooleanCheckbox id="phaseLogic" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.logicalValue : statusOptionManager.selectedEntity.logicalValue}" 
                                                      required="true" 
@@ -135,8 +136,9 @@
                     
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="completed"  value="For the summary process, in a checklist, this value indicates completion i.e. a true value will freeze the assignment." />
+                            <p:outputLabel for="completed"  value="Completed"  />
                         </p:column>
+                        <p:tooltip for="completed" value="For the summary process, in a checklist, this value indicates completion i.e. a true value will freeze the assignment." />
                         <p:column>
                             <p:selectBooleanCheckbox id="completed" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.completed : statusOptionManager.selectedEntity.completed}" 
                                                      required="true" 
@@ -145,8 +147,9 @@
                     </p:row>
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="creq"  value="Comment Required" />
+                            <p:outputLabel for="creq"  value="Comment Required"/>
                         </p:column>
+                        <p:tooltip for="creq" value="Will force user to enter a comment when this option is selected, eg YC." />
                         <p:column>
                             <p:selectBooleanCheckbox id="creq" value="#{statusOptionManager.inputAction == 'CREATE'? statusOptionManager.inputEntity.commentRequired : statusOptionManager.selectedEntity.commentRequired}" 
                                                      required="true" 

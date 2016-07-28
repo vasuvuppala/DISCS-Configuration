@@ -133,14 +133,14 @@
                             <p:outputLabel for="smeInp"  value="SME" />
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="smeInp" var="role" converter="#{roleConverter}"
-                                             filter="true"
+                            <p:selectOneMenu id="smeInp" var="role" converter="#{authRoleConverter}"
+                                             filter="true" filterMatchMode="contains"
                                              value="#{fieldManager.inputAction == 'CREATE'? fieldManager.inputEntity.sme : fieldManager.selectedEntity.sme}"                                            
                                              disabled="#{fieldManager.inputAction == 'DELETE'}">
-
-                                <f:selectItems value="#{fieldManager.roles}" var="b" itemLabel="#{b.roleId}" itemValue="#{b}" />
+                                <f:selectItem itemLabel="Owner" itemValue="#{null}" />
+                                <f:selectItems value="#{fieldManager.roles}" var="b" itemLabel="#{b.name}" itemValue="#{b}" />
                                 <p:column>
-                                    <h:outputText value="#{role.roleId}" />
+                                    <h:outputText value="#{role.name}" />
                                 </p:column>
                                 <p:column>
                                     <h:outputText value="#{role.description}" />

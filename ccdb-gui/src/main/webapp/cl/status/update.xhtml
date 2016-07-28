@@ -71,8 +71,8 @@
                                 <ui:param name="statusId" value="stat-#{loop.index}" />
                             </ui:include>
                             <p:spacer width="5"/>
-                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" disabled="#{not securityPolicy.getUIHint('HIERARCHY_MODIFY')}" 
-                                           rendered="#{not processStatusManager.lockedAssignment(assignment, selPhase.phase) and not processStatusManager.notRequired(assignment, selPhase.phase)}"
+                            <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this"  
+                                           rendered="#{processStatusManager.canEditField(assignment, selPhase.phase)}"
                                            actionListener="#{processStatusManager.onCellEdit(assignment, selPhase.phase)}" 
                                            oncomplete="PF('crudInputWid').show()"   styleClass="iconDisplay">                      
                                 <i class="fa fa-pencil-square-o" title="modify" />

@@ -54,8 +54,8 @@
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
 
-                    <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
-                              filterMatchMode="contains" >
+                    <p:column headerText="Assignee" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
+                              filterMatchMode="contains"  >
                         <h:outputText value="#{assignment.requestor.name}" />
                     </p:column>   
 
@@ -130,9 +130,19 @@
                             <p:outputLabel value="SME"/>                        
                         </p:column>
                         <p:column> 
-                            <p:selectOneMenu id="asme"  converter="#{authUserConverter}" value="#{processStatusManager.inputSME}"  style="width: 200px;"> 
-                                <f:selectItem itemLabel="Default" itemValue="#{null}" />
-                                <f:selectItems value="#{processStatusManager.users}" var="b" itemLabel="#{b.name}" itemValue="#{b}"/>                               
+                            <p:selectOneMenu id="asme"  converter="#{authUserConverter}" value="#{processStatusManager.inputSME}"  style="width: 200px;"
+                                             var="sme"  filter="true"> 
+                                <f:selectItem itemLabel="None" itemValue="#{null}" />
+                                <f:selectItems value="#{processStatusManager.users}" var="b" itemLabel="#{b.name}" itemValue="#{b}"/>
+                                <p:column>
+                                    #{sme.userId}
+                                </p:column>
+                                 <p:column>
+                                    #{sme.firstName}
+                                </p:column>
+                                <p:column>
+                                    #{sme.lastName}
+                                </p:column>
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>

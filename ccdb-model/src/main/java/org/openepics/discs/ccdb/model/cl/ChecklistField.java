@@ -29,7 +29,6 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.auth.AuthRole;
-import org.openepics.discs.ccdb.model.auth.Role;
 
 /**
  * A field in a checklist

@@ -72,11 +72,12 @@
                             </ui:include>
                             <p:spacer width="5"/>
                             <p:commandLink update=":crudInputDlg :crudForm:entityTable" process="@this" 
-                                           rendered="#{not processStatusManager.lockedAssignment(assignment, selPhase.phase) and not processStatusManager.notRequired(assignment, selPhase.phase)}"
+                                           rendered="#{authorizationManager.canAssignProcess(assignment) and not processStatusManager.lockedAssignment(assignment)}"
                                            actionListener="#{processStatusManager.onCellEdit(assignment, selPhase.phase)}" 
                                            oncomplete="PF('crudInputWid').show()"   styleClass="iconDisplay">                      
                                 <i class="fa fa-pencil-square-o" title="modify" />
                             </p:commandLink>
+                            <!--rendered="#{authorizationManager.canAssignProcess(assignment) and not processStatusManager.lockedAssignment(assignment, selPhase.phase) and not processStatusManager.notRequired(assignment, selPhase.phase)}"-->
                         </p:column>
                     </c:forEach>                                    
 
