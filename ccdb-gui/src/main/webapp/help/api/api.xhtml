@@ -40,6 +40,24 @@
                     <p:column style="width:30%">Examples</p:column> 
                 </p:row>  
             </f:facet>  
+            
+            <p:row>  
+                <p:column>ApprovalStatus</p:column>  
+                <p:column>GET</p:column>  
+                <p:column>/report/status</p:column>  
+                <p:column>List of status records</p:column>
+                <p:column>List of <i>approvalStatus</i></p:column>
+                <p:column> 
+                    <ul><li><b>prefix</b> (optional): Slot name prefix</li></ul>
+                </p:column> 
+                <p:column>
+                    <ul>
+                        <li>#{msgs.apiBaseUrl}/report/status</li>
+                        <li>#{msgs.apiBaseUrl}/report/status?prefix=FE</li>
+                    </ul>
+                </p:column> 
+            </p:row>
+            
             <p:row>  
                 <p:column>Device</p:column>
                 <p:column>GET</p:column>  
@@ -94,7 +112,7 @@
                     </ul>
                 </p:column> 
             </p:row>
-
+            
             <p:row>  
                 <p:column>Slot</p:column>  
                 <p:column>GET</p:column>  
@@ -112,22 +130,7 @@
                 </p:column> 
             </p:row>
             
-            <p:row>  
-                <p:column>ApprovalStatus</p:column>  
-                <p:column>GET</p:column>  
-                <p:column>/report/status</p:column>  
-                <p:column>List of status records</p:column>
-                <p:column>List of <i>approvalStatus</i></p:column>
-                <p:column> 
-                    <ul><li><b>prefix</b> (optional): Slot name prefix</li></ul>
-                </p:column> 
-                <p:column>
-                    <ul>
-                        <li>#{msgs.apiBaseUrl}/report/status</li>
-                        <li>#{msgs.apiBaseUrl}/report/status?prefix=FE</li>
-                    </ul>
-                </p:column> 
-            </p:row>
+            
         </p:panelGrid>
     </p:panel>
 </ui:composition>

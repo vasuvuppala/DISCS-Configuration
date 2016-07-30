@@ -163,7 +163,7 @@ public class ApprovalReport implements Serializable {
 
     private String slotProperty(Slot slot, String property) {
         SlotPropertyValue value = slotEJB.getPropertyValue(slot, property);
-        return value == null? "": value.getPropValue().toString();
+        return value == null? "": (value.getPropValue() == null? "": value.getPropValue().toString());
     }
     
     private ProcessStatus getGroupStatusRec(SlotGroup group, Process phase) {

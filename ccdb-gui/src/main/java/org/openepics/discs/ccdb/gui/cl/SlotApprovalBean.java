@@ -210,7 +210,7 @@ public class SlotApprovalBean implements Serializable {
      */
     public String slotProperty(Slot slot, String property) {
         SlotPropertyValue value = slotEJB.getPropertyValue(slot, property);
-        return value == null? "": value.getPropValue().toString();
+        return value == null? "": (value.getPropValue() == null? "" : value.getPropValue().toString());
     }
     
     public List<Slot> getSelectedEntities() {

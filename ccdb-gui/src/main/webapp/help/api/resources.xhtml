@@ -25,6 +25,33 @@
                 </p:row>  
             </f:facet> 
 
+             <p:row>
+                <p:column rowspan="4">approvalStatus</p:column>  
+                <p:column rowspan="4">Approval Status</p:column>  
+                <p:column>slot</p:column>  
+                <p:column>Slot</p:column> 
+                <p:column>Slot</p:column> 
+                <p:column>FE_SCS2</p:column> 
+            </p:row>
+            <p:row>                    
+                <p:column>subSlots</p:column>  
+                <p:column>Integer</p:column> 
+                <p:column>Number of children slots</p:column> 
+                <p:column>721</p:column> 
+            </p:row>            
+            <p:row>                   
+                <p:column>installedSlots</p:column>                    
+                <p:column>Integer</p:column> 
+                <p:column>Number of slots with devices</p:column>  
+                <p:column>231</p:column>                     
+            </p:row>
+            <p:row>                   
+                <p:column>approvedSlots</p:column>                    
+                <p:column>Integer</p:column> 
+                <p:column>Number of approved slots</p:column>  
+                <p:column>176</p:column>                     
+            </p:row>      
+            
             <p:row>
                 <p:column rowspan="2">device</p:column>  
                 <p:column rowspan="2">A device</p:column>  
@@ -77,6 +104,21 @@
             </p:row>
 
             <p:row>
+                <p:column rowspan="2">path</p:column>  
+                <p:column rowspan="2">Beam path</p:column>  
+                <p:column>name</p:column>  
+                <p:column>String</p:column> 
+                <p:column>Start and End Elements</p:column> 
+                <p:column>E_ISRC2:ELC1_D0665 - FE_BTS:FC_D1100</p:column> 
+            </p:row>
+            <p:row>                   
+                <p:column>elements</p:column>                    
+                <p:column>List of <i>Element</i></p:column> 
+                <p:column>Elements in the path</p:column>  
+                <p:column>See <i>Element</i></p:column>                     
+            </p:row>
+            
+            <p:row>
                 <p:column rowspan="6">slot</p:column>  
                 <p:column rowspan="6">Slot</p:column>  
                 <p:column>name</p:column>  
@@ -115,32 +157,7 @@
                 <p:column>See <i>property</i> resource</p:column>                     
             </p:row>
 
-             <p:row>
-                <p:column rowspan="4">approvalStatus</p:column>  
-                <p:column rowspan="4">Approval Status</p:column>  
-                <p:column>slot</p:column>  
-                <p:column>Slot</p:column> 
-                <p:column>Slot</p:column> 
-                <p:column>FE_SCS2</p:column> 
-            </p:row>
-            <p:row>                    
-                <p:column>subSlots</p:column>  
-                <p:column>Integer</p:column> 
-                <p:column>Number of children slots</p:column> 
-                <p:column>721</p:column> 
-            </p:row>            
-            <p:row>                   
-                <p:column>installedSlots</p:column>                    
-                <p:column>Integer</p:column> 
-                <p:column>Number of slots with devices</p:column>  
-                <p:column>231</p:column>                     
-            </p:row>
-            <p:row>                   
-                <p:column>approvedSlots</p:column>                    
-                <p:column>Integer</p:column> 
-                <p:column>Number of approved slots</p:column>  
-                <p:column>176</p:column>                     
-            </p:row>         
+               
             
         </p:panelGrid>
     </p:panel>

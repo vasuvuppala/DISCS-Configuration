@@ -34,25 +34,21 @@
                 <p:menuitem value="Manage Slots" icon="fa  fa-server" outcome="slotmanage" />
             </p:submenu>
 
-            <p:submenu label="Racks" icon="fa  fa-building-o">
-                <p:menuitem value="Rack Layout" icon="fa  fa-building-o" outcome="racklayout" />
-                <p:menuitem value="Rack List" icon="fa  fa-building-o" outcome="racklist" />
+            <p:submenu label="Racks" icon="fa  fa-building-o" >
+                <p:menuitem value="Rack Layout" icon="fa  fa-building-o" outcome="racklayout"  disabled="true"/>
+                <p:menuitem value="Rack List" icon="fa  fa-building-o" outcome="racklist"  disabled="true"/>
             </p:submenu>                     
 
             <p:submenu label="Views" icon="fa  fa-pagelines">
-                <p:menuitem value="Front End" icon="fa  fa-pagelines" outcome="fedevices" />
-                <p:menuitem value="PSOL" icon="fa  fa-pagelines" outcome="psoldevs"/>
+                <p:menuitem value="Front End" icon="fa  fa-pagelines" outcome="fedevices"  disabled="true"/>
+                <p:menuitem value="PSOL" icon="fa  fa-pagelines" outcome="psoldevs" disabled="true"/>
                 <p:menuitem value="RF" icon="fa  fa-pagelines" outcome="home"  disabled="true"/>
                 <p:submenu label="My Views" icon="fa  fa-pagelines">
                     <p:menuitem value="BPMs in FE" icon="fa  fa-pagelines" outcome="home"  disabled="true"/>
                 </p:submenu>
             </p:submenu>
 
-            <p:submenu label="Reports" icon="fa  fa-line-chart ">
-                <p:menuitem value="Differential Report" icon="fa  fa-line-chart " outcome="diffreport" />             
-                <p:menuitem value="Approval Status" icon="fa  fa-line-chart " outcome="statusreport"/>
-                <p:menuitem value="Slot Status Report" icon="fa  fa-line-chart o" outcome="slotreport" />
-            </p:submenu>
+           
 
             <p:submenu label="Device Types" icon="fa fa-tablet" rendered="false">
                 <p:menuitem value="Device Type List" icon="fa fa-tablet" outcome="device-types" />
@@ -62,44 +58,45 @@
                 <p:menuitem value="Property List" icon="fa fa-connectdevelop" outcome="properties" />
             </p:submenu>         
 
-            
-           <p:submenu label="Checklists" icon="fa fa-list-alt"> 
+
+            <p:submenu label="Checklists" icon="fa fa-list-alt"> 
                 <p:menuitem value="Process Diagram" icon="fa fa-list-alt" url="/cl/docs/checklist-proc.xhtml" />
                 <p:submenu label="Assign Checklists" icon="fa fa-list-alt">
                     <p:menuitem value="To Devices" icon="fa fa-list-alt" url="/cl/checklist/to-devs.xhtml" />
                     <p:menuitem value="To Groups" icon="fa fa-list-alt" url="/cl/checklist/to-groups.xhtml" />
                     <p:menuitem value="To Slots" icon="fa fa-list-alt" url="/cl/checklist/to-slots.xhtml" />                    
                 </p:submenu>
-                
-               <p:submenu label="Assign Fields" icon="fa fa-list-alt">
+
+                <p:submenu label="Assign Fields" icon="fa fa-list-alt">
                     <p:menuitem value="Devices" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=DEVICE" />
                     <p:menuitem value="Groups" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=GROUP" />
                     <p:menuitem value="Slots" icon="fa fa-list-alt" url="/cl/fields/update.xhtml?et=SLOT" />                    
                 </p:submenu>
-                
+
                 <p:submenu label="Assign SMEs" icon="fa fa-list-alt">
                     <p:menuitem value="To Devices" icon="fa fa-list-alt" url="/cl/sme/smes.xhtml?et=DEVICE" />
                     <p:menuitem value="To Groups" icon="fa fa-list-alt" url="/cl/sme/smes.xhtml?et=GROUP" />
                     <p:menuitem value="To Slots" icon="fa fa-list-alt" url="/cl/sme/smes.xhtml?et=SLOT" />                    
                 </p:submenu>   
-              
+
                 <p:submenu label="Update Status" icon="fa fa-list-alt">
                     <p:menuitem value="Of Devices" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=DEVICE" />
                     <p:menuitem value="Of Groups" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=GROUP" />
                     <p:menuitem value="Of Slots" icon="fa fa-list-alt" url="/cl/status/update.xhtml?et=SLOT" />                    
                 </p:submenu>
-                            
+
                 <p:submenu label="Slot Groups" icon="fa fa-list-alt">
                     <p:menuitem value="Manage Groups" icon="fa fa-list-alt" url="/cl/group/groups.xhtml" />
                     <p:menuitem value="Assign Slots" icon="fa fa-list-alt" url="/cl/group/slots.xhtml" />                   
                 </p:submenu>
-                
-               <p:submenu label="Status Report" icon="fa fa-list-alt">
+
+                <p:submenu label="Status Report" icon="fa fa-list-alt">
                     <p:menuitem value="Device Status" icon="fa fa-list-alt" url="/cl/report/device-status.xhtml?et=DEVICE" />
                     <p:menuitem value="Group Status" icon="fa fa-list-alt" url="/cl/report/group-status.xhtml?et=GROUP" />
                     <p:menuitem value="Slot Status" icon="fa fa-list-alt" url="/cl/report/slot-status.xhtml?et=GROUP" />   
                     <p:menuitem value="Readiness" icon="fa fa-list-alt" url="/cl/report/readiness.xhtml" /> 
                 </p:submenu>    
+
                 <p:submenu label="Configure" icon="fa fa-list-alt">
                     <p:menuitem value="Processes" icon="fa fa-list-alt" url="/cl/admin/processes.xhtml" />
                     <p:menuitem value="Checklists" icon="fa fa-crosshairs" url="/cl/admin/checklists.xhtml" /> 
@@ -108,12 +105,12 @@
                 </p:submenu>
                 <p:menuitem value="User Manual" icon="fa fa-list-alt" url="/cl/docs/usermanual.xhtml" />
             </p:submenu>
-             <p:submenu label="Approvals" icon="fa fa-thumbs-o-up ">
+            <p:submenu label="Approvals" icon="fa fa-thumbs-o-up ">
                 <p:menuitem value="DHR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=DHR" />             
                 <p:menuitem value="ARR" icon="fa  fa-thumbs-o-up " url="/cl/approvals/slots.xhtml?proc=ARR" />        
                 <p:menuitem value="Status Report" icon="fa  fa-thumbs-o-up " url="/cl/report/approval-status.xhtml" />
             </p:submenu>
-           <p:menuitem value="Paths"  url="/paths" icon="fa fa-road" />
+            <p:menuitem value="Beampaths"  url="/paths" icon="fa fa-road" />
             <p:submenu label="Import" icon="fa fa-upload" rendered="false">               
                 <p:menuitem value="Devices" icon="fa fa-upload" url="#" disabled="true"/>
                 <p:menuitem value="Device Types" icon="fa fa-upload" url="#" disabled="true"/>
@@ -122,11 +119,18 @@
                 <p:menuitem value="Units" icon="fa fa-upload" url="#" disabled="true"/>
             </p:submenu>
 
-           <p:submenu label="Base" icon="fa fa-database">
-                <p:menuitem value="Audit Log" icon="fa fa-database" outcome="log" />
+             <p:submenu label="Reports" icon="fa  fa-line-chart ">
+                <p:menuitem value="Approval Status" icon="fa  fa-thumbs-o-up " url="/cl/report/approval-status.xhtml" />
+                <p:menuitem value="Device Status" icon="fa fa-list-alt" url="/cl/report/device-status.xhtml?et=DEVICE" />
+                <p:menuitem value="Group Status" icon="fa fa-list-alt" url="/cl/report/group-status.xhtml?et=GROUP" />
+                <p:menuitem value="Slot Status" icon="fa fa-list-alt" url="/cl/report/slot-status.xhtml?et=GROUP" />   
+                <p:menuitem value="Readiness" icon="fa fa-list-alt" url="/cl/report/readiness.xhtml" /> 
+            </p:submenu>
+            
+            <p:submenu label="Base" icon="fa fa-database">                
                 <p:menuitem value="Device Types" icon="fa fa-tablet" outcome="device-types" />
                 <p:menuitem value="Enumerations" icon="fa fa-database" outcome="enums" />    
-                <p:menuitem value="Property List" icon="fa fa-connectdevelop" outcome="properties" />
+                <p:menuitem value="Properties" icon="fa fa-connectdevelop" outcome="properties" />
                 <p:menuitem value="Units" icon="fa fa-database" outcome="units" />
             </p:submenu>
 
@@ -138,7 +142,7 @@
                     <p:menuitem value="Permissions" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-permissions.xhtml" />
                 </p:submenu>
                 <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth" rendered="false"/>   
-                
+                <p:menuitem value="Audit Log" icon="fa fa-database" outcome="log" />
             </p:submenu>
 
             <p:submenu label="Links" icon="fa fa-external-link" >
@@ -159,6 +163,7 @@
 
                 <p:menuitem value=" RESTful API" title="API Manual" 
                             icon="ui-icon-script" target="_blank"  url="/help/api/" />
+                <p:menuitem value=" Checklists" icon="fa fa-list-alt" url="/cl/docs/usermanual.xhtml" />
                 <p:menuitem value="Report Problems" id="reportProblem" icon="fa fa-info"  immediate="true"
                             title="Report Problems"  onclick="PF('reportProblemWid').show()" disabled="true"/>
                 <p:menuitem value="About" id="aboutMenu" icon="fa fa-info"  immediate="true"
@@ -171,6 +176,10 @@
         </p:menubar> 
     </h:form>
 
+    <h:panelGroup>
+        <ui:include src="about.xhtml"/>
+    </h:panelGroup>
+    
     <h:panelGroup rendered="#{request.requestURI.endsWith('units.xhtml')}">
         <ui:include src="../loaders/single-file-DL.xhtml">
             <ui:param name="formId" value="importUnitsForm" />

@@ -61,7 +61,7 @@
                                 <p:column>Level Of Care</p:column>  
                                 <p:column><h:outputText value="#{cc.attrs.selectedSlot.levelOfCare}" /></p:column>                               
                             </p:row>
-                            <p:row>  
+                            <p:row rendered="false">  
                                 <p:column>Approved [for Ops]</p:column>  
                                 <p:column><h:outputText value="#{comp.approvedForOp ? 'Yes': 'No'}" /></p:column>                               
                             </p:row>

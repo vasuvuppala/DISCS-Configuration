@@ -12,7 +12,8 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:h="http://java.sun.com/jsf/html">
 
-    <p:dialog id="aboutPanel"  header="About #{msgs.title}" widgetVar="aboutPanelWid"  hideEffect="clip"  modal="true" > 
+    <p:dialog id="aboutPanel"  header="About #{msgs.title}" widgetVar="aboutPanelWid"  
+              hideEffect="clip"  modal="true" width="500"> 
         <p:panelGrid>            
             <p:row>  
                 <p:column>Version</p:column>  
@@ -27,7 +28,19 @@
                 <p:column>Core Team</p:column>  
                 <p:column>#{msgs.devTeam}</p:column>    
             </p:row>
-            
+            <p:row>  
+                <p:column>Production Team</p:column>  
+                <p:column>#{msgs.productionTeam}</p:column>    
+            </p:row>
+            <p:row>  
+                <p:column>Domain Experts</p:column>  
+                <p:column>#{msgs.domainExperts}</p:column>    
+            </p:row>
+            <p:row>  
+                 
+                <p:column>Systems Engineering</p:column>
+                <p:column>#{msgs.systemsEngineering}</p:column>    
+            </p:row>         
             <p:row>  
                 <p:column>Support </p:column>  
                 <p:column>Send Email to <a href="mailto:#{msgs.supportEmail}?Subject=Subject=#{msgs.title}: Feedback">Support Team</a></p:column>    

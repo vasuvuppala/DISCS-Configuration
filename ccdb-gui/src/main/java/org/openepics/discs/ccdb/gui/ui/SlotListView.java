@@ -35,7 +35,7 @@ public class SlotListView implements Serializable {
 
     @PostConstruct
     public void init() {
-        slots = slotEJB.findAll();
+        slots = slotEJB.findNonSystemSlots();
         logger.log(Level.FINE, "Found number of slots: {0}", slots.size());       
     }
     
