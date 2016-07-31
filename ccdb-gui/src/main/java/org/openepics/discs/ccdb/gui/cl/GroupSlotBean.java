@@ -71,6 +71,8 @@ public class GroupSlotBean implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(GroupSlotBean.class.getName());
 
+    private Boolean showAllSlots = false;
+
     // view data
     private List<Slot> entities;
     private List<Slot> selectedEntities;
@@ -90,7 +92,7 @@ public class GroupSlotBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        entities = slotEJB.findNonSystemSlots();
+        entities = showAllSlots ? slotEJB.findNonSystemSlots() : slotEJB.findByIsHostingSlot(true);
         slotGroups = lcEJB.findAllSlotGroups();
         resetInput();
     }

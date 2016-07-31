@@ -11,7 +11,7 @@
 
 .userManual {
     font-family: "Times New Roman", Georgia, Serif;
-    font-size: 14pt;
+    font-size: 12pt;
 }
 
 .userManual h1 {
@@ -42,6 +42,12 @@
     font-family: "Times New Roman", Georgia, Serif;
     font-size:   12pt;
     text-align: justify;
+}
+
+.userManual>tbody>tr, .noBorders>tbody>tr>td {
+    /* background: none; */ 
+    font-size:   12pt !important;
+    /* vertical-align: top; */
 }
 
 .toc {
