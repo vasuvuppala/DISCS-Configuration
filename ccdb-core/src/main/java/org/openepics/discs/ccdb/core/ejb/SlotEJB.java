@@ -671,6 +671,17 @@ public class SlotEJB extends DAO<Slot> {
         }
         return null;
     }
+    
+    public SlotPropertyValue getPropertyValue(final Slot slot, final Property property) {
+        if (slot.getSlotPropertyList() == null) return null;
+        
+        for (final SlotPropertyValue pv : slot.getSlotPropertyList()) {
+            if (pv.getProperty().equals(property)) {
+                return pv;
+            }
+        }
+        return null;
+    }
 
     private void copyValuesFromSource(final Slot newCopy, final Slot copySource) {
         for (final SlotPropertyValue pv : copySource.getSlotPropertyList()) {
@@ -702,5 +713,9 @@ public class SlotEJB extends DAO<Slot> {
             newArtifact.setSlot(newCopy);
             addChild(newArtifact);
         }
+    }
+    
+    public List<Property> findPropertiesOfSlots() {
+        return em.createNamedQuery("SlotPropertyValue.findProperties", Property.class).getResultList();
     }
 }

@@ -34,8 +34,8 @@
                 CCDB captures the final status of these processes using <e>Readiness Checklists</e>.
 
                 Readiness Checklists are used by Device
-                Owners and Area Managers to collect input from Subject Matter Experts (SME), and to 
-                decide and document device and slot readiness for installation, integrated testing, and/or beam.  
+                Owners to collect inputs from Subject Matter Experts (SME) on the readiness of a device for its next stage (e.g. installation). 
+                Similarly Area Managers use them for tracking the readiness of a slot for its next stage (e.g. DHR and ARR).  
             </p>
             <h2 id='terminology'>
                 Terminology
@@ -56,10 +56,10 @@
             <p>
                 Readiness Checklists can be associated with devices, 
                 slots, or groups of slots.
-                Assemblies are not not the same as Groups: assemblies store the physical relationship of devices within a 
+                Assemblies are not the same as Groups: assemblies store the physical relationship of devices within a 
                 larger device, so those internal devices can move with the larger device and fill appropriate slots when 
                 the larger device gets installed; groups are arbitrary collections of slots defined by a user, so those 
-                grouped slots can be collectively reviewed with a checklist.  A Group might include a cryomodule slot, 
+                grouped slots can be collectively reviewed, with a checklist.  A Group might include a cryomodule slot, 
                 the cavity slots, and the adjacent warm beamline slots; or, the Area Manager may choose to group the 
                 cryomodule slot with the power supply and RF amplifier rack slots that power power it (and leave out 
                 the individual cavity slots).  In this way, groups do not have a predefined physical relationship; they 
@@ -100,19 +100,21 @@
                 <ul>
                     <li>For Devices</li>
                     <ol>
-                        <li>Device Owner assigns checklists to devices</li>
-                        <li>Device Owner optionally assigns SMEs to devices</li>
-                        <li>SME updates the status of devices</li>
-                        <li>Device Owner sets the summary status (e.g. DO-OK) of devices</li>
+                        <li>Device Owner assigns checklists to Devices</li>
+                        <li>Device Owner optionally excludes certain processes from the checklist for certain Devices</li>
+                        <li>Device Owner optionally assigns SMEs to Devices</li>
+                        <li>SME updates the status of Devices</li>
+                        <li>Device Owner signs off a Device (by setting DO-OK to Y or YC)</li>
                     </ol>
                     <li>For Slots</li>
                     <ol>
                         <li>Area Manager optionally defines Slot Groups</li>
                         <li>Area Manager assigns checklists to Groups and/or Slots</li>
-                        <li>Area Manager optionally assigns SMEs to  Groups and/or Slots</li>
+                        <li>Area Manager optionally excludes certain processes from the checklist for certain Groups and/or Slots</li>
+                        <li>Area Manager optionally assigns SMEs to Groups and/or Slots</li>
                         <li>SME updates the status of Groups and/or Slots</li>
                         <li>Device Owner sets status (e.g. DO-OK) of installed Groups and/or Slots</li>
-                        <li>Area Manager sets summary status (e.g. AM-OK) of Groups and/or Slots</li>
+                        <li>Area Manager signs off a Group or Slot (by setting AM-OK to Y or YC)</li>
                     </ol>
                 </ul>
 
@@ -123,12 +125,11 @@
                 <ul>
                     <li> When a checklist is assigned, all the fields will get a default status value. 
                         This is defined by the Configuration Manager during setup of checklists.</li>
-                    <li>An Area Manager or Device Owner can set certain fields to NA ('Not Required'). 
-                        However, this cannot be done for some fields (such as AM-OK or DO-OK).</li>
-                    <li>Once an Area Manager sets the summary fields (e.g. AM-OK) to a final status (e.g. Y or YC),
-                        the Group or Slot is frozen i.e the status of the rest of the fields cannot be updated. Area Manager 
+                    <li>An Area Manager or Device Owner cannot exclude mandatory processes, such as AM-OK or DO-OK, from a checklist.</li>
+                    <li>Once an Area Manager sets the signs off on a a Group or Slot,
+                        that Group or Slot is frozen i.e the status of the rest of the fields cannot be updated. Area Manager 
                         can reset this by setting the status to N</li>
-                    <li>It works the same way for devices when Device Owner sets the summary field (e.g. DO-OK) to Y or YC</li>
+                    <li>Similarly, when Device Owner signs off on a Device, it gets frozen.</li>
                 </ul> 
             </p>
 

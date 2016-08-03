@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+    Display the navigation list of logical components.
+
+    @author: Vasu V
+-->
+
+<ui:composition 
+    template="/WEB-INF/template/template.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">              
+
+    <ui:define name="content">
+        <f:metadata>          
+            <f:viewParam name="type" value="#{slotViewManager.viewType}"  />
+            <f:viewAction action="#{slotViewManager.initialize()}" />
+        </f:metadata>
+
+        <p:panel>
+            <h:form id="viewform">
+                <h:outputText value="#{slotViewManager.viewType.name} View" styleClass="heading"/>
+                <p:separator/>
+
+                <ui:fragment rendered="#{slotViewManager.viewType == 'CUSTOM' or empty slotViewManager.viewType}">               
+                    <p:panelGrid styleClass="noBorders">
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Properties:"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu value="#{slotViewManager.selectedProperties}" converter="#{propertyConverter}"
+                                                  var="prop" filter="true" filterMatchMode="contains" showCheckbox="true" style="width: 500px">
+                                    <f:selectItems value="#{slotViewManager.properties}" var="pr" itemLabel="#{pr.name}" itemValue="#{pr}"/>
+                                    <p:column>
+                                        <h:outputText value="#{prop.name}" title="#{prop.description}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{prop.description}" />
+                                    </p:column>
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="Refresh" icon="fa fa-refresh" title="refresh the table"  update="viewTable"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                               
+                    <p:separator/>
+                </ui:fragment>
+                
+                <p:dataTable id="viewTable" var="slot" value="#{slotViewManager.slots}"                     
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100"                                     
+                             rowKey="#{slot.id}"  styleClass="ccdbDatatable">                    
+
+                    <f:facet name="header">
+                        <h:outputText value="Custom View"/>
+                    </f:facet>
+                    <p:column id="name" headerText="Name"  sortBy="#{slot.name}" filterBy="#{slot.name}" filterMatchMode="contains">                    
+                        <p:link  value="#{slot.name}"  outcome="devices" target="_blank">
+                            <f:param name="name" value="#{slot.name}" />
+                        </p:link>
+                    </p:column>
+                    <p:column id="type" headerText="Type" sortBy="#{slot.componentType.name}" filterBy="#{slot.componentType.name}">
+                        <h:outputText value="#{slot.componentType.name}"/>
+                    </p:column>  
+                    <p:column id="desc" headerText="Description"  filterBy="#{slot.description}">
+                        <h:outputText value="#{slot.description}"/>
+                    </p:column>
+
+                    <p:columns var="prop" value="#{slotViewManager.selectedProperties}" styleClass="alignRight">
+                        <f:facet name="header">
+                            <h:outputText value="#{prop.name}" title="#{prop.description}"/>
+                        </f:facet>                  
+                        <h:outputText value="#{slotViewManager.slotProperty(slot, prop)}" />
+                    </p:columns>
+                </p:dataTable>
+                <h:commandLink title="Export to Excel" >  
+                    <p:graphicImage value="#{resource['images/excel.png']}" />                      
+                    <p:dataExporter type="xls"  target="viewTable" fileName="ccdb-view"  />  
+                </h:commandLink>  
+                <h:commandLink title="Export to CSV" >  
+                    <p:graphicImage value="#{resource['images/csv.png']}" />  
+                    <p:dataExporter type="csv" target="viewTable" fileName="ccdb-view"  /> 
+                </h:commandLink>  
+                <h:commandLink title="Export to XML"  rendered="false">  
+                    <p:graphicImage value="#{resource['images/xml.png']}" />  
+                    <p:dataExporter type="xml" target="viewTable" fileName="ccdb-view" />  
+                </h:commandLink>
+                <br/>                
+            </h:form>                       
+        </p:panel>
+
+    </ui:define>
+</ui:composition>

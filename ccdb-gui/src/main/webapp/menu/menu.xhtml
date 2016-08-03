@@ -40,7 +40,15 @@
             </p:submenu>                     
 
             <p:submenu label="Views" icon="fa  fa-pagelines">
-                <p:menuitem value="Front End" icon="fa  fa-pagelines" outcome="fedevices"  disabled="true"/>
+                <p:menuitem value="Lattice" icon="fa  fa-pagelines" outcome="views">
+                    <f:param name="type" value="LATTICE"/>
+                </p:menuitem>
+                <p:menuitem value="CM" icon="fa  fa-pagelines" outcome="views">
+                    <f:param name="type" value="CM"/>
+                </p:menuitem>
+                <p:menuitem value="Custom" icon="fa  fa-pagelines" outcome="views">
+                    <f:param name="type" value="CUSTOM"/>
+                </p:menuitem>
                 <p:menuitem value="PSOL" icon="fa  fa-pagelines" outcome="psoldevs" disabled="true"/>
                 <p:menuitem value="RF" icon="fa  fa-pagelines" outcome="home"  disabled="true"/>
                 <p:submenu label="My Views" icon="fa  fa-pagelines">

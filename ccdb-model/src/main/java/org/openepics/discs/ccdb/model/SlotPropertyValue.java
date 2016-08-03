@@ -47,7 +47,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "SlotPropertyValue.findSamePropertyValueByType", query = "SELECT s FROM SlotPropertyValue s "
             + "WHERE s.slot.componentType = :componentType AND s.property = :property AND s.propValue = :propValue"),
     @NamedQuery(name = "SlotPropertyValue.findSamePropertyValue", query = "SELECT s FROM SlotPropertyValue s "
-            + "WHERE s.property = :property AND s.propValue = :propValue")
+            + "WHERE s.property = :property AND s.propValue = :propValue"),
+    @NamedQuery(name = "SlotPropertyValue.findProperties", query = "SELECT DISTINCT s.property FROM SlotPropertyValue s")
 })
 public class SlotPropertyValue extends PropertyValue {
     private static final long serialVersionUID = -6418859111076538082L;

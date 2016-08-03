@@ -54,9 +54,14 @@
             <to-view-id>/device/devices.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-outcome>views</from-outcome>
+            <to-view-id>/views/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case> 
          <navigation-case>
-            <from-outcome>fedevices</from-outcome>
-            <to-view-id>/views/fedevs.xhtml</to-view-id>
+            <from-outcome>customView</from-outcome>
+            <to-view-id>/views/custom.xhtml</to-view-id>
             <redirect/>
         </navigation-case> 
         <navigation-case>

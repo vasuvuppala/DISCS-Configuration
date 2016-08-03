@@ -49,6 +49,8 @@ import org.openepics.discs.ccdb.model.SlotRelationName;
 import org.openepics.discs.ccdb.gui.views.EntityAttributeViewKind;
 
 import com.google.common.collect.Lists;
+import javax.ejb.EJB;
+import org.openepics.discs.ccdb.model.SlotPropertyValue;
 
 /**
 *
@@ -156,5 +158,18 @@ public class UiUtility {
         }
     }
 
-
+    /**
+     * Find value of a slot property.
+     * 
+     * @param slot
+     * @param property
+     * @return 
+     */
+    
+    @EJB private static SlotEJB slotEJB;
+    
+    public static String slotProperty(Slot slot, String property) {
+        SlotPropertyValue value = slotEJB.getPropertyValue(slot, property);
+        return value == null? "": (value.getPropValue() == null? "": value.getPropValue().toString());
+    }
 }
