@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/template/template.xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"              
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content"> 
+        <f:metadata>          
+            <f:viewParam name="et" value="#{assignmentStatusReport.entityType}"  />
+            <f:viewAction action="#{assignmentStatusReport.initialize()}" />
+        </f:metadata>
+
+        <h:form id="crudForm" > 
+            <p:panel>
+                <h:outputText value="Status Report" styleClass="heading"/>
+                <ui:fragment rendered="#{empty assignmentStatusReport.entities}">
+                    <p:panel>
+                        <p:spacer height="15"/>
+                        <h:outputText value="Unfortunately, no checklist has been assigned to a #{param['et']}, yet. Please refer to "/>
+                        <p:link href="/cl/docs/checklist-proc.xhtml" value="the checklists workflow." />
+                    </p:panel>                                    
+                </ui:fragment>
+
+                <p:dataTable rendered="#{not empty assignmentStatusReport.entities}" 
+                             var="assignment" id="entityTable" 
+                             value="#{assignmentStatusReport.entities}"
+                             emptyMessage="No records found."  
+                             rowKey="#{assignment.id}" 
+
+                             resizableColumns="true" filteredValue="#{assignmentStatusReport.filteredEntities}" 
+                             disabledSelection="#{assignmentStatusReport.lockedAssignment(assignment)}"
+                             currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                             rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">   
+
+                    <c:set var="itemName" value="#{not empty assignment.slot? assignment.slot.name : assignment.slotGroup.name}" />
+                    <c:set var="itemType" value="#{not empty assignment.slot? 'Slot' : 'Group'}" />
+                    <p:column headerText="Slot/Group" sortBy="#{itemName}" filterBy="#{itemName}"
+                              filterMatchMode="contains" rendered="#{assignmentStatusReport.entityType eq  'SLOT'}">
+                        <h:outputText value="#{itemName}" />
+                    </p:column>
+
+                    <p:column headerText="Type" sortBy="#{itemType}" filterBy="#{itemType}"
+                              filterMatchMode="contains" rendered="#{assignmentStatusReport.entityType eq  'SLOT'}">
+                        <h:outputText value="#{itemType}" />
+                    </p:column>
+
+
+                    <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
+                              filterMatchMode="contains"  rendered="false">
+                        <h:outputText value="#{assignment.requestor.name}" />
+                    </p:column>
+
+                    <c:forEach items="#{assignmentStatusReport.phases}" var="phase" varStatus="loop">
+                        <p:column style="text-align: center">                       
+                            <f:facet name="header">                          
+                                <h:outputText value="#{phase.name}" />                              
+                            </f:facet>
+
+                            <ui:include src="status-disp.xhtml">
+                                <ui:param name="statusRec" value="#{assignmentStatusReport.getStatusRec(assignment, phase)}" />
+                                <ui:param name="statusId" value="stat-#{loop.index}" />
+                            </ui:include>                        
+                        </p:column>
+                    </c:forEach>                                    
+                </p:dataTable>                             
+            </p:panel>
+        </h:form>
+
+    </ui:define> 
+</ui:composition>

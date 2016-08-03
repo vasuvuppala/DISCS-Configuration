@@ -162,7 +162,7 @@ public class ProcessStatusManager implements Serializable {
                 entities = lcEJB.findGroupAssignments();
                 break;
             case SLOT:
-                entities = lcEJB.findSlotAssignments();
+                entities = lcEJB.findGroupSlotAssignments();              
                 break;
             case DEVICE:
                 entities = lcEJB.findDeviceAssignments();

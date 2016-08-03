@@ -41,6 +41,14 @@
                         <h:outputText value="#{statusRec.comment}" styleClass="phaseStatus" />
                     </p:column>                                              
                 </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputText value="SME" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{empty statusRec.assignedSME? processStatusManager.defaultSME(statusRec): statusRec.assignedSME.userId}" styleClass="phaseStatus" />
+                    </p:column>                                            
+                </p:row>
             </p:panelGrid>
         </p:overlayPanel>          
     </ui:fragment>

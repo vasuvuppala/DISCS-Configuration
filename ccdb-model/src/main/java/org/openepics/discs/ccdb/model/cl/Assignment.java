@@ -29,7 +29,6 @@ import org.openepics.discs.ccdb.model.ConfigurationEntity;
 import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.auth.AuthUser;
-import org.openepics.discs.ccdb.model.auth.User;
 
 /**
  * Assignment of a checklist to a slot, device or group.
@@ -46,6 +45,7 @@ import org.openepics.discs.ccdb.model.auth.User;
 @NamedQueries({
     @NamedQuery(name = "Assignment.findAll", query = "SELECT d FROM Assignment d"),
     @NamedQuery(name = "Assignment.findGroupAssignments", query = "SELECT d FROM Assignment d WHERE d.slotGroup IS NOT null"),
+    @NamedQuery(name = "Assignment.findGroupSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slotGroup IS NOT null OR d.slot IS NOT null"),
     @NamedQuery(name = "Assignment.findSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null AND d.slot.cmGroup IS NULL"),
     @NamedQuery(name = "Assignment.findAllSlotAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS NOT null"),
     @NamedQuery(name = "Assignment.findDeviceAssignments", query = "SELECT d FROM Assignment d WHERE d.slot IS null AND d.device IS NOT null"),

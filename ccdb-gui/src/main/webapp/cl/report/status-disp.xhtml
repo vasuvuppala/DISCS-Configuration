@@ -6,12 +6,12 @@
     <ui:fragment  rendered="#{not empty statusRec}">
         <ui:fragment  rendered="#{not empty statusRec.status}">
             <h:outputText value="#{statusRec.status.name} " title="#{statusRec.status.description}" />
-            <h:outputText value=" [#{statusRec.modifiedBy}"/>
+            <h:outputText value=" [#{statusRec.modifiedBy}" rendered="#{not empty statusRec.modifiedBy}"/>
             <p:spacer width="5"/>
-            <h:outputText value="#{statusRec.modifiedAt}" >
+            <h:outputText value="#{statusRec.modifiedAt}" rendered="#{not empty statusRec.modifiedBy}">
                 <f:convertDateTime type="both"  pattern="#{msgs.timestampFormat}"/>
             </h:outputText>  
-            <h:outputText value="]" />
+            <h:outputText value="]" rendered="#{not empty statusRec.modifiedBy}"/>
             <p:spacer width="5"/>
             <h:outputText id="comment" styleClass="fa fa-comment-o" rendered="#{not empty statusRec.comment}" />
             <p:overlayPanel for="comment" showEvent="mouseover" hideEvent="mouseout">

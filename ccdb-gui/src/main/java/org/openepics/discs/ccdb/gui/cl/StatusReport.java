@@ -48,24 +48,24 @@ import org.openepics.discs.ccdb.model.cl.SlotGroup;
 @ViewScoped
 public class StatusReport implements Serializable {
 
-    static public class ColumnModel implements Serializable {
- 
-        private String header;
-        private String property;
- 
-        public ColumnModel(String header, String property) {
-            this.header = header;
-            this.property = property;
-        }
- 
-        public String getHeader() {
-            return header;
-        }
- 
-        public String getProperty() {
-            return property;
-        }
-    }
+//    static public class ColumnModel implements Serializable {
+// 
+//        private String header;
+//        private String property;
+// 
+//        public ColumnModel(String header, String property) {
+//            this.header = header;
+//            this.property = property;
+//        }
+// 
+//        public String getHeader() {
+//            return header;
+//        }
+// 
+//        public String getProperty() {
+//            return property;
+//        }
+//    }
     
     private static final Logger LOGGER = Logger.getLogger(StatusReport.class.getName());
     @EJB

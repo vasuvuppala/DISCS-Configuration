@@ -41,18 +41,29 @@
                     <p:ajax event="rowUnselectCheckbox"  update="commandButtons" />
 
                     <p:column selectionMode="multiple" style="width:16px;text-align:center"  />
-                    <p:column headerText="Group" sortBy="#{assignment.slotGroup.name}" filterBy="#{assignment.slotGroup.name}"
-                              filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'GROUP'}">
-                        <h:outputText value="#{assignment.slotGroup.name}" />
-                    </p:column>
-                    <p:column headerText="Slot" sortBy="#{assignment.slot.name}" filterBy="#{assignment.slot.name}"
+
+                    <c:set var="itemName" value="#{not empty assignment.slot? assignment.slot.name : assignment.slotGroup.name}" />
+                    <c:set var="itemType" value="#{not empty assignment.slot? 'Slot' : 'Group'}" />
+                    <p:column headerText="Slot/Group" sortBy="#{itemName}" filterBy="#{itemName}"
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'SLOT'}">
-                        <h:outputText value="#{assignment.slot.name}" />
+                        <h:outputText value="#{itemName}" />
                     </p:column>
+
+                    <p:column headerText="Type" sortBy="#{itemType}" filterBy="#{itemType}"
+                              filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'SLOT'}">
+                        <h:outputText value="#{itemType}" />
+                    </p:column>
+
+                    <p:column headerText="Group" sortBy="#{assignment.slotGroup.name}" filterBy="#{assignment.slotGroup.name}"
+                              filterMatchMode="contains"  rendered="#{processStatusManager.entityType eq  'GROUP'}">
+                        <h:outputText value="#{assignment.slotGroup.name}" />
+                    </p:column> 
+                    
                     <p:column headerText="Device" sortBy="#{assignment.device.serialNumber}" filterBy="#{assignment.device.serialNumber}"
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'DEVICE'}">
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
+
                     <p:column headerText="Requestor" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
                               filterMatchMode="contains"  rendered="false">
                         <h:outputText value="#{assignment.requestor.name}" />
@@ -108,7 +119,6 @@
                                 <!--<h:outputText value="Delete" rendered="#{processStatusManager.inputAction == 'DELETE'}"/>-->
                             </p:column>                
                         </p:row>
-
                     </f:facet>
 
                     <p:row>

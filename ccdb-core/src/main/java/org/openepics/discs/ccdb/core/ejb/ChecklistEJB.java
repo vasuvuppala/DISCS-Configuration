@@ -173,6 +173,16 @@ public class ChecklistEJB {
     public List<Assignment> findSlotAssignments() {
         return em.createNamedQuery("Assignment.findSlotAssignments", Assignment.class).getResultList();
     }
+   
+    /**
+     * All group and slot assignments
+     * 
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<Assignment> findGroupSlotAssignments() {
+        return em.createNamedQuery("Assignment.findGroupSlotAssignments", Assignment.class).getResultList();
+    }
     
     /**
      * All device assignments
