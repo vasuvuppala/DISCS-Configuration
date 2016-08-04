@@ -7,6 +7,8 @@
 
     <ui:define name="content">
         <h:form id="hierarchies">
+            <h:outputText value="Slot Hierarchy" styleClass="heading"/>
+            <p:separator/>
             <script type="text/javascript">
                 //<![CDATA[                         
                 function hierarchiesResizeAll() {
@@ -33,8 +35,6 @@
             <p:panelGrid id="hierarchiesContainer" styleClass="noBorders">
                 <p:row>
                     <p:column rowspan="4" id="treeColumn">
-
-
                         <p:tabView id="hierarchyTabs" >
                             <p:ajax event="tabChange" listener="#{hierarchiesController.onTabChange}"
                                     update=":hierarchies:relationsTable :hierarchies:deleteButton :hierarchies:downButton

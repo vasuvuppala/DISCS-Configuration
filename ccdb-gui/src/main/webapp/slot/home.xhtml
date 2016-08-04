@@ -33,8 +33,8 @@
             <p:panelGrid id="hierarchiesContainer" styleClass="noBorders">
                 <p:row>
                     <p:column rowspan="4" id="treeColumn">
-                        <p:fieldset id="treeFieldSet" legend="Slots" style="box-sizing: border-box; height: calc(100vh - 7em)">
-                        <div style="height: calc(100% - 5.5em)">
+                        <p:fieldset id="treeFieldSet" legend="Slots" >
+                        <!--<div style="height: calc(100% - 5.5em)">-->
                             <p:tabView id="hierarchyTabs" style="width: 33em; height: 100%">
                                 <p:ajax event="tabChange" listener="#{hierarchiesController.onTabChange}"
                                     update=":hierarchies:relationsTable :hierarchies:deleteButton :hierarchies:downButton
@@ -45,7 +45,7 @@
                                         :hierarchies:hierarchyTabs:connectsTree :hierarchies:clipboardOperations
                                         :hierarchies:slotExport"                                    
                                     onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide(); hierarchiesResizeAll();" />
-                                <p:tab id="INCLUDES" title="Contains" style="height: 100%">
+                                <p:tab id="INCLUDES" title="Contains">
                                     <p:inputText id="filterContainsTree" value="#{hierarchiesController.containsTree.filter}"
                                                  style="box-sizing: border-box; width:100%">
                                         <p:ajax event="keyup" delay="1000" listener="#{hierarchiesController.containsTree.applyFilter()}"
@@ -55,11 +55,12 @@
                                                         :hierarchies:addRelationship :hierarchies:editRelationship :hierarchies:hierarchyTabs:tree                                                        
                                                         :hierarchies:clipboardOperations"/>                                                 
                                     </p:inputText>
-                                    <div style="height: calc(100% - 2em)">
+                                    <p:scrollPanel style="width: 400px; height: 800px;" mode="native" >
                                         <p:treeTable id="tree" value="#{hierarchiesController.containsTree.rootNode}" var="installationSlot"
                                                  selectionMode="multiple" selection="#{hierarchiesController.containsTree.selectedNodesArray}"
-                                                 scrollable="true" rowStyleClass="treeRows"
-                                                 widgetVar="hierarchyWidget" nodeVar="slotNode">
+                                                 rowStyleClass="treeRows"                                                
+                                                 widgetVar="hierarchyWidget" nodeVar="slotNode"
+                                                  styleClass="ccdbDatatable">
                                             <p:ajax event="select" listener="#{hierarchiesController.onNodeSelect}"
                                                 update=":hierarchies:relationsTable :hierarchies:deleteButton :hierarchies:downButton
                                                         :hierarchies:upButton :hierarchies:editButton :hierarchies:addButton
@@ -99,9 +100,9 @@
                                                     styleClass="ui-icon ui-icon-clipboard" />
                                             </p:column>
                                         </p:treeTable>                                            
-                                    </div>                                    
+                                    </p:scrollPanel>                                   
                                 </p:tab>
-                                <p:tab id="CONTROLS" title="Controls" style="height: 100%">
+                                <p:tab id="CONTROLS" title="Controls" >
                                     <p:inputText id="filterControlsTree" value="#{hierarchiesController.controlsTree.filter}"
                                                  style="box-sizing: border-box; width:100%">
                                         <p:ajax event="keyup" delay="1000" listener="#{hierarchiesController.controlsTree.applyFilter()}"
@@ -111,7 +112,7 @@
                                                         :hierarchies:addRelationship :hierarchies:editRelationship :hierarchies:hierarchyTabs:controlsTree                                                        
                                                         :hierarchies:clipboardOperations"/>                                                 
                                     </p:inputText>
-                                    <div style="height: calc(100% - 2em)">
+                                    <div >
                                         <p:treeTable id="controlsTree" value="#{hierarchiesController.controlsTree.rootNode}" var="ctrlSlot"
                                                  selectionMode="multiple" selection="#{hierarchiesController.controlsTree.selectedNodesArray}"
                                                  scrollable="true" scrollWidth="100%" scrollHeight="100%" rowStyleClass="treeRows"
@@ -144,7 +145,7 @@
                                         </p:treeTable>
                                     </div>
                                 </p:tab>
-                                <p:tab id="POWERS" title="Powers" style="height: 100%">
+                                <p:tab id="POWERS" title="Powers" >
                                     <p:inputText id="filterPowersTree" value="#{hierarchiesController.powersTree.filter}"
                                                  style="box-sizing: border-box; width:100%">
                                         <p:ajax event="keyup" delay="1000" listener="#{hierarchiesController.powersTree.applyFilter()}"
@@ -155,7 +156,7 @@
                                                         :hierarchies:clipboardOperations"/>                                                 
                                     </p:inputText>
                                 
-                                    <div style="height: calc(100% - 2em)">
+                                    <div >
                                         <p:treeTable id="powersTree" value="#{hierarchiesController.powersTree.rootNode}" var="powerSlot"
                                                  selectionMode="multiple" selection="#{hierarchiesController.powersTree.selectedNodesArray}"
                                                  scrollable="true" scrollWidth="100%" scrollHeight="100%" rowStyleClass="treeRows"
@@ -197,7 +198,7 @@
                                                         :hierarchies:addRelationship :hierarchies:editRelationship :hierarchies:hierarchyTabs:connectsTree                                                        
                                                         :hierarchies:clipboardOperations"/>                                                 
                                     </p:inputText>                                
-                                    <div style="height: calc(100% - 2em)">
+                                    <div >
                                         <p:treeTable id="connectsTree" value="#{hierarchiesController.connectsTree.rootNode}" var="connectsSlot"
                                                  selectionMode="multiple" selection="#{hierarchiesController.connectsTree.selectedNodesArray}"
                                                  scrollable="true" scrollWidth="100%" scrollHeight="100%" rowStyleClass="treeRows"
@@ -232,16 +233,16 @@
                                     </div>
                                 </p:tab>
                             </p:tabView>
-                        </div>
-                        <div style="height: 3.0em;">
+                        <!--</div>-->
+                        <div >
                             <p:commandButton id="slotExport" value="Export" title="Export Installation Slots" 
-                                    icon="ui-icon-disk" style="float: right; margin: 1em 0 0 0;"
+                                    icon="ui-icon-disk" 
                                     oncomplete="PF('exportSlots').show();" update=":exportSlotsForm:exportSlots" 
                                     disabled="#{not hierarchiesController.includesActive or hierarchiesController.containsEmpy}" 
                                     actionListener="#{hierarchiesController.simpleTableDialog.prepareTableExportPopup}" />
-                            <p:menuButton value="Import" id="import" style="float: right; margin: 1em 1ex 0 0;"
+                            <p:menuButton value="Import" id="import" 
                                     disabled="#{not hierarchiesController.includesActive}"
-                                    title="Import Slots and Signals">
+                                    >
                                 <p:menuitem value="Slots" id="importSlots" icon="ui-icon-arrowthickstop-1-n"
                                     title="Import Slots" oncomplete="PF('importSlots').show();"
                                     action="#{hierarchiesController.prepareImportSlotPopup()}" 
@@ -256,20 +257,20 @@
                                     update=":importSignalsForm" />
                             </p:menuButton>
                             <p:commandButton id="deleteButton" icon="ui-icon-trash" value="Delete" title="Delete"
-                                style="float: right; margin: 1em 1ex 0 0;" oncomplete="PF('deleteSlots').show();"
+                                 oncomplete="PF('deleteSlots').show();"
                                 disabled="#{not hierarchiesController.includesActive
                                                 or empty hierarchiesController.containsTree.selectedNodes
                                                 or not securityPolicy.getUIHint('HIERARCHY_DELETE')}"
                                 update=":deleteSlotsForm" actionListener="#{hierarchiesController.prepareDeletePopup()}" />
                             <p:commandButton id="editButton" icon="ui-icon-pencil" value="Edit" title="Edit"
-                                style="float: right; margin: 1em 1ex 0 0;" update=":editSlotForm:editSlotDialog"
+                                 update=":editSlotForm:editSlotDialog"
                                 disabled="#{not hierarchiesController.singleNodeSelected 
                                             or not hierarchiesController.includesActive
                                             or not securityPolicy.getUIHint('HIERARCHY_MODIFY')}"
                                 oncomplete="PF('editSlotDialog').show();"
                                 actionListener="#{hierarchiesController.prepareEditPopup()}" />
 
-                            <p:menuButton id="addButton" value="Add" style="float: right; margin: 1em 1ex 0 0;"
+                            <p:menuButton id="addButton" value="Add" 
                                     disabled="#{not hierarchiesController.includesActive
                                                 or hierarchiesController.multipleNodesSelected
                                                 or not securityPolicy.getUIHint('HIERARCHY_CREATE')}">
@@ -283,8 +284,8 @@
                                         update=":addSlotForm" disabled="#{not hierarchiesController.singleNodeSelected}" />
                             </p:menuButton>
                         </div>
-                        <div style="height: 2.75em;">
-                            <p:menuButton value="+/-" id="expandColapseOp" style="float: right; margin-top: 0.25em;">
+                        <div >
+                            <p:menuButton value="+/-" id="expandColapseOp" >
                                 <p:menuitem value="Expand" id="expandButton" icon="ui-icon-plus"
                                     title="Expand Selected Items"
                                     action="#{hierarchiesController.expandTreeNodes}" oncomplete="hierarchiesResizeAll();"                                   
@@ -298,10 +299,10 @@
                                             :hierarchies:hierarchyTabs:powersTree
                                             :hierarchies:hierarchyTabs:connectsTree" />                            
                             </p:menuButton>
-                            <p:menuButton value="C/P" id="clipboardOperations" style="float: right; margin: 0.25em 1ex 0 0;"
+                            <p:menuButton value="C/P" id="clipboardOperations" 
                                     disabled="#{not hierarchiesController.includesActive 
                                                 or not securityPolicy.getUIHint('HIERARCHY_CREATE')}"
-                                    title="Clipboard Operations">
+                                    >
                                 <p:menuitem value="Copy" id="copyButton" icon="ui-icon-copy"
                                     title="Put Selected Items to Clipboard for Copying"
                                     action="#{hierarchiesController.copyTreeNodes}" oncomplete="hierarchiesResizeAll();"
@@ -322,8 +323,7 @@
                                     action="#{hierarchiesController.checkPasteAction}"
                                     update=":pasteSlotsForm:pasteSlots" />
                             </p:menuButton>
-                            <p:commandButton id="downButton" icon="ui-icon-arrowthick-1-s" value="Down" title="Move Down"
-                                style="float: right; margin: 0.25em 1ex 0 0;"
+                            <p:commandButton id="downButton" icon="ui-icon-arrowthick-1-s" value="Down" title="Move Down"                              
                                 oncomplete="hierarchiesResizeAll(); scrollSelectedIntoView(PF('hierarchyWidget'));"
                                 update=":hierarchies:hierarchyTabs:tree :hierarchies:downButton :hierarchies:upButton"
                                 disabled="#{not hierarchiesController.singleNodeSelected
@@ -332,8 +332,7 @@
                                                 or hierarchiesController.singleSelectedSlotView.last
                                                 or not securityPolicy.getUIHint('MOVE_SLOT')}"
                                 actionListener="#{hierarchiesController.moveSlotDown()}" />
-                            <p:commandButton id="upButton" icon="ui-icon-arrowthick-1-n" value="Up" title="Move Up"
-                                style="float: right; margin: 0.25em 1ex 0 0;"
+                            <p:commandButton id="upButton" icon="ui-icon-arrowthick-1-n" value="Up" title="Move Up"                             
                                 oncomplete="hierarchiesResizeAll(); scrollSelectedIntoView(PF('hierarchyWidget'));"
                                 update=":hierarchies:hierarchyTabs:tree :hierarchies:upButton :hierarchies:downButton"
                                 disabled="#{not hierarchiesController.singleNodeSelected
@@ -346,23 +345,23 @@
                         </p:fieldset>
                     </p:column>
                     <p:column id="attributesColumn" styleClass="alignTop" >
-                        <p:fieldset id="slotAttributes" legend="Properties" style="box-sizing: border-box; height: calc(33.33vh - 4em)">
-                            <div style="height: calc(100% - 3em)">
+                        <p:fieldset id="slotAttributes" legend="Properties" >
+                            <!--<div style="height: calc(100% - 3em)">-->
                                 <rc:new-attribute-table id="attributesDataTable" controllerBean="#{slotAttributeController}"
                                     updateButtons=":hierarchies:deleteAttrButton :hierarchies:editAttrButton"
                                     parentName="Container/Slot" />
-                            </div>
+                            <!--</div>-->
                             <p:commandButton id="deleteAttrButton" value="Delete" icon="ui-icon-trash"
-                                style="float: right; margin-top: 1em;" oncomplete="PF('deleteAttribute').show();"
+                                 oncomplete="PF('deleteAttribute').show();"
                                 disabled="#{not slotAttributeController.canDeleteAttributes() 
                                             or not securityPolicy.getUIHint('HIERARCHY_DELETE')}" />
                             <p:commandButton id="editAttrButton" value="Edit" icon="ui-icon-pencil"
                                 action="#{slotAttributeController.prepareModifyPropertyPopUp}" 
-                                style="float: right; margin: 1em 1ex 0 0;" 
+                                 
                                 disabled="#{not slotAttributeController.singleAttributeSelected or
                                             not slotAttributeController.canEdit(slotAttributeController.selectedAttributes.get(0))
                                             or not securityPolicy.getUIHint('HIERARCHY_MODIFY')}" />
-                            <p:menuButton id="addAttrButton" value="Add" style="margin: 1em 1ex 0 0; float: right;"
+                            <p:menuButton id="addAttrButton" value="Add" 
                                     disabled="#{not hierarchiesController.singleNodeSelected
                                                 or not securityPolicy.getUIHint('HIERARCHY_CREATE')}">
                                 <p:menuitem value="Container property" oncomplete="PF('addPropertyValue').show();"
@@ -376,21 +375,24 @@
                                         update=":addArtifactForm:addArtifact" />
                             </p:menuButton>
                         </p:fieldset>
-                        <p:spacer height="20" />
+                        <!--<p:spacer height="20" />-->
                     </p:column>
                 </p:row>
                 <p:row>
                     <p:column id="relationsColumn" styleClass="alignTop">
-                        <p:fieldset id="relationsTable" legend="Relationships" style="box-sizing: border-box; height: calc(33.33vh - 4em)">
-                            <div style="height: calc(100% - 3em)">
+                        <p:fieldset id="relationsTable" legend="Relationships" >
+                            <!--<div style="height: calc(100% - 3em)">-->
                                 <p:dataTable value="#{relationshipController.relationships}" id="relationshipTable"
                                         var="relationship" emptyMessage="No records found."
-                                        scrollable="true" scrollWidth="100%" scrollHeight="100%" 
+                                         
                                         class="hierarchies-attributes-cell"
                                         filteredValue="#{relationshipController.filteredRelationships}"
                                         selectionMode="multiple" rowKey="#{relationship.id}"
                                         selection="#{relationshipController.selectedRelationships}"
-                                        widgetVar="relationshipsWidget">
+                                        widgetVar="relationshipsWidget"
+                                        currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                                         rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable" >
                                     <p:ajax event="rowSelect" update=":hierarchies:editRelationship :hierarchies:deleteRelationship" />
                                     <p:ajax event="rowUnselect" update=":hierarchies:editRelationship :hierarchies:deleteRelationship" />                                
                                     
@@ -422,20 +424,20 @@
                                             rendered="#{not hierarchiesController.includesActive}" />
                                     </p:column>
                                 </p:dataTable>
-                            </div>
+                            <!--</div>-->
 
                             <p:commandButton id="deleteRelationship" value="Delete" icon="ui-icon-trash"
-                                style="margin-top: 1em; float: right;" oncomplete="PF('deleteRelationship').show();" 
+                                oncomplete="PF('deleteRelationship').show();" 
                                 disabled="#{empty relationshipController.selectedRelationships 
                                             or not securityPolicy.getUIHint('RELATIONSHIP')}" />
                             <p:commandButton value="Edit" id="editRelationship" icon="ui-icon-pencil" 
-                                oncomplete="PF('addSlotRelationship').show()" style="margin: 1em 1ex 0 0; float: right;" 
+                                oncomplete="PF('addSlotRelationship').show()"  
                                 disabled="#{not relationshipController.canRelationshipBeEdited() 
                                             or not securityPolicy.getUIHint('RELATIONSHIP')}"
                                 update=":addSlotRelationshipForm:addSlotRelationship"
                                 actionListener="#{relationshipController.prepareEditRelationshipPopup}" />                                
                             <p:commandButton value="Add" id="addRelationship" icon="ui-icon-plus" 
-                                oncomplete="PF('addSlotRelationship').show()" style="margin: 1em 1ex 0 0; float: right;" 
+                                oncomplete="PF('addSlotRelationship').show()" 
                                 disabled="#{not hierarchiesController.singleNodeSelected 
                                             or not securityPolicy.getUIHint('RELATIONSHIP')}"
                                 update=":addSlotRelationshipForm:addSlotRelationship"
@@ -446,15 +448,17 @@
                 </p:row>
                 <p:row>
                     <p:column id="installationColumn" styleClass="alignTop">
-                        <p:fieldset id="installationDetails" legend="Installation" 
-                                style="box-sizing: border-box; height: calc(33.33vh - 4em)">
-                            <div style="height: calc(100% - 3em)">
+                        <p:fieldset id="installationDetails" legend="Installation" >
+                            <!--<div style="height: calc(100% - 3em)">-->
                                 <p:dataTable id="installationTable" value="#{installationController.installationRecords}"
                                         var="installationRecord" widgetVar="installationWidget"
                                         selectionMode="multiple" selection="#{installationController.selectedInstallationViews}"
                                         emptyMessage="No records found." rowKey="#{installationRecord.slotName}"
                                         filteredValue="#{installationController.filteredInstallationRecords}"
-                                        scrollable="true" scrollWidth="100%" scrollHeight="100%" class="hierarchies-attributes-cell">
+                                        class="hierarchies-attributes-cell"
+                                        currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                                         rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
     
                                     <p:ajax event="rowSelect" update=":hierarchies:installDeviceBtn :hierarchies:uninstallDeviceBtn" />
                                     <p:ajax event="rowUnselect" update=":hierarchies:installDeviceBtn :hierarchies:uninstallDeviceBtn" />                                
@@ -482,17 +486,16 @@
                                                 rendered="#{not installationRecord.deviceInstalled}" />
                                     </p:column>
                                 </p:dataTable>
-                            </div>
+                            <!--</div>-->
                             <p:commandButton title="Uninstall Selected Device" label="Uninstall" value="Uninstall" 
-                                type="button" onclick="PF('uninstallConfirm').show();" id="uninstallDeviceBtn" 
-                                style="margin-top: 1em; float: right;" icon="ui-icon-cancel" 
+                                type="button" onclick="PF('uninstallConfirm').show();" id="uninstallDeviceBtn"                                
                                 disabled="#{not installationController.canUninstall() 
                                             or not securityPolicy.getUIHint('INSTALLATION')}" 
                                 update=":hierarchies:installationDetails :hierarchies:growl" />
                             <p:commandButton title="Install Device to the Selected Slot" id="installDeviceBtn"
                                     value="Install" ajax="true" icon="ui-icon-check" 
                                     actionListener="#{installationController.prepareUninstalledDevices}"
-                                    style="margin: 1em 1ex 0 0; float: right;" oncomplete="PF('installDevice').show();" 
+                                    oncomplete="PF('installDevice').show();" 
                                     update=":hierarchies:installationDetails :installDeviceForm :installDeviceForm:installDevice"
                                     disabled="#{not installationController.canInstall() 
                                                 or not securityPolicy.getUIHint('INSTALLATION')}" />

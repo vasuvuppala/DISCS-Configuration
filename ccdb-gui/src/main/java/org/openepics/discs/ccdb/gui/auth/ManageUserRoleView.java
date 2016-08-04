@@ -15,6 +15,7 @@
 package org.openepics.discs.ccdb.gui.auth;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -122,6 +123,12 @@ public class ManageUserRoleView implements Serializable {
                 inputUserRole.setComment("default comment");
                 authEJB.saveAuthUserRole(inputUserRole);
                 userRoles.add(inputUserRole);
+                // Update UserRole list in role
+                // ToDo: not the best way. use JPA instead (in EJB).
+//                if (inputUserRole.getRole().getUserRoleList() == null) {
+//                    inputUserRole.getRole().setUserRoleList(new ArrayList<>());
+//                }
+//                inputUserRole.getRole().getUserRoleList().add(inputUserRole);
             } else {
                 authEJB.saveAuthUserRole(selectedUserRole);
             }

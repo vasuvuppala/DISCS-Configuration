@@ -56,7 +56,7 @@ public class AuthRole extends ConfigurationEntity {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "role")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} , mappedBy = "role")
     private List<AuthUserRole> userRoleList;
 
     public AuthRole() {

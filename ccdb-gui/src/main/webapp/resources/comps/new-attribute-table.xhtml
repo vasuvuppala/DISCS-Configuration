@@ -13,26 +13,35 @@
 
     <cc:implementation>
         <p:dataTable id="#{cc.attrs.id}" var="attribute" value="#{cc.attrs.controllerBean.attributes}"
-                selection="#{cc.attrs.controllerBean.selectedAttributes}" selectionMode="multiple"
-                rowKey="#{attribute.id}" style="overflow: hidden" scrollHeight="100%" emptyMessage="No records found." 
-                scrollable="true" resizableColumns="true" filteredValue="#{cc.attrs.controllerBean.filteredAttributes}"
-                tableStyle="word-wrap: break-word;" widgetVar="attributesDataTable">
+                     selection="#{cc.attrs.controllerBean.selectedAttributes}" selectionMode="multiple"
+                     rowKey="#{attribute.id}" style="overflow: hidden"  emptyMessage="No records found." 
+                     resizableColumns="true" filteredValue="#{cc.attrs.controllerBean.filteredAttributes}"
+                     tableStyle="word-wrap: break-word;" widgetVar="attributesDataTable"
+                     currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
+                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                     rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable"
+                     >
+
+            <f:facet name="header">
+                <h:outputText value="Properties"/>
+            </f:facet>
+            
             <p:ajax event="filter" ignoreAutoUpdate="true" />
             <p:ajax event="rowSelect" update="#{cc.attrs.updateButtons}" />
             <p:ajax event="rowUnselect" update="#{cc.attrs.updateButtons}" />
 
             <p:column headerText="#{cc.attrs.parentName}" sortBy="#{attribute.parent}" filterBy="#{attribute.parent}"
-                    filterMatchMode="contains">
+                      filterMatchMode="contains">
                 <h:outputText value="#{attribute.parent}" />
             </p:column>
 
             <p:column headerText="Name" sortBy="#{attribute.name}" filterBy="#{attribute.name}"
-                    filterMatchMode="contains">
+                      filterMatchMode="contains">
                 <h:outputText value="#{attribute.name}" />
             </p:column>
 
             <p:column headerText="Value" style="width: 30%" sortBy="#{attribute.value}" filterBy="#{attribute.value}"
-                    filterMatchMode="contains">
+                      filterMatchMode="contains">
                 <h:outputLink rendered="#{attribute.hasURL}" target="_blank" value="#{attribute.value}" title="Go to URL">
                     <h:outputText value="#{attribute.value}" style="text-decoration: underline;" />
                 </h:outputLink>
@@ -45,27 +54,27 @@
             </p:column>
 
             <p:column headerText="Unit" sortBy="#{attribute.unit}" filterBy="#{attribute.unit.name}"
-                    filterMatchMode="contains">
+                      filterMatchMode="contains">
                 <h:outputLink rendered="#{!empty attribute.unit}"
-                        value="#{request.contextPath}/units.xhtml?id=#{attribute.unit.id}">
+                              value="#{request.contextPath}/units.xhtml?id=#{attribute.unit.id}">
                     <h:outputText value="#{attribute.unit.name}" style="text-decoration: underline;" />
                 </h:outputLink>
                 <h:outputText value="-" rendered="#{empty attribute.unit}" />
             </p:column>
 
             <p:column headerText="Kind" sortBy="#{attribute.kind.toString()}" filterBy="#{attribute.kind}"
-                    filterMatchMode="exact" filterOptions="#{cc.attrs.controllerBean.attributeKinds}">
+                      filterMatchMode="exact" filterOptions="#{cc.attrs.controllerBean.attributeKinds}">
                 <h:outputText value="#{attribute.kind.toString()}" />
             </p:column>
 
             <p:column headerText="Data Type" sortBy="#{attribute.type.name}" filterBy="#{attribute.type.name}"
-                    filterMatchMode="contains">
+                      filterMatchMode="contains">
                 <h:outputText value="#{!empty attribute.type ? attribute.type.name : '-'}" />
             </p:column>
-            
-<!--            <p:column headerText="LoC" >
-                <h:outputText value="#{attribute.levelOfCare}" />
-            </p:column>-->
+
+            <!--            <p:column headerText="LoC" >
+                            <h:outputText value="#{attribute.levelOfCare}" />
+                        </p:column>-->
         </p:dataTable>
     </cc:implementation>
 </html>
