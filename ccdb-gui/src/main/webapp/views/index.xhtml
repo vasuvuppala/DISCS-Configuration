@@ -51,7 +51,7 @@
                     <p:separator/>
                 </ui:fragment>
                 
-                <p:dataTable id="viewTable" var="slot" value="#{slotViewManager.slots}"                     
+                <p:dataTable id="viewTable" var="slot" value="#{slotViewManager.slots}" resizableColumns="true"           
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100"                                     
@@ -72,13 +72,14 @@
                         <h:outputText value="#{slot.description}"/>
                     </p:column>
 
-                    <p:columns var="prop" value="#{slotViewManager.selectedProperties}" styleClass="alignRight">
+                    <p:columns var="prop" value="#{slotViewManager.selectedProperties}" styleClass="alignRight" >
                         <f:facet name="header">
                             <h:outputText value="#{prop.name}" title="#{prop.description}"/>
                         </f:facet>                  
                         <h:outputText value="#{slotViewManager.slotProperty(slot, prop)}" />
                     </p:columns>
                 </p:dataTable>
+                
                 <h:commandLink title="Export to Excel" >  
                     <p:graphicImage value="#{resource['images/excel.png']}" />                      
                     <p:dataExporter type="xls"  target="viewTable" fileName="ccdb-view"  />  
