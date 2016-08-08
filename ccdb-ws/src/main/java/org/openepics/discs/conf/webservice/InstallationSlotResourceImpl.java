@@ -20,6 +20,7 @@
 package org.openepics.discs.conf.webservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,6 +47,9 @@ import org.openepics.discs.ccdb.jaxb.PropertyKind;
 import org.openepics.discs.ccdb.jaxb.PropertyValue;
 import org.openepics.discs.ccdb.jaxrs.InstallationSlotResource;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
+import org.openepics.discs.ccdb.jaxb.ProcessStatusRep;
+import org.openepics.discs.ccdb.jaxb.RelationshipRep;
+import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 
 /**
  * An implementation of the InstallationSlotResource interface.
@@ -77,8 +81,9 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
 //        }
 //    }
 
+    
     @Override
-    public List<InstallationSlot> searchSlots(String name, String type) {
+    public List<InstallationSlot> searchSlots(String name, String type, String tag, String detail) {
         // Get mattching slots
 
         return slotEJB.searchSlots(name, type).stream().
@@ -133,37 +138,68 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         installationSlot.setDescription(slot.getDescription());
         installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));
 
-        installationSlot.setParents(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-                        SlotRelationName.CONTAINS,
-                        pair -> pair.getParentSlot()));
-        installationSlot.setChildren(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-                        SlotRelationName.CONTAINS,
-                        pair -> pair.getChildSlot()));
-
-        installationSlot.setPoweredBy(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-                        SlotRelationName.POWERS,
-                        pair -> pair.getParentSlot()));
-        installationSlot.setPowers(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-                        SlotRelationName.POWERS,
-                        pair -> pair.getChildSlot()));
-
-        installationSlot.setControlledBy(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-                        SlotRelationName.CONTROLS,
-                        pair -> pair.getParentSlot()));
-        installationSlot.setControls(
-                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-                        SlotRelationName.CONTROLS,
-                        pair -> pair.getChildSlot()));
-      
+        installationSlot.setRelationships(getRelationships(slot));
+        installationSlot.setStatuses(getStatus(slot));
         installationSlot.setProperties(getPropertyValues(slot));
         return installationSlot;
     }
+    
+//    private InstallationSlot createInstallationSlot(final Slot slot) {
+//        if (slot == null) {
+//            return null;
+//        }
+//
+//        final InstallationSlot installationSlot = new InstallationSlot();
+//        installationSlot.setName(slot.getName());
+//        installationSlot.setDescription(slot.getDescription());
+//        installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));
+//
+//        installationSlot.setParents(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
+//                        SlotRelationName.CONTAINS,
+//                        pair -> pair.getParentSlot()));
+//        installationSlot.setChildren(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
+//                        SlotRelationName.CONTAINS,
+//                        pair -> pair.getChildSlot()));
+//
+//        installationSlot.setPoweredBy(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
+//                        SlotRelationName.POWERS,
+//                        pair -> pair.getParentSlot()));
+//        installationSlot.setPowers(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
+//                        SlotRelationName.POWERS,
+//                        pair -> pair.getChildSlot()));
+//
+//        installationSlot.setControlledBy(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
+//                        SlotRelationName.CONTROLS,
+//                        pair -> pair.getParentSlot()));
+//        installationSlot.setControls(
+//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
+//                        SlotRelationName.CONTROLS,
+//                        pair -> pair.getChildSlot()));
+//      
+//        installationSlot.setProperties(getPropertyValues(slot));
+//        return installationSlot;
+//    }
 
+    private List<ProcessStatusRep> getStatus(Slot slot) {
+        List<ProcessStatus> statuses = clEJB.findStatuses(slot);
+              
+        return statuses == null? null: statuses.stream().map(p -> ProcessStatusRep.newInstance(p)).collect(Collectors.toList());
+    }
+    
+    private List<RelationshipRep> getRelationships(Slot slot) {
+        List<RelationshipRep> rels = Collections.EMPTY_LIST;
+        
+        rels.addAll(slot.getPairsInWhichThisSlotIsAChildList().stream().map(p -> new RelationshipRep(p.getSlotRelation().getName().toString(), p.getParentSlot().getName())).collect(Collectors.toList()));
+        rels.addAll(slot.getPairsInWhichThisSlotIsAParentList().stream().map(p -> new RelationshipRep(p.getSlotRelation().getName().toString(), p.getChildSlot().getName())).collect(Collectors.toList()));
+        
+        return rels;
+    }
+    
     private List<String> getRelatedSlots(final Stream<SlotPair> relatedSlotPairs,
             final SlotRelationName relationName,
             final RelatedSlotExtractor extractor) {

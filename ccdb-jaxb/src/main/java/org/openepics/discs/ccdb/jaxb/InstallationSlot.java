@@ -42,29 +42,37 @@ public class InstallationSlot {
     
     @XmlElement private DeviceType deviceType;
 
-    @XmlElementWrapper(name = "parents")
-    @XmlElement(name = "parent")
-    private List<String> parents = new ArrayList<>();
-
-    @XmlElementWrapper(name = "children")
-    @XmlElement(name = "child")
-    private List<String> children = new ArrayList<>();
-
-    @XmlElementWrapper(name = "powers")
-    @XmlElement(name = "power")
-    private List<String> powers = new ArrayList<>();
-
-    @XmlElementWrapper(name = "poweredBy")
-    @XmlElement(name = "powerBy")
-    private List<String> poweredBy = new ArrayList<>();
-
-    @XmlElementWrapper(name = "controls")
-    @XmlElement(name = "control")
-    private List<String> controls = new ArrayList<>();
-
-    @XmlElementWrapper(name = "controlledBy")
-    @XmlElement(name = "controlBy")
-    private List<String> controlledBy = new ArrayList<>();
+    @XmlElementWrapper(name = "relations")
+    @XmlElement(name = "relation")
+    private List<RelationshipRep> relationships = new ArrayList<>();
+    
+    @XmlElementWrapper(name = "statuses")
+    @XmlElement(name = "status")
+    private List<ProcessStatusRep> statuses = new ArrayList<>();
+    
+//    @XmlElementWrapper(name = "parents")
+//    @XmlElement(name = "parent")
+//    private List<String> parents = new ArrayList<>();
+//
+//    @XmlElementWrapper(name = "children")
+//    @XmlElement(name = "child")
+//    private List<String> children = new ArrayList<>();
+//
+//    @XmlElementWrapper(name = "powers")
+//    @XmlElement(name = "power")
+//    private List<String> powers = new ArrayList<>();
+//
+//    @XmlElementWrapper(name = "poweredBy")
+//    @XmlElement(name = "powerBy")
+//    private List<String> poweredBy = new ArrayList<>();
+//
+//    @XmlElementWrapper(name = "controls")
+//    @XmlElement(name = "control")
+//    private List<String> controls = new ArrayList<>();
+//
+//    @XmlElementWrapper(name = "controlledBy")
+//    @XmlElement(name = "controlBy")
+//    private List<String> controlledBy = new ArrayList<>();
 
     @XmlElementWrapper(name = "properties")
     @XmlAnyElement(lax = true)
@@ -81,23 +89,21 @@ public class InstallationSlot {
     public DeviceType getDeviceType() { return deviceType; }
     public void setDeviceType(DeviceType deviceType) { this.deviceType = deviceType; }
 
-    public List<String> getParents() { return parents; }
-    public void setParents(List<String> parents) { this.parents = parents; }
+    public List<RelationshipRep> getRelationships() {
+        return relationships;
+    }
 
-    public List<String> getChildren() { return children; }
-    public void setChildren(List<String> children) { this.children = children; }
+    public void setRelationships(List<RelationshipRep> relationships) {
+        this.relationships = relationships;
+    }
 
-    public List<String> getPowers() { return powers; }
-    public void setPowers(List<String> powers) { this.powers = powers; }
+    public List<ProcessStatusRep> getStatuses() {
+        return statuses;
+    }
 
-    public List<String> getPoweredBy() { return poweredBy; }
-    public void setPoweredBy(List<String> poweredBy) { this.poweredBy = poweredBy; }
-
-    public List<String> getControls() { return controls; }
-    public void setControls(List<String> controls) { this.controls = controls; }
-
-    public List<String> getControlledBy() { return controlledBy; }
-    public void setControlledBy(List<String> controlledBy) { this.controlledBy = controlledBy; }
+    public void setStatuses(List<ProcessStatusRep> statuses) {
+        this.statuses = statuses;
+    }
 
     public List<PropertyValue> getProperties() { return properties; }
     public void setProperties(List<PropertyValue> properties) { this.properties = properties; }

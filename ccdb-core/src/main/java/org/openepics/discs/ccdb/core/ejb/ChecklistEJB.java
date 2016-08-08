@@ -918,6 +918,40 @@ public class ChecklistEJB {
                 .getResultList();
     }
     
+    /**
+     * All status records for the give slot
+     * 
+     * @param slot
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<ProcessStatus> findStatuses(Slot slot) {
+        if (slot.getCmGroup() != null) {
+            return findStatuses(slot.getCmGroup());
+        }
+        
+        Checklist checklist = findDefaultChecklist(ChecklistEntity.SLOT);
+        return em.createNamedQuery("ProcessStatus.findBySlot", ProcessStatus.class)
+                .setParameter("slot", slot)
+                .setParameter("checklist", checklist)
+                .getResultList();
+    }
+    
+    /**
+     * All status records for the given group
+     * 
+     * @param group
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<ProcessStatus> findStatuses(SlotGroup group) {
+        Checklist checklist = findDefaultChecklist(ChecklistEntity.GROUP);
+        return em.createNamedQuery("ProcessStatus.findByGroup", ProcessStatus.class)
+                .setParameter("group", group)
+                .setParameter("checklist", checklist)
+                .getResultList();
+    }
+    
      /**
      * save a status type
      *

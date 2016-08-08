@@ -42,6 +42,8 @@ import org.openepics.discs.ccdb.model.auth.AuthUser;
     @NamedQuery(name = "ProcessStatus.findValid", query = "SELECT d FROM ProcessStatus d"),
     @NamedQuery(name = "ProcessStatus.findGroupStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slotGroup IS NOT null"),
     @NamedQuery(name = "ProcessStatus.findSlotStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS NOT null"),
+    @NamedQuery(name = "ProcessStatus.findBySlot", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot = :slot AND d.field.checklist = :checklist"),
+    @NamedQuery(name = "ProcessStatus.findByGroup", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slotGroup = :group AND d.field.checklist = :checklist"),
     @NamedQuery(name = "ProcessStatus.findDeviceStatus", query = "SELECT d FROM ProcessStatus d WHERE d.assignment.slot IS null AND d.assignment.device IS NOT null"),
     @NamedQuery(name = "ProcessStatus.findByChecklist", query = "SELECT d FROM ProcessStatus d WHERE d.field.checklist = :checklist"),
     @NamedQuery(name = "ProcessStatus.findByAssignment", query = "SELECT d FROM ProcessStatus d WHERE d.assignment = :assignment")

@@ -81,7 +81,7 @@ class InstallationSlotClient implements
      * @return list of InstallationSlot
      */
     @Override
-    public List<InstallationSlot> searchSlots(String name, String type) {        
+    public List<InstallationSlot> searchSlots(String name, String type, String tag, String detail) {        
         LOG.fine("Invoking getInstallationSlots");
 
         final String url = client.buildUrl(PATH_SLOTS);
@@ -92,6 +92,12 @@ class InstallationSlotClient implements
         }
         if (type != null) {
             queryParams.put("type", Arrays.asList(type));
+        }
+        if (tag != null) {
+            queryParams.put("tag", Arrays.asList(tag));
+        }
+        if (detail != null) {
+            queryParams.put("detail", Arrays.asList(detail));
         }
         
         try (final ClosableResponse response = client.getResponse(url, queryParams)) {

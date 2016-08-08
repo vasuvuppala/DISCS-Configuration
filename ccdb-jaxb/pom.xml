@@ -18,8 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ccdb-model</artifactId>
-            <version>${project.version}</version>
+            <artifactId>ccdb-model</artifactId>            
         </dependency>
         <dependency>
             <groupId>javax</groupId>
