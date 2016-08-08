@@ -57,6 +57,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "ComponentType.findUserTypesOnly", query = "SELECT c FROM ComponentType c "
             + "WHERE c.name <> :internalType1 AND c.name <> :internalType2 ORDER BY c.name"),
     @NamedQuery(name = "ComponentType.findByName", query = "SELECT c FROM ComponentType c WHERE c.name = :name"),
+    @NamedQuery(name = "ComponentType.queryByName", query = "SELECT c FROM ComponentType c WHERE c.name LIKE :query"),
     @NamedQuery(name = "ComponentType.findAllOrdered", query = "SELECT c FROM ComponentType c ORDER BY c.name"),
     @NamedQuery(name = "ComponentType.findByModifiedBy", query = "SELECT c FROM ComponentType c "
             + "WHERE c.modifiedBy = :modifiedBy")

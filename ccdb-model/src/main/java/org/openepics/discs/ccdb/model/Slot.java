@@ -57,6 +57,8 @@ import org.openepics.discs.ccdb.model.cl.SlotGroup;
     @NamedQuery(name = "Slot.findAll", query = "SELECT s FROM Slot s"),
     @NamedQuery(name = "Slot.findBySlotId", query = "SELECT s FROM Slot s WHERE s.id = :id"),
     @NamedQuery(name = "Slot.findByName", query = "SELECT s FROM Slot s WHERE s.name = :name"),
+    @NamedQuery(name = "Slot.searchSlots", query = "SELECT s FROM Slot s WHERE s.name LIKE :name AND s.componentType.name LIKE :type"),
+    @NamedQuery(name = "Slot.queryByName", query = "SELECT s FROM Slot s WHERE s.name LIKE :query"),
     @NamedQuery(name = "Slot.findByNameAndHosting", query = "SELECT s FROM Slot s WHERE s.name = :name AND s.isHostingSlot = :isHostingSlot"),
     @NamedQuery(name = "Slot.findByNameContaining", query = "SELECT s FROM Slot s WHERE s.name LIKE :name"),
     @NamedQuery(name = "Slot.findByIsHostingSlot", query = "SELECT s FROM Slot s WHERE s.isHostingSlot = :isHostingSlot"),

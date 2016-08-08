@@ -57,23 +57,50 @@ class InstallationSlotClient implements
      * @param deviceType optional (can be null) device type to filter the slots
      * @return list of InstallationSlot
      */
+//    @Override
+//    public List<InstallationSlot> getInstallationSlots(String deviceType) {        
+//        LOG.fine("Invoking getInstallationSlots");
+//
+//        final String url = client.buildUrl(PATH_SLOTS);
+//        
+//        MultivaluedHashMap queryParams = new MultivaluedHashMap();
+//        if (deviceType!=null) {
+//            queryParams.put("deviceType", Arrays.asList(deviceType));
+//        }
+//        try (final ClosableResponse response = client.getResponse(url, queryParams)) {
+//            return response.readEntity(new GenericType<List<InstallationSlot>>(){});
+//        } catch (Exception e) {
+//            throw new ResponseException("Couldn't retrieve data from service at " + url + ".", e);
+//        }
+//    }
+
+    /**
+     * Gets either all installation slots, or filtered by the deviceType parameter
+     * 
+     * @param query optional (can be null) device type to filter the slots
+     * @return list of InstallationSlot
+     */
     @Override
-    public List<InstallationSlot> getInstallationSlots(String deviceType) {        
+    public List<InstallationSlot> searchSlots(String name, String type) {        
         LOG.fine("Invoking getInstallationSlots");
 
         final String url = client.buildUrl(PATH_SLOTS);
         
         MultivaluedHashMap queryParams = new MultivaluedHashMap();
-        if (deviceType!=null) {
-            queryParams.put("deviceType", Arrays.asList(deviceType));
+        if (name != null) {
+            queryParams.put("name", Arrays.asList(name));
         }
+        if (type != null) {
+            queryParams.put("type", Arrays.asList(type));
+        }
+        
         try (final ClosableResponse response = client.getResponse(url, queryParams)) {
             return response.readEntity(new GenericType<List<InstallationSlot>>(){});
         } catch (Exception e) {
             throw new ResponseException("Couldn't retrieve data from service at " + url + ".", e);
         }
     }
-
+    
     @Override
     public InstallationSlot getInstallationSlot(String name) {
         LOG.fine("Invoking getInstallationSlot");

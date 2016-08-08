@@ -80,6 +80,16 @@ public class DeviceEJB extends DAO<Device> {
                 .setParameter("componentType", componentType).getResultList();
     }
 
+    public List<Device> searchDevices(String name, String devtype) {
+        String qname = "%" + name + "%";
+        String qtype = "%" + devtype + "%";
+
+        return em.createNamedQuery("Device.searchDevices", Device.class)
+                .setParameter("name", qname)
+                .setParameter("type", qtype)
+                .getResultList();
+    }
+    
     /**
      * Adds a new device and creates all its defined property values in a single transaction
      * @param device the {@link Device} the add

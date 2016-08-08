@@ -51,6 +51,18 @@ public class PropertyEJB extends DAO<Property> {
         return em.createNamedQuery("Property.findAllOrderedByName", Property.class).getResultList();
     }
 
+//    /**
+//     * 
+//     * @param query
+//     * @return 
+//     */
+//    public List<Property> queryByName(String query) {
+//        String qstring = "%" + query +"%";
+//        return em.createNamedQuery("Property.queryByName", Property.class)
+//                .setParameter("query", qstring)
+//                .getResultList();
+//    }
+    
     /**
      * @param property the property to perform test for
      * @return <code>true</code> if the property is used in some {@link PropertyValue} instance,

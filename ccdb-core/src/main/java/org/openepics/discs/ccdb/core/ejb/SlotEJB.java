@@ -91,6 +91,23 @@ public class SlotEJB extends DAO<Slot> {
         return em.createNamedQuery("Slot.findByNameContaining", Slot.class)
                 .setParameter("name", namePart).getResultList();
     }
+    
+    /**
+     * Queries database for slots by partial name
+     *
+     * @param name
+     * @param type
+     * @return {@link List} of slots
+     */
+    public List<Slot> searchSlots(String name, String type) {
+        String qname = "%" + name + "%";
+        String qtype = "%" + type + "%";
+        
+        return em.createNamedQuery("Slot.searchSlots", Slot.class)
+                .setParameter("name", qname)
+                .setParameter("type", qtype)
+                .getResultList();
+    }
 
     /**
      * Find all slots define by users i.e. slots not used internally by system such as _ROOT
@@ -137,6 +154,7 @@ public class SlotEJB extends DAO<Slot> {
                 .setParameter("componentType", componentType).getResultList();
     }
 
+    
     /**
      * All hosting or non-hosting {@link Slot}s.
      *

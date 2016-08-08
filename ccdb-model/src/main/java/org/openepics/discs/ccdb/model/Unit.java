@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Unit.findAllOrdered", query = "SELECT u FROM Unit u ORDER BY u.name"),
     @NamedQuery(name = "Unit.findByName", query = "SELECT u FROM Unit u WHERE u.name = :name"),
+    @NamedQuery(name = "Unit.queryByName", query = "SELECT u FROM Unit u WHERE u.name LIKE :query"),
     @NamedQuery(name = "Unit.findBySymbol", query = "SELECT u FROM Unit u WHERE u.symbol = :symbol"),
     @NamedQuery(name = "Unit.findByModifiedBy", query = "SELECT u FROM Unit u WHERE u.modifiedBy = :modifiedBy")
 })

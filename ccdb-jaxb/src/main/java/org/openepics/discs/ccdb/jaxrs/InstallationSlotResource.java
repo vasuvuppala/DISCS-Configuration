@@ -43,10 +43,23 @@ public interface InstallationSlotResource {
      * @param deviceType the name of the device type to retrieve slots for
      * @return list of slots of given device 
      */ 
+//    @GET
+//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+//    public List<InstallationSlot> getInstallationSlots(@DefaultValue("undefined") 
+//        @QueryParam("deviceType") String deviceType);  
+    
+    /**
+     * Retrieves a list of slots of a given device type
+     * 
+     * @param name 
+     * @param deviceType
+     * @return list of slots of given device 
+     */ 
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
-    public List<InstallationSlot> getInstallationSlots(@DefaultValue("undefined") 
-        @QueryParam("deviceType") String deviceType);    
+    public List<InstallationSlot> searchSlots( 
+        @DefaultValue("") @QueryParam("name") String name,
+        @DefaultValue("") @QueryParam("type") String deviceType);
     
     /**
      * Returns a specific installation slot

@@ -43,9 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 
 /**
  *
@@ -60,6 +57,8 @@ import org.openepics.discs.ccdb.model.cm.LevelOfCare;
     @NamedQuery(name = "Device.findAll", query = "SELECT d FROM Device d"),
     // device instance does not have a name. This named query is introduced to satisfy the ReadOnlyDAO assumption.
     @NamedQuery(name = "Device.findByName", query = "SELECT d FROM Device d WHERE d.serialNumber = :name"),
+    @NamedQuery(name = "Device.queryByName", query = "SELECT d FROM Device d WHERE d.serialNumber LIKE :query"),
+    @NamedQuery(name = "Device.searchDevices", query = "SELECT d FROM Device d WHERE d.serialNumber LIKE :name AND d.componentType.name LIKE :type"),
     @NamedQuery(name = "Device.findByComponentType", query = "SELECT d FROM Device d "
             + "WHERE d.componentType = :componentType"),
     @NamedQuery(name = "Device.uninstalledDevicesByType", query = "SELECT d from Device d "

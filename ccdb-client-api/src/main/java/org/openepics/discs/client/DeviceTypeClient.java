@@ -19,11 +19,13 @@
  */
 package org.openepics.discs.client;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MultivaluedHashMap;
 
 import org.openepics.discs.client.impl.ClosableResponse;
 import org.openepics.discs.client.impl.ResponseException;
@@ -58,18 +60,42 @@ class DeviceTypeClient
      *
      * @return {@link List} of all {@link DeviceType}s
      */
-    @Override
-    public List<DeviceType> getAllDeviceTypes() {
-        LOG.fine("Invoking getAllDeviceTypes");
+//    @Override
+//    public List<DeviceType> getAllDeviceTypes() {
+//        LOG.fine("Invoking getAllDeviceTypes");
+//
+//        final String url = client.buildUrl(PATH_DEVICE_TYPES);
+//        try (final ClosableResponse response = client.getResponse(url)) {
+//            return response.readEntity(new GenericType<List<DeviceType>>() {});
+//        } catch (Exception e) {
+//            throw new ResponseException("Couldn't retrieve data from service at " + url + ".", e);
+//        }
+//    }
 
+    /**
+     * Requests a {@link List} of all {@link DeviceType}s from the REST service.
+     *
+     * @throws ResponseException if data couldn't be retrieved
+     *
+     * @return {@link List} of all {@link DeviceType}s
+     */
+    @Override
+    public List<DeviceType> searchDeviceTypes(String query) {
+        LOG.fine("Invoking getAllDeviceTypes");
         final String url = client.buildUrl(PATH_DEVICE_TYPES);
-        try (final ClosableResponse response = client.getResponse(url)) {
+        
+        MultivaluedHashMap queryParams = new MultivaluedHashMap();
+        if (query!=null) {
+            queryParams.put("name", Arrays.asList(query));
+        }
+        
+        try (final ClosableResponse response = client.getResponse(url, queryParams)) {
             return response.readEntity(new GenericType<List<DeviceType>>() {});
         } catch (Exception e) {
             throw new ResponseException("Couldn't retrieve data from service at " + url + ".", e);
         }
     }
-
+    
     /**
      * Requests particular {@link DeviceType} from the REST service.
      *

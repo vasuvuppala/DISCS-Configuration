@@ -26,38 +26,35 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.openepics.discs.ccdb.jaxb.UnitRep;
 
-import org.openepics.discs.ccdb.jaxb.ResDevice;
 
 /**
- * This resource provides bulk and specific device type data.
+ * Unit Resource.
  *
- * @author <a href="mailto:sunil.sah@cosylab.com">Sunil Sah</a>
+ * @author <a href="mailto:vuppala@frib.msu.edu">Vasu Vuppala</a>
  */
-@Path("device")
-public interface DeviceResource {
- 
+@Path("unit")
+public interface UnitResource {
     /**
-     * search devices
+     * Units
      * 
-     * @param name
-     * @param type
-     * @return 
+     * @param query query string
+     * @return all units matching the query
      */
-    @GET
+    @GET    
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<ResDevice> searchDevices( 
-        @DefaultValue("") @QueryParam("name") String name, 
-        @DefaultValue("") @QueryParam("type") String type);
+    public List<UnitRep> searchUnits(
+        @DefaultValue("") @QueryParam("name") String query);   
     
     /**
-     * Returns a specific device type.
-     *
-     * @param name the name of the device type to retrieve
-     * @return the device type instance data
+     * A unit
+     * 
+     * @param name property name
+     * @return unit
      */
-    @GET
-    @Path("{iid}")
+    @GET    
+    @Path("{name}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public ResDevice getDevice(@PathParam("iid") String name);
+    public UnitRep getUnit(@PathParam("name") String name);
 }

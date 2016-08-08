@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "DataType.findAll", query = "SELECT d FROM DataType d"),
     @NamedQuery(name = "DataType.findByName", query = "SELECT d FROM DataType d WHERE d.name = :name"),
+    @NamedQuery(name = "DataType.queryByName", query = "SELECT d FROM DataType d WHERE d.name LIKE :query"),
     @NamedQuery(name = "DataType.findByDataTypeId", query = "SELECT d FROM DataType d WHERE d.id = :id"),
     @NamedQuery(name = "DataType.findByModifiedBy", query = "SELECT d FROM DataType d WHERE d.modifiedBy = :modifiedBy")
 })

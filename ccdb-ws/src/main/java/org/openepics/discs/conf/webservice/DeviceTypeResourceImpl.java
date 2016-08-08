@@ -36,9 +36,10 @@ public class DeviceTypeResourceImpl implements DeviceTypeResource {
 
     @Inject private ComptypeEJB comptypeEJB;
 
+    
     @Override
-    public List<DeviceType> getAllDeviceTypes() {
-        return comptypeEJB.findAll().stream().
+    public List<DeviceType> searchDeviceTypes(String query) {
+        return comptypeEJB.queryByName(query).stream().
                 map(compType -> getDeviceType(compType)).
                 collect(Collectors.toList());
     }

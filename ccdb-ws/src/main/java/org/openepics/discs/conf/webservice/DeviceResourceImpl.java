@@ -42,16 +42,24 @@ public class DeviceResourceImpl implements DeviceResource {
     @Inject
     private ComptypeEJB compTypeEJB;
 
+//    @Override
+//    public List<ResDevice> getAllDevices(String deviceType) {
+//        if ("undefined".equals(deviceType)) {
+//            return deviceEJB.findAll().stream().
+//                    map(dev -> getDevice(dev)).
+//                    collect(Collectors.toList());
+//        } else {
+//            // Get them filtered by deviceType
+//            return getDevicesOfType(deviceType);
+//        }
+//    }
+
     @Override
-    public List<ResDevice> getAllDevices(String deviceType) {
-        if ("undefined".equals(deviceType)) {
-            return deviceEJB.findAll().stream().
-                    map(dev -> getDevice(dev)).
-                    collect(Collectors.toList());
-        } else {
-            // Get them filtered by deviceType
-            return getDevicesOfType(deviceType);
-        }
+    public List<ResDevice> searchDevices(String name, String type) {
+        return deviceEJB.searchDevices(name, type).stream().
+                map(dev -> getDevice(dev)).
+                collect(Collectors.toList());
+
     }
 
     private List<ResDevice> getDevicesOfType(String deviceType) {

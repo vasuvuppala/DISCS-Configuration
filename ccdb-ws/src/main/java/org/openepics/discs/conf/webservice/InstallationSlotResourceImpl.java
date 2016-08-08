@@ -63,20 +63,30 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         public Slot getRelatedSlot(final SlotPair pair);
     }
 
+//    @Override
+//    public List<InstallationSlot> getInstallationSlots(String deviceType) {
+//        // Get all slots
+//        if ("undefined".equals(deviceType)) {
+//            return slotEJB.findAll().stream().
+//                filter(slot -> slot!=null && slot.isHostingSlot()).
+//                map(slot -> createInstallationSlot(slot)).
+//                collect(Collectors.toList());
+//        } else {
+//            // Get them filtered by deviceType
+//            return getInstallationSlotsForType(deviceType);
+//        }
+//    }
+
     @Override
-    public List<InstallationSlot> getInstallationSlots(String deviceType) {
-        // Get all slots
-        if ("undefined".equals(deviceType)) {
-            return slotEJB.findAll().stream().
-                filter(slot -> slot!=null && slot.isHostingSlot()).
+    public List<InstallationSlot> searchSlots(String name, String type) {
+        // Get mattching slots
+
+        return slotEJB.searchSlots(name, type).stream().
+                filter(slot -> slot != null && slot.isHostingSlot()).
                 map(slot -> createInstallationSlot(slot)).
                 collect(Collectors.toList());
-        } else {
-            // Get them filtered by deviceType
-            return getInstallationSlotsForType(deviceType);
-        }
     }
-
+    
     @Override
     public InstallationSlot getInstallationSlot(String name) {
         final Slot installationSlot = slotEJB.findByName(name);

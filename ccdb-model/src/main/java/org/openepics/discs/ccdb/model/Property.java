@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Property.findAllOrderedByName", query = "SELECT p FROM Property p ORDER BY p.name"),
     @NamedQuery(name = "Property.findByPropertyId", query = "SELECT p FROM Property p WHERE p.id = :id"),
     @NamedQuery(name = "Property.findByName", query = "SELECT p FROM Property p WHERE p.name = :name"),
+    @NamedQuery(name = "Property.queryByName", query = "SELECT p FROM Property p WHERE p.name LIKE :query"),
     @NamedQuery(name = "Property.findByUnit", query = "SELECT p from Property p WHERE p.unit = :unit"),
     @NamedQuery(name = "Property.findByDataType", query = "SELECT p FROM Property p WHERE p.dataType = :dataType"),
     @NamedQuery(name = "Property.findByModifiedBy", query = "SELECT p FROM Property p "
