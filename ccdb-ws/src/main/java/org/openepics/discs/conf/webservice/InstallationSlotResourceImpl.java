@@ -61,7 +61,7 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
     @Inject private ComptypeEJB compTypeEJB;
     @Inject private ChecklistEJB clEJB;
     @Inject private InstallationEJB installationEJB;
-
+    
     @FunctionalInterface
     private interface RelatedSlotExtractor {
         public Slot getRelatedSlot(final SlotPair pair);
@@ -85,10 +85,10 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
     @Override
     public List<InstallationSlot> searchSlots(String name, String type, String tag, String detail) {
         // Get mattching slots
-
+           
         return slotEJB.searchSlots(name, type).stream().
                 filter(slot -> slot != null && slot.isHostingSlot()).
-                map(slot -> createInstallationSlot(slot)).
+                map(slot -> createInstallationSlot(slot, detail)).
                 collect(Collectors.toList());
     }
     
@@ -98,7 +98,7 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         if (installationSlot == null || !installationSlot.isHostingSlot()) {
             return null;
         }
-        return createInstallationSlot(installationSlot);
+        return createInstallationSlot(installationSlot, InstallationSlotResource.DETAIL_PROPERTY + InstallationSlotResource.DETAIL_STATUS);
     }
     
     @Override
@@ -113,22 +113,22 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                        .collect(Collectors.toList()).get(0); // TODO: improve use findFirst()
     }
 
-    private List<InstallationSlot> getInstallationSlotsForType(String deviceType) {
-        if (StringUtils.isEmpty(deviceType)) {
-            return new ArrayList<>();
-        }
+//    private List<InstallationSlot> getInstallationSlotsForType(String deviceType) {
+//        if (StringUtils.isEmpty(deviceType)) {
+//            return new ArrayList<>();
+//        }
+//
+//        final ComponentType ct = compTypeEJB.findByName(deviceType);
+//        if (ct == null) {
+//            return new ArrayList<>();
+//        }
+//
+//        return slotEJB.findByComponentType(ct).stream().
+//                map(slot -> createInstallationSlot(slot)).
+//                collect(Collectors.toList());
+//    }
 
-        final ComponentType ct = compTypeEJB.findByName(deviceType);
-        if (ct == null) {
-            return new ArrayList<>();
-        }
-
-        return slotEJB.findByComponentType(ct).stream().
-                map(slot -> createInstallationSlot(slot)).
-                collect(Collectors.toList());
-    }
-
-    private InstallationSlot createInstallationSlot(final Slot slot) {
+    private InstallationSlot createInstallationSlot(final Slot slot, String detail) {
         if (slot == null) {
             return null;
         }
@@ -138,9 +138,10 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         installationSlot.setDescription(slot.getDescription());
         installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));
 
-        installationSlot.setRelationships(getRelationships(slot));
-        installationSlot.setStatuses(getStatus(slot));
-        installationSlot.setProperties(getPropertyValues(slot));
+        if (detail.contains(InstallationSlotResource.DETAIL_RELATIONSHIP)) installationSlot.setRelationships(getRelationships(slot));
+        if (detail.contains(InstallationSlotResource.DETAIL_STATUS)) installationSlot.setStatuses(getStatus(slot));
+        if (detail.contains(InstallationSlotResource.DETAIL_PROPERTY)) installationSlot.setProperties(getPropertyValues(slot));
+        
         return installationSlot;
     }
     
@@ -192,9 +193,13 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
     }
     
     private List<RelationshipRep> getRelationships(Slot slot) {
-        List<RelationshipRep> rels = Collections.EMPTY_LIST;
+        List<RelationshipRep> rels = new ArrayList<>();
+        List<SlotPair> pairs = new ArrayList<>(slot.getPairsInWhichThisSlotIsAChildList());        
         
-        rels.addAll(slot.getPairsInWhichThisSlotIsAChildList().stream().map(p -> new RelationshipRep(p.getSlotRelation().getName().toString(), p.getParentSlot().getName())).collect(Collectors.toList()));
+        rels.addAll(pairs.stream().map(p -> new RelationshipRep(p.getSlotRelation().getName().toString(), p.getParentSlot().getName())).collect(Collectors.toList()));
+        
+        pairs.clear();
+        pairs.addAll(slot.getPairsInWhichThisSlotIsAParentList());        
         rels.addAll(slot.getPairsInWhichThisSlotIsAParentList().stream().map(p -> new RelationshipRep(p.getSlotRelation().getName().toString(), p.getChildSlot().getName())).collect(Collectors.toList()));
         
         return rels;

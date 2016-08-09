@@ -30,7 +30,7 @@
                 and experimental systems. It is part of <h:outputLink value="#{msgs.discs}" target="_blank">DISCS</h:outputLink>.                   
             </p>
             <p>
-                During its life cycle,  a device or slot undergoes a number of processes such as Mechanical Inspection, Electrical Inspection, and Device Hazard Review.
+                During its life cycle,  a device or slot undergoes a number of processes such as Mechanical Inspection, Electrical Inspection, Controls Inspection etc.
                 CCDB captures the final status of these processes using <e>Readiness Checklists</e>.
 
                 Readiness Checklists are used by Device
@@ -47,7 +47,7 @@
                 Readiness Checklists
             </h2>
             <p>               
-                Readiness Checklists are described in detail in CCDB Implementation Plan [1], the verbatim source of this section.
+                Readiness Checklists are described in detail in CCDB Implementation Plan [1].
                 Readiness Checklists provide a top-down review with Subject Matter Experts (SME) 
                 to verify that a device, slot, or subsystem is ready for use, and to ensure that
                 higher-level performance and safety requirements that are not specifically part of 
@@ -67,7 +67,7 @@
                 collection of slots.
             </p>
             <p>
-                Area Managers own Slot and Group Readiness Checklists and their supporting data; Device Owners own 
+                Area Managers own Slot/Group Readiness Checklists and their supporting data; Device Owners own 
                 Device Readiness Checklists and their supporting data.
                 Readiness Checklists may be associated with devices, slots, or groups, at the Area Manager’s discretion.  
             </p>
@@ -78,7 +78,7 @@
                 criteria for that device’s installation or replacement.
             </p>
             <p>
-                Checklists for slots and groups are to verify that the devices installed in their slots, and their 
+                Checklists for slots and groups are to verify that the devices installed in the slots, and their 
                 interfaces to the larger subsystem, are ready for operation.  Checklists for slots and groups are typically a 
                 verification that the critical and complex beamline devices are now properly installed and configured for use.
             </p>
@@ -110,11 +110,11 @@
                     <ol>
                         <li>Area Manager optionally defines Slot Groups</li>
                         <li>Area Manager assigns checklists to Groups and/or Slots</li>
-                        <li>Area Manager optionally excludes certain processes from the checklist for certain Groups and/or Slots</li>
-                        <li>Area Manager optionally assigns SMEs to Groups and/or Slots</li>
-                        <li>SME updates the status of Groups and/or Slots</li>
-                        <li>Device Owner sets status (e.g. DO-OK) of installed Groups and/or Slots</li>
-                        <li>Area Manager signs off a Group or Slot (by setting AM-OK to Y or YC)</li>
+                        <li>Area Manager optionally excludes certain processes from the checklist for certain Group/Slots</li>
+                        <li>Area Manager optionally assigns SMEs to Groups/Slots</li>
+                        <li>SME updates the status of Groups/Slots</li>
+                        <li>Device Owner signs off on the installed Groups/Slots (by setting DO-OK to Y or YC)</li>
+                        <li>Area Manager signs off Groups/Slots (by setting AM-OK to Y or YC)</li>
                     </ol>
                 </ul>
 
@@ -123,10 +123,10 @@
             <p>
                 Notes:
                 <ul>
-                    <li> When a checklist is assigned, all the fields will get a default status value. 
+                    <li> When a checklist is assigned, all the fields will get a default status value, generally 'N'. 
                         This is defined by the Configuration Manager during setup of checklists.</li>
                     <li>An Area Manager or Device Owner cannot exclude mandatory processes, such as AM-OK or DO-OK, from a checklist.</li>
-                    <li>Once an Area Manager sets the signs off on a a Group or Slot,
+                    <li>Once an Area Manager signs off on a Group or Slot,
                         that Group or Slot is frozen i.e the status of the rest of the fields cannot be updated. Area Manager 
                         can reset this by setting the status to N</li>
                     <li>Similarly, when Device Owner signs off on a Device, it gets frozen.</li>
@@ -158,7 +158,7 @@
             </p>
 
             <p>
-                To configure checklists (Configuration Manager), use 'Configuration' item under 'Admin' menu.
+                To configure checklists (Configuration Manager), use the 'Configure' sub-menu.
             </p>
             <p:graphicImage value="#{resource['images/cm/cm-menu.png']}"/> 
 

@@ -37,6 +37,11 @@ import org.openepics.discs.ccdb.jaxb.PropertyValue;
  */
 @Path("slot")
 public interface InstallationSlotResource {
+    
+    public static String DETAIL_PROPERTY = "p";
+    public static String DETAIL_RELATIONSHIP = "r";
+    public static String DETAIL_STATUS = "s";   
+    
     /**
      * Retrieves a list of slots of a given device type
      * 

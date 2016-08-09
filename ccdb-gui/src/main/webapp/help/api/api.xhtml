@@ -40,7 +40,7 @@
                     <p:column style="width:30%">Examples</p:column> 
                 </p:row>  
             </f:facet>  
-            
+
             <p:row>  
                 <p:column>ApprovalStatus</p:column>  
                 <p:column>GET</p:column>  
@@ -57,7 +57,7 @@
                     </ul>
                 </p:column> 
             </p:row>
-            
+
             <p:row>  
                 <p:column>Device</p:column>
                 <p:column>GET</p:column>  
@@ -65,11 +65,19 @@
                 <p:column>Device</p:column> 
                 <p:column>List of <i>device</i></p:column>
                 <p:column>
-                    <ul><li><b>deviceType</b> (optional): Device type</li></ul>                   
+                    <ul>
+                        <li><b>name</b> (optional): All slots that contain the given string are returned</li>
+                        <li><b>type</b> (optional): All slots with device types that contain the given string are returned</li>
+                        <li><b>tag</b> (optional): All slots whose tags contain the given string are returned</li>                    
+                    </ul>                  
                 </p:column> 
                 <p:column>
-                    <ul><li>#{msgs.apiBaseUrl}/device</li></ul>
-                    <ul><li>#{msgs.apiBaseUrl}/device?deviceType=Q7</li></ul>
+                    <ul>
+                        <li>#{msgs.apiBaseUrl}/device</li>
+                        <li>#{msgs.apiBaseUrl}/device?name=MDE</li>
+                        <li>#{msgs.apiBaseUrl}/device?type=Q7</li>
+                        <li>#{msgs.apiBaseUrl}/device?type=Q7&amp;name=EDE</li>
+                    </ul>
                 </p:column> 
             </p:row>
 
@@ -83,8 +91,8 @@
                     <ul><li><b>name</b>: Device type name</li></ul>                              
                 </p:column> 
                 <p:column>
-                    <ul><li>#{msgs.apiBaseUrl}/deviceType</li></ul>
-                    <ul><li>#{msgs.apiBaseUrl}/deviceType/ACC</li></ul>
+                    <ul><li>#{msgs.apiBaseUrl}/deviceType</li>
+                        <li>#{msgs.apiBaseUrl}/deviceType/ACC</li></ul>
                 </p:column> 
             </p:row>
 
@@ -112,7 +120,7 @@
                     </ul>
                 </p:column> 
             </p:row>
-            
+
             <p:row>  
                 <p:column>Slot</p:column>  
                 <p:column>GET</p:column>  
@@ -120,17 +128,30 @@
                 <p:column>List of slots</p:column>
                 <p:column>List of <i>slot</i></p:column>
                 <p:column> 
-                    <ul><li><b>deviceType</b> (optional): Device type</li></ul>
+                    <ul>
+                        <li><b>name</b> (optional): All slots that contain the given string are returned</li>
+                        <li><b>type</b> (optional): All slots with device types that contain the given string are returned</li>
+                        <li><b>tag</b> (optional): All slots whose tags contain the given string are returned</li>
+                        <li><b>detail</b> (optional): Specifies how much of data about slots should be returned. It is a concatenation following options:
+                            <ul>
+                                <li><b>p</b>: Associated properties and their values</li>
+                                <li><b>r</b>: Related slots</li>
+                                <li><b>s</b>: Statuses of slot, from checklists and approvals</li>
+                            </ul>
+                        </li>
+                    </ul>
                 </p:column> 
                 <p:column>
                     <ul>
                         <li>#{msgs.apiBaseUrl}/slot</li>
-                        <li>#{msgs.apiBaseUrl}/slot?deviceType=Q7</li>
+                        <li>#{msgs.apiBaseUrl}/slot?type=Q7</li>
+                        <li>#{msgs.apiBaseUrl}/slot?name=FE&amp;type=Q7</li>
+                        <li>#{msgs.apiBaseUrl}/slot?name=FE&amp;type=Q7&amp;detail=ps</li>
+                        <li>#{msgs.apiBaseUrl}/slot?type=Q7&amp;tag=diag&amp;detail=r</li>
+                        <li>#{msgs.apiBaseUrl}/slot?name=FE&amp;detail=prs</li>
                     </ul>
                 </p:column> 
             </p:row>
-            
-            
         </p:panelGrid>
     </p:panel>
 </ui:composition>

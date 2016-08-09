@@ -56,7 +56,11 @@
                                     </h:link>                                    
                                 </p:column>
 
-
+                                <p:column headerText="Description" sortBy="#{device.description}" 
+                                          filterBy="#{device.description}" filterMatchMode="contains">
+                                    <h:outputText value="#{device.description}" />
+                                </p:column>
+                                
                                 <p:column headerText="Installation Slot" sortBy="#{device.installedIn}" 
                                           filterBy="#{device.installedIn}" filterMatchMode="contains">
                                     <h:outputLink rendered="#{!empty device.installedSlotId}" 
@@ -65,9 +69,9 @@
                                     </h:outputLink>
                                     <h:outputText value="-" rendered="#{empty device.installedSlotId}" />
                                 </p:column>
-
+                                                             
                                 <p:column headerText="Installation Timestamp" sortBy="#{device.installationDate}" 
-                                          filterBy="#{device.installationDate}" filterMatchMode="contains">
+                                          filterBy="#{device.installationDate}" filterMatchMode="contains" rendered="false">
                                     <h:outputText value="#{device.installationDate}" />
                                 </p:column>
                             </p:dataTable>
