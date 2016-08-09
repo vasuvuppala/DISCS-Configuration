@@ -92,7 +92,7 @@ public class FieldManager implements Serializable {
     public void init() {      
         entities = lcEJB.findAllChecklistFields();    
         checklists = lcEJB.findAllChecklists();
-        processes = lcEJB.findAllPhases();
+        processes = lcEJB.findAllProcesses();
         roles = authEJB.findRoles();
         if (checklists == null || checklists.isEmpty()) {
             LOGGER.log(Level.SEVERE, "There are no phase groups!");

@@ -108,7 +108,7 @@ public class StatusReport implements Serializable {
         
         if (checklist == null) {
             statusList = lcEJB.findAllStatuses();
-            phases = lcEJB.findAllPhases();
+            phases = lcEJB.findAllProcesses();
         } else {                 
             statusList = lcEJB.findAllStatuses(checklist); 
             phases = lcEJB.findPhases(checklist);

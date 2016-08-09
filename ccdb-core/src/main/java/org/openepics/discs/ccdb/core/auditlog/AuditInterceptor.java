@@ -21,14 +21,12 @@ package org.openepics.discs.ccdb.core.auditlog;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.openepics.discs.ccdb.model.AuditRecord;
 import org.openepics.discs.ccdb.core.security.SecurityPolicy;
 import org.openepics.discs.ccdb.core.util.CRUDOperation;

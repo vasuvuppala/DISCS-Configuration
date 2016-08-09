@@ -40,6 +40,7 @@ import org.openepics.discs.ccdb.model.cm.LevelOfCare;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Process.findAll", query = "SELECT d FROM Process d"),
+    @NamedQuery(name = "Process.findApprovalProcesses", query = "SELECT d FROM Process d WHERE d NOT IN (SELECT c.process FROM ChecklistField c)"), //ToDo: add a flag in the entity instead
     @NamedQuery(name = "Process.findByName", query = "SELECT d FROM Process d WHERE d.name = :name")
 })
 public class Process extends ConfigurationEntity {

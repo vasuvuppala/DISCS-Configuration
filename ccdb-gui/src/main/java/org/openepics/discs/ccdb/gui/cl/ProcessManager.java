@@ -102,7 +102,7 @@ public class ProcessManager implements Serializable {
             stype = lcEJB.findChecklist(selectedType);
         }
         if (stype == null) {
-            entities = lcEJB.findAllPhases();
+            entities = lcEJB.findAllProcesses();
         } else {
             entities = lcEJB.findPhases(stype);
         }

@@ -67,8 +67,19 @@ public class ChecklistEJB {
      * @return a list of all {@link Process}s ordered by name.
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public List<Process> findAllPhases() {
+    public List<Process> findAllProcesses() {
         return em.createNamedQuery("Process.findAll", Process.class).getResultList();
+    } 
+    
+    /**
+     * Find approval-related processes
+     * ToDo: add a flog in the entity instead
+     * 
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<Process> findApprovalProcesses() {
+        return em.createNamedQuery("Process.findApprovalProcesses", Process.class).getResultList();
     } 
     
      /**
@@ -152,6 +163,12 @@ public class ChecklistEJB {
             return null;
         }
         return approvals.get(0);
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public List<Approval> findApprovals(Slot slot) {
+        return em.createNamedQuery("Approval.findBySlot", Approval.class).setParameter("slot", slot).getResultList();
+   
     }
     // ----------------- Assignments 
     /**
@@ -935,6 +952,35 @@ public class ChecklistEJB {
                 .setParameter("slot", slot)
                 .setParameter("checklist", checklist)
                 .getResultList();
+    }
+    
+    /**
+     * find summary status for a slot
+     * 
+     * @param slot
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public ProcessStatus findSummaryStatus(Slot slot) {
+        List<ProcessStatus> statuses;
+
+        if (slot.getCmGroup() != null) {
+            statuses = findStatuses(slot.getCmGroup());
+        } else {
+            Checklist checklist = findDefaultChecklist(ChecklistEntity.SLOT);
+            statuses = em.createNamedQuery("ProcessStatus.findBySlot", ProcessStatus.class)
+                    .setParameter("slot", slot)
+                    .setParameter("checklist", checklist)
+                    .getResultList();
+        }
+        
+        for(ProcessStatus status: statuses) {
+            if (status.getField().getSummaryProcess()) {
+                return status;
+            }
+        }
+        
+        return null;
     }
     
     /**

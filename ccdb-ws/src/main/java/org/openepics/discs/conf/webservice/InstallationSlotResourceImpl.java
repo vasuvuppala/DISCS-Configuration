@@ -20,20 +20,15 @@
 package org.openepics.discs.conf.webservice;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.ComptypeEJB;
 import org.openepics.discs.ccdb.core.ejb.InstallationEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
-import org.openepics.discs.ccdb.model.ComponentType;
 import org.openepics.discs.ccdb.model.ComptypePropertyValue;
 import org.openepics.discs.ccdb.model.DevicePropertyValue;
 import org.openepics.discs.ccdb.model.InstallationRecord;
@@ -47,9 +42,12 @@ import org.openepics.discs.ccdb.jaxb.PropertyKind;
 import org.openepics.discs.ccdb.jaxb.PropertyValue;
 import org.openepics.discs.ccdb.jaxrs.InstallationSlotResource;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
+import org.openepics.discs.ccdb.jaxb.ApprovalRep;
 import org.openepics.discs.ccdb.jaxb.ProcessStatusRep;
 import org.openepics.discs.ccdb.jaxb.RelationshipRep;
+import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
+import org.openepics.discs.ccdb.model.cl.Process;
 
 /**
  * An implementation of the InstallationSlotResource interface.
@@ -142,6 +140,10 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         if (detail.contains(InstallationSlotResource.DETAIL_STATUS)) installationSlot.setStatuses(getStatus(slot));
         if (detail.contains(InstallationSlotResource.DETAIL_PROPERTY)) installationSlot.setProperties(getPropertyValues(slot));
         
+        List<ApprovalRep> approvals = getApprovals(slot);
+        if (detail.contains(InstallationSlotResource.DETAIL_APPROVAL)) installationSlot.setApprovals(approvals);
+        installationSlot.setOverallApproval(approvals.stream().allMatch(a -> a.getApproved()));
+        
         return installationSlot;
     }
     
@@ -190,6 +192,21 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         List<ProcessStatus> statuses = clEJB.findStatuses(slot);
               
         return statuses == null? null: statuses.stream().map(p -> ProcessStatusRep.newInstance(p)).collect(Collectors.toList());
+    }
+    
+    private List<ApprovalRep> getApprovals(Slot slot) {
+        List<Process> processes = clEJB.findApprovalProcesses();
+        List<ApprovalRep> approvalReps = new ArrayList<>();
+        
+        for (Process proc: processes) {
+            Approval approval = clEJB.findApproval(proc, slot);
+            approvalReps.add(ApprovalRep.newInstance(proc, approval));
+        }
+        
+        ProcessStatus status = clEJB.findSummaryStatus(slot);
+        approvalReps.add(ApprovalRep.newInstance(status));
+
+        return approvalReps;
     }
     
     private List<RelationshipRep> getRelationships(Slot slot) {

@@ -109,7 +109,7 @@
                 <p:column>name</p:column>  
                 <p:column>String</p:column> 
                 <p:column>Start and End Elements</p:column> 
-                <p:column>E_ISRC2:ELC1_D0665 - FE_BTS:FC_D1100</p:column> 
+                <p:column>FE_ISRC2:ELC1_D0665 - FE_BTS:FC_D1100</p:column> 
             </p:row>
             <p:row>                   
                 <p:column>elements</p:column>                    
@@ -147,8 +147,8 @@
             
             
             <p:row>
-                <p:column rowspan="6">slot</p:column>  
-                <p:column rowspan="6">Slot</p:column>  
+                <p:column rowspan="9">slot</p:column>  
+                <p:column rowspan="9">Slot</p:column>  
                 <p:column>name</p:column>  
                 <p:column>String</p:column> 
                 <p:column>Name</p:column> 
@@ -167,16 +167,16 @@
                 <p:column>See <i>deviceType</i> resource</p:column>                     
             </p:row>
             <p:row>                   
-                <p:column>parents</p:column>                    
-                <p:column>List of <i>slot</i></p:column> 
-                <p:column>List of parent slots</p:column>  
-                <p:column>See <i>slot</i> resource</p:column>                     
+                <p:column>relations</p:column>                    
+                <p:column>List of related slots</p:column> 
+                <p:column>relationship name and slot name</p:column>  
+                <p:column>{"powers", "FE_ISRC2:ELC1_D0665"}</p:column>                     
             </p:row>
             <p:row>                   
-                <p:column>children</p:column>                    
-                <p:column>List of <i>slot</i></p:column> 
-                <p:column>List of children slots</p:column>  
-                <p:column>See <i>slot</i> resource</p:column>                     
+                <p:column>statuses</p:column>                    
+                <p:column>List of <i>status</i></p:column> 
+                <p:column>List of status: process name, status, boolean value</p:column>  
+                <p:column>{"ME-OK", "N", false}</p:column>                     
             </p:row>
             <p:row>                   
                 <p:column>properties</p:column>                    
@@ -184,7 +184,25 @@
                 <p:column>List of properties</p:column>  
                 <p:column>See <i>property</i> resource</p:column>                     
             </p:row>
-
+            <p:row>                   
+                <p:column>approvals</p:column>                    
+                <p:column>List of <i>approval</i></p:column> 
+                <p:column>List of approval process name, boolean value</p:column>  
+                <p:column>{"ARR", false}</p:column>                     
+            </p:row>
+            <p:row>                   
+                <p:column>overallApproval</p:column>                    
+                <p:column>Boolean</p:column> 
+                <p:column>Overall approval status</p:column>  
+                <p:column>false</p:column>                     
+            </p:row>
+            <p:row>                   
+                <p:column>installedDevice</p:column>                    
+                <p:column><i>Device</i></p:column> 
+                <p:column>Device installed in this slot</p:column>  
+                <p:column>See <i>Device</i></p:column>                     
+            </p:row>
+            
              <p:row>
                 <p:column rowspan="2">unit</p:column>  
                 <p:column rowspan="2">Unit</p:column>  

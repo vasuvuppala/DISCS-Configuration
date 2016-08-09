@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import org.openepics.discs.ccdb.model.Device;
 
 /**
  * This is data transfer object representing a CCDB installation slot for JSON and XML serialization.
@@ -49,6 +50,14 @@ public class InstallationSlot {
     @XmlElementWrapper(name = "statuses")
     @XmlElement(name = "status")
     private List<ProcessStatusRep> statuses = new ArrayList<>();
+    
+    @XmlElementWrapper(name = "approvals")
+    @XmlElement(name = "approval")
+    private List<ApprovalRep> approvals = new ArrayList<>();
+    
+    private Boolean overallApproval; // approval of checklists, and reviews
+    
+    private Device installedDevice;
     
 //    @XmlElementWrapper(name = "parents")
 //    @XmlElement(name = "parent")
@@ -103,6 +112,30 @@ public class InstallationSlot {
 
     public void setStatuses(List<ProcessStatusRep> statuses) {
         this.statuses = statuses;
+    }
+
+    public List<ApprovalRep> getApprovals() {
+        return approvals;
+    }
+
+    public void setApprovals(List<ApprovalRep> approvals) {
+        this.approvals = approvals;
+    }
+
+    public Boolean getOverallApproval() {
+        return overallApproval;
+    }
+
+    public void setOverallApproval(Boolean overallApproval) {
+        this.overallApproval = overallApproval;
+    }
+
+    public Device getInstalledDevice() {
+        return installedDevice;
+    }
+
+    public void setInstalledDevice(Device installedDevice) {
+        this.installedDevice = installedDevice;
     }
 
     public List<PropertyValue> getProperties() { return properties; }
