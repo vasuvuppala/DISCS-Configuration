@@ -24,7 +24,6 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:fc="http://java.sun.com/jsf/composite/comps">
 
-    <h3>API</h3>
     <p>The following table lists the interfaces to manage various CCDB resources. It lists the resource name, 
         its URI, the HTTP method, its parameters, and the response from the API to the method. </p>
     <p:panel header='Application Programming Interface'  toggleable="true">
@@ -132,11 +131,13 @@
                         <li><b>name</b> (optional): All slots that contain the given string are returned</li>
                         <li><b>type</b> (optional): All slots with device types that contain the given string are returned</li>
                         <li><b>tag</b> (optional): All slots whose tags contain the given string are returned</li>
-                        <li><b>detail</b> (optional): Specifies how much of data about slots should be returned. It is a concatenation following options:
+                        <li><b>detail</b> (optional): Specifies how much of data about slots should be returned. Default is none. It is a concatenation of following options:
                             <ul>
+                                <li><b>a</b>: Approvals for the slot</li>                               
                                 <li><b>p</b>: Associated properties and their values</li>
                                 <li><b>r</b>: Related slots</li>
-                                <li><b>s</b>: Statuses of slot, from checklists and approvals</li>
+                                <li><b>s</b>: Statuses of slot, from checklist</li>
+                                 <li><b>v</b>: Associated Process Variables</li>
                             </ul>
                         </li>
                     </ul>

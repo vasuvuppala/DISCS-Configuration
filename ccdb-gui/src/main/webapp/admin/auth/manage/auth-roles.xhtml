@@ -10,39 +10,43 @@
     <ui:define name="content"> 
 
         <h:form id="authRoleForm" >
-           
-            <p:dataTable id="authRoleTable" value="#{manageRoleView.roles}" var="obj" 
-                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
-                         rowKey="#{obj.id}" selectionMode="single" selection="#{manageRoleView.selectedRole}">  
-                <f:facet name="header" >
-                    <h:outputText value="Manage Roles"/>
-                </f:facet>
-                <p:ajax event="rowSelect" listener="#{manageRoleView.onRowSelect}" update="commandButtons" />
-                <p:column headerText="Name">
-                    <h:outputText value="#{obj.name}"/>
-                </p:column>
-                <p:column headerText="Description">
-                    <h:outputText value="#{obj.description}"/>
-                </p:column>
+            <p:panel>
+                <h:outputText value="Security: Roles" styleClass="heading"/>
+                <p:separator/>
+                <p:dataTable id="authRoleTable" value="#{manageRoleView.roles}" var="obj" 
+                             scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                             rowKey="#{obj.id}" selectionMode="single" selection="#{manageRoleView.selectedRole}">  
+                    <f:facet name="header" >
+                        <h:outputText value="Manage Roles"/>
+                    </f:facet>
+                    <p:ajax event="rowSelect" listener="#{manageRoleView.onRowSelect}" update="commandButtons" />
+                    <p:column headerText="Name">
+                        <h:outputText value="#{obj.name}"/>
+                    </p:column>
+                    <p:column headerText="Description">
+                        <h:outputText value="#{obj.description}"/>
+                    </p:column>
 
-                <f:facet name="footer">
-                    <p:toolbar id="commandButtons">
-                        <f:facet name="left">
-                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{manageRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
-                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
-                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
-                                             actionListener="#{manageRoleView.onEditCommand}"
-                                             oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
-                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{manageRoleView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
-                        </f:facet>
-                    </p:toolbar>
-                </f:facet>
-            </p:dataTable>
+                    <f:facet name="footer">
+                        <p:toolbar id="commandButtons">
+                            <f:facet name="left">
+                                <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                                 actionListener="#{manageRoleView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
+                                                 disabled="#{not authorizationManager.canAuthorize()}"/>   
+                                <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                                 actionListener="#{manageRoleView.onEditCommand}"
+                                                 oncomplete="PF('authRoleInputWid').show()" 
+                                                 disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
+                                <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                                 actionListener="#{manageRoleView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                                 disabled="#{not authorizationManager.canAuthorize() or empty manageRoleView.selectedRole}"/>
+                            </f:facet>
+                        </p:toolbar>
+                    </f:facet>
+                </p:dataTable>
+            </p:panel>
         </h:form>
+
         <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
             <h:form id="authROleInputForm">              
                 <p:panelGrid>

@@ -42,6 +42,7 @@ public interface InstallationSlotResource {
     public static String DETAIL_RELATIONSHIP = "r";
     public static String DETAIL_STATUS = "s";   
     public static String DETAIL_APPROVAL = "a";   
+    public static String DETAIL_PV = "v";   
     
     /**
      * Retrieves a list of slots of a given device type

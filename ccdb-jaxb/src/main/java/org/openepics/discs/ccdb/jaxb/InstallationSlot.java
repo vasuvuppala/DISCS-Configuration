@@ -55,6 +55,10 @@ public class InstallationSlot {
     @XmlElement(name = "approval")
     private List<ApprovalRep> approvals = new ArrayList<>();
     
+    @XmlElementWrapper(name = "pvs")
+    @XmlElement(name = "pv")
+    private List<ProcessVariableRep> processVariables = new ArrayList<>();
+    
     private Boolean overallApproval; // approval of checklists, and reviews
     
     private Device installedDevice;
@@ -136,6 +140,14 @@ public class InstallationSlot {
 
     public void setInstalledDevice(Device installedDevice) {
         this.installedDevice = installedDevice;
+    }
+
+    public List<ProcessVariableRep> getProcessVariables() {
+        return processVariables;
+    }
+
+    public void setProcessVariables(List<ProcessVariableRep> processVariables) {
+        this.processVariables = processVariables;
     }
 
     public List<PropertyValue> getProperties() { return properties; }

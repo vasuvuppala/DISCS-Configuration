@@ -10,11 +10,11 @@
     <ui:define name="content" >
 
         <!--<ui:param name="restRoot" value="#{request.scheme}://#{request.serverName}:#{request.serverPort}#{request.contextPath}#{msgs.restURIbase}/v#{msgs.apiversion}" />-->    
-        <p:panel styleClass="noBorders">
+        <p:panel styleClass="noBorders userManual">
         
             <h1> CCDB: Application Programming Interface</h1>
 
-            <h3>Introduction</h3>
+            <h2>Introduction</h2>
             <p>
                 CCDB (Central Configuration Database) is used by Facility for Rare Isotope Beams 
                 (FRIB) to manage configuration of the facility.
@@ -27,6 +27,7 @@
             The CCDB API follows
             <a href="#{msgs.semverReference}" target="_blank">Semantic Versioning</a> for its version numbers. The current API version number is #{msgs.apiversion}.         
 
+            <h2>Resources</h2>
             <ui:include src="resources.xhtml" />                        
 
             <ui:include src="represent.xhtml" />
@@ -38,7 +39,7 @@
             Currently the #{msgs.title} API does not support caching. However, future versions of the API will support caching mechanisms such as 
             Conditional GETs and Expiration Times.
 
-            <h3>Authentication and Authorization</h3>
+            <h2>Authentication and Authorization</h2>
             <i>Note: Authentication mechanisms of CCDB API will be changed in future. So please be prepared to update you application.</i>
             To use any part of the CCDB API, an application must first authenticate itself. Instead of the standard HTTP Basic, 
             DIGEST, FORM or other authentication mechanisms, CCDB API requires the following HTTP Header to be sent with every request:
@@ -61,11 +62,14 @@
             <h3>Error Codes and Responses</h3>
             The #{msgs.title} API attempts to return appropriate <a href="#{msgs.httpCodes}" target="_blank">HTTP Status Codes</a> for each request.
 
+            <h2>API</h2>
+    
             <ui:include src="api.xhtml" />
 
+            <h2>Examples</h2>
             <ui:include src="examples.xhtml" />
             
-            <h3>References</h3>
+            <h2>References</h2>
             <ol>
                 <li>
                     <a href='http://tinoweb.googlecode.com/files/O%27Reilly%20-RESTful.Web.Services.pdf' target="_blank">RESTful Web Services,</a>

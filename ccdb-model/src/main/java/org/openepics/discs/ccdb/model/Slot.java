@@ -140,6 +140,9 @@ public class Slot extends ConfigurationEntity implements EntityWithProperties, E
     private List<SlotPropertyValue> slotPropertyList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "slot")
+    private List<ProcessVariable> processVariables = new ArrayList<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "slot")
     private List<InstallationRecord> installationRecordList = new ArrayList<>();
 
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
@@ -322,5 +325,13 @@ public class Slot extends ConfigurationEntity implements EntityWithProperties, E
 
     public void setCmGroup(SlotGroup cmGroup) {
         this.cmGroup = cmGroup;
+    }
+
+    public List<ProcessVariable> getProcessVariables() {
+        return processVariables;
+    }
+
+    public void setProcessVariables(List<ProcessVariable> processVariables) {
+        this.processVariables = processVariables;
     }
 }

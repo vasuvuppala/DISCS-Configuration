@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:fc="http://java.sun.com/jsf/composite/comps">
 
-    <h3>Resources</h3>
+    
     <p> A resource is an entity that is managed by CCDB. For example, a device, a slot, a beampath, a device type, an approval status etc.
         The #{msgs.title} API provides access to the resources or entities that CCDB manages. 
         These entities and their attributes are described below. Note that the names of attributes are important as they are 
@@ -119,6 +119,21 @@
             </p:row>
             
             <p:row>
+                <p:column rowspan="2">processVariable</p:column>  
+                <p:column rowspan="2">Process Variable (Control System)</p:column>  
+                <p:column>name</p:column>  
+                <p:column>String</p:column> 
+                <p:column>Name</p:column> 
+                <p:column>FE_LEBT:TL_D1001:POS_RSET</p:column> 
+            </p:row>
+            <p:row>                    
+                <p:column>description</p:column>  
+                <p:column>String</p:column> 
+                <p:column>Description</p:column> 
+                <p:column>Readback of Set position (integer)</p:column> 
+            </p:row>
+            
+            <p:row>
                 <p:column rowspan="4">property</p:column>  
                 <p:column rowspan="4">Property</p:column>  
                 <p:column>name</p:column>  
@@ -147,8 +162,8 @@
             
             
             <p:row>
-                <p:column rowspan="9">slot</p:column>  
-                <p:column rowspan="9">Slot</p:column>  
+                <p:column rowspan="10">slot</p:column>  
+                <p:column rowspan="10">Slot</p:column>  
                 <p:column>name</p:column>  
                 <p:column>String</p:column> 
                 <p:column>Name</p:column> 
@@ -183,6 +198,12 @@
                 <p:column>List of <i>property</i></p:column> 
                 <p:column>List of properties</p:column>  
                 <p:column>See <i>property</i> resource</p:column>                     
+            </p:row>
+             <p:row>                   
+                <p:column>processVariables</p:column>                    
+                <p:column>List of <i>processVariable</i></p:column> 
+                <p:column>PVs associated with the slot</p:column>  
+                <p:column>See <i>processVariable</i></p:column>                     
             </p:row>
             <p:row>                   
                 <p:column>approvals</p:column>                    

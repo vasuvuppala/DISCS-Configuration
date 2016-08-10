@@ -10,45 +10,49 @@
     <ui:define name="content"> 
 
         <h:form id="authRoleForm" >
+            <p:panel>
+                <h:outputText value="Security: Permissions" styleClass="heading"/>
+                <p:separator/>
+                <p:dataTable id="authRoleTable" value="#{managePermissionView.permissions}" var="obj" 
+                             scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
+                             rowKey="#{obj.id}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
+                    <f:facet name="header" >
+                        <h:outputText value="Manage Permissions"/>
+                    </f:facet>
+                    <p:ajax event="rowSelect" listener="#{managePermissionView.onRowSelect}" update="commandButtons" />
 
-            <p:dataTable id="authRoleTable" value="#{managePermissionView.permissions}" var="obj" 
-                         scrollRows="25" scrollable="true" scrollHeight="400" liveScroll="true"
-                         rowKey="#{obj.id}" selectionMode="single" selection="#{managePermissionView.selectedPermission}">  
-                <f:facet name="header" >
-                    <h:outputText value="Manage Permissions"/>
-                </f:facet>
-                <p:ajax event="rowSelect" listener="#{managePermissionView.onRowSelect}" update="commandButtons" />
-
-                <p:column headerText="Resource">
-                    <h:outputText value="#{obj.resource}" title="#{obj.resource}"/>
-                </p:column>
-                <p:column headerText="Operation">
-                    <h:outputText value="#{obj.authOperation}" title="#{obj.authOperation}"/>
-                </p:column>
-                <p:column headerText="Direct Role">
-                    <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
-                </p:column>
-                <p:column headerText="Indirect Role">
-                    <h:outputText value="#{obj.property.name}" title="#{obj.property.description}"/>
-                </p:column>
-                <f:facet name="footer">
-                    <p:toolbar id="commandButtons">
-                        <f:facet name="left">
-                            <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
-                                             disabled="#{not authorizationManager.canAuthorize()}"/>   
-                            <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
-                                             actionListener="#{managePermissionView.onEditCommand}"
-                                             oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
-                            <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
-                                             actionListener="#{managePermissionView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
-                                             disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
-                        </f:facet>
-                    </p:toolbar>
-                </f:facet>
-            </p:dataTable>
+                    <p:column headerText="Resource">
+                        <h:outputText value="#{obj.resource}" title="#{obj.resource}"/>
+                    </p:column>
+                    <p:column headerText="Operation">
+                        <h:outputText value="#{obj.authOperation}" title="#{obj.authOperation}"/>
+                    </p:column>
+                    <p:column headerText="Direct Role">
+                        <h:outputText value="#{obj.role.name}" title="#{obj.role.description}"/>
+                    </p:column>
+                    <p:column headerText="Indirect Role">
+                        <h:outputText value="#{obj.property.name}" title="#{obj.property.description}"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:toolbar id="commandButtons">
+                            <f:facet name="left">
+                                <p:commandButton title="New" icon="ui-icon-document" update=":authRoleInputDlg" process="@this" 
+                                                 actionListener="#{managePermissionView.onAddCommand}" oncomplete="PF('authRoleInputWid').show()"
+                                                 disabled="#{not authorizationManager.canAuthorize()}"/>   
+                                <p:commandButton title="Edit" icon="ui-icon-disk" update=":authRoleInputDlg"  process="@this"                                          
+                                                 actionListener="#{managePermissionView.onEditCommand}"
+                                                 oncomplete="PF('authRoleInputWid').show()" 
+                                                 disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
+                                <p:commandButton title="Delete" icon="ui-icon-trash" update=":authRoleInputDlg" process="@this" 
+                                                 actionListener="#{managePermissionView.onDeleteCommand}" oncomplete="PF('authRoleInputWid').show()" 
+                                                 disabled="#{not authorizationManager.canAuthorize() or empty managePermissionView.selectedPermission}"/>
+                            </f:facet>
+                        </p:toolbar>
+                    </f:facet>
+                </p:dataTable>
+            </p:panel>
         </h:form>
+
         <p:dialog id="authRoleInputDlg" widgetVar="authRoleInputWid">
             <h:form id="authROleInputForm" rendered="#{managePermissionView.inputAction != 'READ'}">              
                 <p:panelGrid>
@@ -103,7 +107,7 @@
                                              disabled="#{managePermissionView.inputAction == 'DELETE'}">
                                 <f:selectItem itemLabel="None" itemValue="#{null}" />
                                 <f:selectItems value="#{managePermissionView.roles}" var="ro" itemLabel="#{ro.name}" itemValue="#{ro}" />
-                                
+
                             </p:selectOneMenu>                           
                         </p:column>
                     </p:row>

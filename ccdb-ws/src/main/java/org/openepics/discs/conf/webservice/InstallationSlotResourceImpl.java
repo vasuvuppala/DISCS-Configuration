@@ -44,6 +44,7 @@ import org.openepics.discs.ccdb.jaxrs.InstallationSlotResource;
 import org.openepics.discs.ccdb.core.util.UnhandledCaseException;
 import org.openepics.discs.ccdb.jaxb.ApprovalRep;
 import org.openepics.discs.ccdb.jaxb.ProcessStatusRep;
+import org.openepics.discs.ccdb.jaxb.ProcessVariableRep;
 import org.openepics.discs.ccdb.jaxb.RelationshipRep;
 import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
@@ -139,6 +140,7 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         if (detail.contains(InstallationSlotResource.DETAIL_RELATIONSHIP)) installationSlot.setRelationships(getRelationships(slot));
         if (detail.contains(InstallationSlotResource.DETAIL_STATUS)) installationSlot.setStatuses(getStatus(slot));
         if (detail.contains(InstallationSlotResource.DETAIL_PROPERTY)) installationSlot.setProperties(getPropertyValues(slot));
+        if (detail.contains(InstallationSlotResource.DETAIL_PV)) installationSlot.setProcessVariables(getPVs(slot));
         
         List<ApprovalRep> approvals = getApprovals(slot);
         if (detail.contains(InstallationSlotResource.DETAIL_APPROVAL)) installationSlot.setApprovals(approvals);
@@ -188,12 +190,34 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
 //        return installationSlot;
 //    }
 
+    /**
+     * Get status records (checklist fields) for the slot
+     * 
+     * @param slot
+     * @return 
+     */
     private List<ProcessStatusRep> getStatus(Slot slot) {
         List<ProcessStatus> statuses = clEJB.findStatuses(slot);
               
         return statuses == null? null: statuses.stream().map(p -> ProcessStatusRep.newInstance(p)).collect(Collectors.toList());
     }
     
+    /**
+     * get all process variables of a slot
+     * 
+     * @param slot
+     * @return 
+     */
+    private List<ProcessVariableRep> getPVs(Slot slot) {
+        return slot.getProcessVariables() == null? null : slot.getProcessVariables().stream().map(v -> ProcessVariableRep.newInstance(v)).collect(Collectors.toList());
+    }
+    
+    /**
+     * get Approval records for the slot
+     * 
+     * @param slot
+     * @return 
+     */
     private List<ApprovalRep> getApprovals(Slot slot) {
         List<Process> processes = clEJB.findApprovalProcesses();
         List<ApprovalRep> approvalReps = new ArrayList<>();
@@ -209,6 +233,12 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         return approvalReps;
     }
     
+    /**
+     * get the relationships associated with the slot
+     * 
+     * @param slot
+     * @return 
+     */
     private List<RelationshipRep> getRelationships(Slot slot) {
         List<RelationshipRep> rels = new ArrayList<>();
         List<SlotPair> pairs = new ArrayList<>(slot.getPairsInWhichThisSlotIsAChildList());        
@@ -252,6 +282,12 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
     }
     */
 
+    /**
+     * Get properties of a slot
+     * 
+     * @param slot
+     * @return 
+     */
     private List<PropertyValue> getPropertyValues(final Slot slot) {
         final InstallationRecord record = installationEJB.getActiveInstallationRecordForSlot(slot);
        
@@ -275,6 +311,12 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                         .collect(Collectors.toList());
     }
     
+    /**
+     * Value of a property
+     * 
+     * @param slotPropertyValue
+     * @return 
+     */
     private PropertyValue createPropertyValue(final org.openepics.discs.ccdb.model.PropertyValue slotPropertyValue) {
         final PropertyValue propertyValue = new PropertyValue();
         final Property parentProperty = slotPropertyValue.getProperty();
