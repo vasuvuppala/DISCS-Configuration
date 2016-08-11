@@ -46,6 +46,7 @@ import org.openepics.discs.ccdb.jaxb.ApprovalRep;
 import org.openepics.discs.ccdb.jaxb.ProcessStatusRep;
 import org.openepics.discs.ccdb.jaxb.ProcessVariableRep;
 import org.openepics.discs.ccdb.jaxb.RelationshipRep;
+import org.openepics.discs.ccdb.jaxb.ResDevice;
 import org.openepics.discs.ccdb.model.cl.Approval;
 import org.openepics.discs.ccdb.model.cl.ProcessStatus;
 import org.openepics.discs.ccdb.model.cl.Process;
@@ -66,21 +67,6 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         public Slot getRelatedSlot(final SlotPair pair);
     }
 
-//    @Override
-//    public List<InstallationSlot> getInstallationSlots(String deviceType) {
-//        // Get all slots
-//        if ("undefined".equals(deviceType)) {
-//            return slotEJB.findAll().stream().
-//                filter(slot -> slot!=null && slot.isHostingSlot()).
-//                map(slot -> createInstallationSlot(slot)).
-//                collect(Collectors.toList());
-//        } else {
-//            // Get them filtered by deviceType
-//            return getInstallationSlotsForType(deviceType);
-//        }
-//    }
-
-    
     @Override
     public List<InstallationSlot> searchSlots(String name, String type, String tag, String detail) {
         // Get mattching slots
@@ -112,20 +98,6 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                        .collect(Collectors.toList()).get(0); // TODO: improve use findFirst()
     }
 
-//    private List<InstallationSlot> getInstallationSlotsForType(String deviceType) {
-//        if (StringUtils.isEmpty(deviceType)) {
-//            return new ArrayList<>();
-//        }
-//
-//        final ComponentType ct = compTypeEJB.findByName(deviceType);
-//        if (ct == null) {
-//            return new ArrayList<>();
-//        }
-//
-//        return slotEJB.findByComponentType(ct).stream().
-//                map(slot -> createInstallationSlot(slot)).
-//                collect(Collectors.toList());
-//    }
 
     private InstallationSlot createInstallationSlot(final Slot slot, String detail) {
         if (slot == null) {
@@ -135,8 +107,9 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         final InstallationSlot installationSlot = new InstallationSlot();
         installationSlot.setName(slot.getName());
         installationSlot.setDescription(slot.getDescription());
-        installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));
-
+        installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));        
+        installationSlot.setInstalledDevice(getInstalledDevice(slot));
+        
         if (detail.contains(InstallationSlotResource.DETAIL_RELATIONSHIP)) installationSlot.setRelationships(getRelationships(slot));
         if (detail.contains(InstallationSlotResource.DETAIL_STATUS)) installationSlot.setStatuses(getStatus(slot));
         if (detail.contains(InstallationSlotResource.DETAIL_PROPERTY)) installationSlot.setProperties(getPropertyValues(slot));
@@ -149,47 +122,22 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         return installationSlot;
     }
     
-//    private InstallationSlot createInstallationSlot(final Slot slot) {
-//        if (slot == null) {
-//            return null;
-//        }
-//
-//        final InstallationSlot installationSlot = new InstallationSlot();
-//        installationSlot.setName(slot.getName());
-//        installationSlot.setDescription(slot.getDescription());
-//        installationSlot.setDeviceType(DeviceTypeResourceImpl.getDeviceType(slot.getComponentType()));
-//
-//        installationSlot.setParents(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-//                        SlotRelationName.CONTAINS,
-//                        pair -> pair.getParentSlot()));
-//        installationSlot.setChildren(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-//                        SlotRelationName.CONTAINS,
-//                        pair -> pair.getChildSlot()));
-//
-//        installationSlot.setPoweredBy(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-//                        SlotRelationName.POWERS,
-//                        pair -> pair.getParentSlot()));
-//        installationSlot.setPowers(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-//                        SlotRelationName.POWERS,
-//                        pair -> pair.getChildSlot()));
-//
-//        installationSlot.setControlledBy(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAChildList().stream(),
-//                        SlotRelationName.CONTROLS,
-//                        pair -> pair.getParentSlot()));
-//        installationSlot.setControls(
-//                getRelatedSlots(slot.getPairsInWhichThisSlotIsAParentList().stream(),
-//                        SlotRelationName.CONTROLS,
-//                        pair -> pair.getChildSlot()));
-//      
-//        installationSlot.setProperties(getPropertyValues(slot));
-//        return installationSlot;
-//    }
-
+    /**
+     * Get the installed device
+     * 
+     * @param slot
+     * @return 
+     */
+    private ResDevice getInstalledDevice(Slot slot) {
+        InstallationRecord irecord = installationEJB.getActiveInstallationRecordForSlot(slot);
+        
+        if (irecord == null) {
+            return null;
+        } else {
+            return ResDevice.newInstance(irecord.getDevice());
+        }
+    }
+    
     /**
      * Get status records (checklist fields) for the slot
      * 
@@ -263,25 +211,6 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
                 collect(Collectors.toList());
     }
 
-    /*
-    
-    private List<PropertyValue> getPropertyValues(final Slot slot) {
-        final InstallationRecord record = installationEJB.getActiveInstallationRecordForSlot(slot);
-
-        final Stream<? extends PropertyValue> externalProps = Stream.concat(
-                            slot.getComponentType().getComptypePropertyList().stream().
-                                filter(propValue -> !propValue.isPropertyDefinition()).
-                                map(propValue -> createPropertyValue(propValue)),
-                            record == null ? Stream.empty() :
-                                record.getDevice().getDevicePropertyList().stream().
-                                    map(propValue -> createPropertyValue(propValue)));
-
-        return Stream.concat(slot.getSlotPropertyList().stream().map(propValue -> createPropertyValue(propValue)),
-                                externalProps).
-                        collect(Collectors.toList());
-    }
-    */
-
     /**
      * Get properties of a slot
      * 
@@ -335,12 +264,5 @@ public class InstallationSlotResourceImpl implements InstallationSlotResource {
         }
         return propertyValue;
     }
-    
-//    private List<ProcessStatus> slotStatus(Slot slot) {
-//        List<Assignment> assignments = clEJB.findAssignments(slot);
-//        if (assignments != null && ! assignments.isEmpty()) {
-//            return assignments.get(0).getStatuses();
-//        }
-//        return null;
-//    }
+
 }

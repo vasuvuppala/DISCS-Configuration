@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.openepics.discs.ccdb.model.Device;
 
 /**
  * This is data transfer object representing a CCDB device type for JSON and XML serialization.
@@ -43,6 +44,22 @@ public class ResDevice {
     
     public ResDevice() { }
 
+    /**
+     * New instance from a device
+     * 
+     * @param device
+     * @return 
+     */
+    public static ResDevice newInstance(Device device) {
+        if (device == null) return null;
+        
+        ResDevice dev = new ResDevice();
+        
+        dev.inventoryId = device.getSerialNumber();
+        // dev.deviceType = device.getComponentType();
+        
+        return dev;
+    }
     // -- getters and setters
     
     public String getInventoryId() {

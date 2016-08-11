@@ -44,34 +44,43 @@ import com.google.common.base.Preconditions;
  */
 @Stateless
 public class InstallationEJB extends DAO<InstallationRecord> {
+
     private static final Logger LOGGER = Logger.getLogger(InstallationEJB.class.getCanonicalName());
 
     /**
      * @param slot the installation slot to find active installation record for.
-     * @return The currently active installation record for slot (an installation record which has uninstall date <code>NULL</code>),
+     * @return The currently active installation record for slot (an
+     * installation record which has uninstall date <code>NULL</code>),
      * <code>null</code> otherwise.
      */
     public InstallationRecord getActiveInstallationRecordForSlot(Slot slot) {
         Preconditions.checkNotNull(slot);
-        try {
-            return em.createNamedQuery("InstallationRecord.activeRecordForSlot", InstallationRecord.class)
-                .setParameter("slot", slot).getSingleResult();
-        } catch (NoResultException e) { // NOSONAR
-            // no result is not an exception
+        
+        List<InstallationRecord> records = em.createNamedQuery("InstallationRecord.activeRecordForSlot", InstallationRecord.class)
+                .setParameter("slot", slot)
+                .getResultList();
+        
+        if (records == null || records.isEmpty()) {
             return null;
+        } else {
+            if (records.size() != 1) {
+                LOGGER.log(Level.WARNING, "Multiple instalaltions found for slot : {0}", slot.getName());
+            }
+            return records.get(0);
         }
     }
 
     /**
      * @param device the device instance to find active installation record for.
-     * @return The currently active installation record for device (an installation record which has uninstall date <code>NULL</code>),
+     * @return The currently active installation record for device (an
+     * installation record which has uninstall date <code>NULL</code>),
      * <code>null</code> otherwise.
      */
     public InstallationRecord getActiveInstallationRecordForDevice(Device device) {
         Preconditions.checkNotNull(device);
         try {
             return em.createNamedQuery("InstallationRecord.activeRecordForDevice", InstallationRecord.class)
-                .setParameter("device", device).getSingleResult();
+                    .setParameter("device", device).getSingleResult();
         } catch (NoResultException e) { // NOSONAR
             // no result is not an exception
             return null;
@@ -80,14 +89,14 @@ public class InstallationEJB extends DAO<InstallationRecord> {
 
     /**
      * @param slot the installation slot to find last installation record for.
-     * @return The last installation record for slot (an installation record which has uninstall date <code>NULL</code>),
-     * <code>null</code> otherwise.
+     * @return The last installation record for slot (an installation record
+     * which has uninstall date <code>NULL</code>), <code>null</code> otherwise.
      */
     public InstallationRecord getLastInstallationRecordForSlot(Slot slot) {
         Preconditions.checkNotNull(slot);
         try {
             return em.createNamedQuery("InstallationRecord.lastRecordForSlot", InstallationRecord.class)
-                .setParameter("slot", slot).getSingleResult();
+                    .setParameter("slot", slot).getSingleResult();
         } catch (NoResultException e) { // NOSONAR
             // no result is not an exception
             return null;
@@ -96,14 +105,14 @@ public class InstallationEJB extends DAO<InstallationRecord> {
 
     /**
      * @param device the device to find last installation record for.
-     * @return The last installation record for device (an installation record which has uninstall date <code>NULL</code>),
-     * <code>null</code> otherwise.
+     * @return The last installation record for device (an installation record
+     * which has uninstall date <code>NULL</code>), <code>null</code> otherwise.
      */
     public InstallationRecord getLastInstallationRecordForDevice(Device device) {
         Preconditions.checkNotNull(device);
         try {
             return em.createNamedQuery("InstallationRecord.lastRecordForDevice", InstallationRecord.class)
-                .setParameter("device", device).getSingleResult();
+                    .setParameter("device", device).getSingleResult();
         } catch (NoResultException e) { // NOSONAR
             // no result is not an exception
             return null;
@@ -111,8 +120,10 @@ public class InstallationEJB extends DAO<InstallationRecord> {
     }
 
     /**
-     * @param componentType the device type for which we are requesting information.
-     * @return The list of all device instances which are not installed into any installation slot.
+     * @param componentType the device type for which we are requesting
+     * information.
+     * @return The list of all device instances which are not installed into any
+     * installation slot.
      */
     public List<Device> getUninstalledDevices(ComponentType componentType) {
         Preconditions.checkNotNull(componentType);
@@ -121,7 +132,7 @@ public class InstallationEJB extends DAO<InstallationRecord> {
     }
 
     @Override
-    @CRUDOperation(operation=EntityTypeOperation.CREATE)
+    @CRUDOperation(operation = EntityTypeOperation.CREATE)
     @Audit
     @Authorized
     public void add(InstallationRecord record) {
@@ -151,7 +162,7 @@ public class InstallationEJB extends DAO<InstallationRecord> {
     }
 
     @Override
-    @CRUDOperation(operation=EntityTypeOperation.UPDATE)
+    @CRUDOperation(operation = EntityTypeOperation.UPDATE)
     @Audit
     @Authorized
     public void save(InstallationRecord record) {

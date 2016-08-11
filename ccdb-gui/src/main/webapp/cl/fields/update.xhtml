@@ -63,6 +63,10 @@
                               filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'DEVICE'}">
                         <h:outputText value="#{assignment.device.serialNumber}" />
                     </p:column>
+                    <p:column headerText="Description" sortBy="#{assignment.device.description}" filterBy="#{assignment.device.description}"
+                              filterMatchMode="contains" rendered="#{processStatusManager.entityType eq  'DEVICE'}">
+                        <h:outputText value="#{assignment.device.description}" />
+                    </p:column>
                     
                     <p:column headerText="Assignee" sortBy="#{assignment.requestor.name}" filterBy="#{assignment.requestor.name}"
                               filterMatchMode="contains"  rendered="false">

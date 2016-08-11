@@ -61,7 +61,7 @@ public class InstallationSlot {
     
     private Boolean overallApproval; // approval of checklists, and reviews
     
-    private Device installedDevice;
+    private ResDevice installedDevice;
     
 //    @XmlElementWrapper(name = "parents")
 //    @XmlElement(name = "parent")
@@ -134,11 +134,11 @@ public class InstallationSlot {
         this.overallApproval = overallApproval;
     }
 
-    public Device getInstalledDevice() {
+    public ResDevice getInstalledDevice() {
         return installedDevice;
     }
 
-    public void setInstalledDevice(Device installedDevice) {
+    public void setInstalledDevice(ResDevice installedDevice) {
         this.installedDevice = installedDevice;
     }
 

@@ -23,6 +23,9 @@
                     <p:column headerText="Device" sortBy="#{device.serialNumber}" filterBy="#{device.serialNumber}" filterMatchMode="contains">
                         <h:outputText value="#{device.serialNumber}" />
                     </p:column>
+                    <p:column headerText="Description" sortBy="#{device.description}" filterBy="#{device.description}" filterMatchMode="contains">
+                        <h:outputText value="#{device.description}" />
+                    </p:column>
                     <p:columns value="#{statusReport.phases}" var="phase" columnIndexVar="colIndex" >
                         <f:facet name="header">
                             <h:outputText value="#{phase.name}" />
