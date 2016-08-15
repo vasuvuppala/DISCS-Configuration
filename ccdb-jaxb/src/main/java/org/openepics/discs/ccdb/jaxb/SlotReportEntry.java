@@ -35,6 +35,7 @@ public class SlotReportEntry {
     private Long subSlots = 0L;
     private Long installedSlots = 0L;
     private Long approvedSlots = 0L;
+    private Long checklistApprovedSlots = 0L;
     // private Long percentComplete = 0L;
 
     public SlotReportEntry() {
@@ -84,5 +85,13 @@ public class SlotReportEntry {
 
     public void setApprovedSlots(Long approvedSlots) {
         this.approvedSlots = approvedSlots;
+    }
+
+    public Long getChecklistApprovedSlots() {
+        return checklistApprovedSlots;
+    }
+
+    public void setChecklistApprovedSlots(Long checklistApprovedSlots) {
+        this.checklistApprovedSlots = checklistApprovedSlots;
     }
 }

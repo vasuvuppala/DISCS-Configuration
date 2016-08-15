@@ -96,6 +96,7 @@ public class ManagePermissionView implements Serializable {
         resetInput();
     }
 
+   
     private void resetInput() {
         inputAction = InputAction.READ;
     }

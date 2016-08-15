@@ -26,8 +26,8 @@
             </f:facet> 
 
              <p:row>
-                <p:column rowspan="4">approvalStatus</p:column>  
-                <p:column rowspan="4">Approval Status</p:column>  
+                <p:column rowspan="5">approvalStatus</p:column>  
+                <p:column rowspan="5">Approval Status</p:column>  
                 <p:column>slot</p:column>  
                 <p:column>Slot</p:column> 
                 <p:column>Slot</p:column> 
@@ -48,9 +48,15 @@
             <p:row>                   
                 <p:column>approvedSlots</p:column>                    
                 <p:column>Integer</p:column> 
-                <p:column>Number of approved slots</p:column>  
+                <p:column>Number of slots approved. Logical conjunction of Checklist, DRR, and ARR approvals</p:column>  
                 <p:column>176</p:column>                     
-            </p:row>      
+            </p:row> 
+            <p:row>                   
+                <p:column>checklistApprovedSlots</p:column>                    
+                <p:column>Integer</p:column> 
+                <p:column>Number slots approved for reviews</p:column>  
+                <p:column>180</p:column>                     
+            </p:row>
             
             <p:row>
                 <p:column rowspan="2">device</p:column>  
