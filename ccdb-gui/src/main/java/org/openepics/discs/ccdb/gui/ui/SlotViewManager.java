@@ -15,9 +15,12 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import org.openepics.discs.ccdb.core.ejb.InstallationEJB;
 import org.openepics.discs.ccdb.core.ejb.PropertyEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
 import org.openepics.discs.ccdb.gui.ui.common.ViewType;
+import org.openepics.discs.ccdb.model.Device;
+import org.openepics.discs.ccdb.model.InstallationRecord;
 import org.openepics.discs.ccdb.model.Property;
 import org.openepics.discs.ccdb.model.Slot;
 import org.openepics.discs.ccdb.model.SlotPropertyValue;
@@ -32,6 +35,7 @@ public class SlotViewManager implements Serializable {
     
     @EJB private SlotEJB slotEJB;
     @EJB private PropertyEJB propEJB;
+    @EJB private InstallationEJB installationEJB;
     
     private static final Logger LOGGER = Logger.getLogger(SlotListView.class.getName());
 
@@ -41,8 +45,10 @@ public class SlotViewManager implements Serializable {
     private List<Slot> slots;
     private List<Property> selectedProperties;
     private List<Property> properties;
+    
+    // ToDo: do not hardcode the propertie names
     private static final String latticeProperties[] = {"AccumulatedLengthC2C", "AccumulatedLengthE2E", "BeamlinePosition", "EffectiveLength", "GlobalX", "GlobalY", "GlobalZ"};
-    private static final String cmProperties[] = {"LevelOfCare", "AssociatedDHR", "AssociatedARR", "AreaManager", "DHRApprover", "ARRApprover", "AssociatedArea", "MachineModes"};
+    private static final String cmProperties[] = {"LevelOfCare", "AssociatedDRR", "AssociatedARR", "AreaManager", "DRRApprover", "ARRApprover", "AssociatedArea", "MachineModes"};
     
     public SlotViewManager() {
     }
@@ -84,9 +90,23 @@ public class SlotViewManager implements Serializable {
         SlotPropertyValue value = slotEJB.getPropertyValue(slot, property);
         return value == null? "": (value.getPropValue() == null? "": value.getPropValue().toString());
     }
-    
-    
-    
+     
+    /**
+     * get the current installed device in a slot
+     * 
+     * @param slot
+     * @return 
+     */
+    public Device installedDevice(Slot slot) {
+        InstallationRecord irecord = installationEJB.getActiveInstallationRecordForSlot(slot);
+        
+        if (irecord == null) {
+            return null;
+        } else {
+            return irecord.getDevice();
+        }
+    } 
+       
     // --- getters/setters
 
     public List<Slot> getSlots() {

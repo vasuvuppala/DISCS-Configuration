@@ -240,10 +240,15 @@ public class SlotsDataLoader extends AbstractEntityWithPropertiesDataLoader<Slot
             return;
         }
         // get a list of all existing parents
-        final List<Slot> existingParents = slot.getPairsInWhichThisSlotIsAChildList().stream().
+        //  ToDo: Temporary workaround for bug in EcplseliNk 2.5: lazy fetch and streams do not work well together 
+//        final List<Slot> existingParents = slot.getPairsInWhichThisSlotIsAChildList().stream().
+//                filter((pair) -> pair.getSlotRelation().getName() == SlotRelationName.CONTAINS).
+//                map(SlotPair::getParentSlot).collect(Collectors.toList());
+        final List<SlotPair> parents = new ArrayList<>(slot.getPairsInWhichThisSlotIsAChildList());
+        final List<Slot> existingParents = parents.stream().
                 filter((pair) -> pair.getSlotRelation().getName() == SlotRelationName.CONTAINS).
                 map(SlotPair::getParentSlot).collect(Collectors.toList());
-
+        
         if (!existingParents.contains(importParent)) {
             // import parent is not amongst the current parents
             if (existingParents.size() != 1) {

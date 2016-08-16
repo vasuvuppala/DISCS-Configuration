@@ -49,10 +49,10 @@ public class ApprovalReport implements Serializable {
 
     static public class ApprovalReportEntry implements Serializable {
         private Slot slot;
-        private String associatedDHR;
+        private String associatedDRR;
         private String associatedARR;
         private String CLstatus; // checklist status
-        private String DHRstatus;
+        private String DRRstatus;
         private String ARRstatus;
         private String overallStatus;
 
@@ -65,8 +65,8 @@ public class ApprovalReport implements Serializable {
             return slot;
         }
 
-        public String getAssociatedDHR() {
-            return associatedDHR;
+        public String getAssociatedDRR() {
+            return associatedDRR;
         }
 
         public String getAssociatedARR() {
@@ -77,8 +77,8 @@ public class ApprovalReport implements Serializable {
             return CLstatus;
         }
 
-        public String getDHRstatus() {
-            return DHRstatus;
+        public String getDRRstatus() {
+            return DRRstatus;
         }
 
         public String getARRstatus() {
@@ -97,10 +97,11 @@ public class ApprovalReport implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(ApprovalReport.class.getName());
      
+    // ToDo: remove hardcoded process and property names
     private final static String CL_PROCESS = "AM-OK";
-    private final static String DHR_PROCESS = "DHR";
+    private final static String DRR_PROCESS = "DRR";
     private final static String ARR_PROCESS = "ARR";
-    private final static String DHR_PROPERTY = "AssociatedDHR";
+    private final static String DRR_PROPERTY = "AssociatedDRR";
     private final static String ARR_PROPERTY = "AssociatedARR";
     
     private Boolean showAllSlots = false;
@@ -203,19 +204,19 @@ public class ApprovalReport implements Serializable {
         ApprovalReportEntry are = new ApprovalReportEntry();
         are.slot = slot;
         
-        are.associatedDHR = slotProperty(slot, DHR_PROPERTY);
+        are.associatedDRR = slotProperty(slot, DRR_PROPERTY);
         are.associatedARR = slotProperty(slot, ARR_PROPERTY);
         
         ProcessStatus CLproc = checklistStatus(slot);
         Boolean CLresult = CLproc == null ? null: CLproc.getStatus().getLogicalValue();        
         are.CLstatus = CLproc == null ? "Undefined" :  CLproc.getStatus().getDescription();
         
-        Boolean DHRresult = approvalStatus(slot, DHR_PROCESS);
+        Boolean DRRresult = approvalStatus(slot, DRR_PROCESS);
         Boolean ARRresult = approvalStatus(slot, ARR_PROCESS);
-        are.DHRstatus = DHRresult == null ? "Undefined" : (DHRresult? "Approved" : "Not Approved");
+        are.DRRstatus = DRRresult == null ? "Undefined" : (DRRresult? "Approved" : "Not Approved");
         are.ARRstatus = ARRresult == null ? "Undefined" : (ARRresult? "Approved" : "Not Approved");
 
-        boolean overall = CLresult != null && DHRresult != null && ARRresult != null && CLresult && DHRresult && ARRresult;
+        boolean overall = CLresult != null && DRRresult != null && ARRresult != null && CLresult && DRRresult && ARRresult;
         are.overallStatus = overall ? "Approved" : "Not Approved";
         
         return are;

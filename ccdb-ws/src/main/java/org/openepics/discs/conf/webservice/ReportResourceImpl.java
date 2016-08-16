@@ -33,6 +33,7 @@ import org.openepics.discs.ccdb.model.Slot;
 
 /**
  * An implementation of the InstallationSlotResource interface.
+ * ToDo: Inefficient. Should not calculate for each container; should aggregate instead.
  *
  * @author <a href="mailto:sunil.sah@cosylab.com">Sunil Sah</a>
  */
@@ -52,14 +53,13 @@ public class ReportResourceImpl implements ReportResource {
         String prefix = entry.getSlot() + "%";
         if ("_ROOT".equals(entry.getSlot())) {
             prefix = "%";
-            entry.setSlot("FRIB"); 
+            entry.setSlot("TOTAL"); 
         }
 
         entry.setSubSlots(clEJB.numberOfHostingSlots(prefix));
-//        entry.setSubSlots(0L);
-        entry.setInstalledSlots(0L); //ToDo: calculate number of installed slots
-        //entry.setApprovedSlots(clEJB.numberOfApprovedSlots(prefix));
-        entry.setApprovedSlots(0L);
+        entry.setInstalledSlots(clEJB.numberOfInstalledSlots(prefix)); 
+        entry.setApprovedSlots(clEJB.numberOfApprovedSlots(prefix));
+        entry.setChecklistApprovedSlots(clEJB.numberOfChecklistApprovedSlots(prefix));
 //        entry.percentComplete = entry.numOfAssignedSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfAssignedSlots;
     }
      

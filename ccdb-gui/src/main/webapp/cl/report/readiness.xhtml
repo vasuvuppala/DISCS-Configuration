@@ -11,7 +11,7 @@
         
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="DHR Readiness Report" styleClass="heading"/>
+                <h:outputText value="DRR Readiness Report" styleClass="heading"/>
                 <p:dataTable id="reportTable" var="entry" 
                              value="#{checklistReport.entries}"
                              emptyMessage="No records found." 
@@ -29,21 +29,40 @@
                         <h:outputText value="#{entry.slot.description}" />
                     </p:column>
 
-                    <p:column headerText="Subslots" sortBy="#{entry.numOfInstallSlots}" styleClass="alignRight"> 
-                        <h:outputText value="#{entry.numOfInstallSlots}" />
+                    <p:column headerText="Subslots" sortBy="#{entry.numOfSubSlots}" styleClass="alignRight"> 
+                        <h:outputText value="#{entry.numOfSubSlots}" />
                     </p:column> 
                     
-                    <p:column headerText="Assigned Slots" sortBy="#{entry.numOfAssignedSlots}" styleClass="alignRight">
+                    <p:column sortBy="#{entry.numOfInstalledSlots}" styleClass="alignRight"> 
+                        <f:facet name="header">
+                            <h:outputText value="Installed Slots" title="Slots with devices installed"/>
+                        </f:facet>
+                        <h:outputText value="#{entry.numOfInstalledSlots}" />
+                    </p:column> 
+                    
+                    <p:column sortBy="#{entry.numOfAssignedSlots}" styleClass="alignRight">
+                        <f:facet name="header">
+                            <h:outputText value="Assigned Slots" title="Slots assigned with a checklist"/>
+                        </f:facet>
                         <h:outputText value="#{entry.numOfAssignedSlots}" />
                     </p:column> 
                     
-                    <p:column headerText="Approved Slots" sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
+                    <p:column sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
+                        <f:facet name="header">
+                            <h:outputText value="CLA Slots" title="Slots with approved checklist"/>
+                        </f:facet>
+                        <h:outputText value="#{entry.numOfChecklistApprovedSlots}" />
+                    </p:column>
+                    
+                    <p:column sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
+                        <f:facet name="header">
+                            <h:outputText value="Approved Slots" title="Slots with approved checklist and reviews"/>
+                        </f:facet>
                         <h:outputText value="#{entry.numOfApprovedSlots}" />
                     </p:column>
                     
                      <p:column headerText="Progress">
-                         <p:progressBar value="#{entry.percentComplete}" labelTemplate="#{entry.percentComplete} %" displayOnly="true"/>
-                            
+                         <p:progressBar value="#{entry.percentComplete}" labelTemplate="#{entry.percentComplete} %" displayOnly="true"/>                            
                     </p:column>
                 </p:dataTable>
             </p:panel>

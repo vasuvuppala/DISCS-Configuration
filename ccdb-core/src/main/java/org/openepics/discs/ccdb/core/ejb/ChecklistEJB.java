@@ -307,24 +307,87 @@ public class ChecklistEJB {
      * @return 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-     public Long numberOfApprovedSlots(String prefix) {
-        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE" , Long.class)
+    public Long numberOfChecklistApprovedSlots(String prefix) {
+        // ToDo: workaround a bug in eclipselink SQL conversion. this can be written as one SQL but...
+        long slots =  em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND a.slot = s AND  p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Long.class)
+                .setParameter("prefix", prefix)
+                .getSingleResult();
+        
+        // slots that are in approved groups
+        long gslots =  em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND a.slotGroup = s.cmGroup AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Long.class)
+                .setParameter("prefix", prefix)
+                .getSingleResult();
+        
+        return slots + gslots;
+        
+//        return em.createQuery("SELECT COUNT(DISTINCT s.id) FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND a.slot = s AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Long.class)
+//                .setParameter("prefix", prefix)
+//                .getSingleResult();
+    }
+    
+    /**
+     * List of sub slots whose name begin with a given prefix
+     * ToDo: Temporary. refactor. use container relationship instead.
+     * 
+     * @param prefix
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Long  numberOfHostingSlots(String prefix) {
+        return em.createQuery("SELECT COUNT(a) FROM Slot a WHERE a.name LIKE :prefix AND a.isHostingSlot = TRUE", Long.class)
                 .setParameter("prefix", prefix)
                 .getSingleResult();
     }
     
     /**
-     * List of sub slots whose name begin with a given prefix
-     * ToDo: Temporary. refactor.
+     * number of installed slots
      * 
      * @param prefix
      * @return 
      */
-     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public Long  numberOfHostingSlots(String prefix) {
-        return em.createQuery("SELECT COUNT(a) FROM Slot a WHERE a.name LIKE :prefix AND a.isHostingSlot = TRUE", Long.class)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public Long  numberOfInstalledSlots(String prefix) {
+        return em.createQuery("SELECT COUNT(DISTINCT a.slot) FROM InstallationRecord a WHERE a.slot.name LIKE :prefix AND a.uninstallDate IS NULL", Long.class)
                 .setParameter("prefix", prefix)
                 .getSingleResult();
+    }
+    
+    /**
+     * number of approved slots
+     * 
+     * @param prefix
+     * @return 
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
+    public long  numberOfApprovedSlots(String prefix) {
+        List<Process> processes = findApprovalProcesses(); 
+        LOGGER.log(Level.INFO, "review proceses {0}", processes.size());
+        if (processes.size() < 1) return 0L;
+        
+//        List<Slot> clist = em.createQuery("SELECT DISTINCT s FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Slot.class)
+//                .setParameter("prefix", prefix)
+//                .getResultList();
+
+        // ToDo: workaround a bug in eclipselink SQL conversion. this can be written as one SQL but...
+        List<Slot> clist = em.createQuery("SELECT DISTINCT s FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND a.slot = s AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Slot.class)
+                .setParameter("prefix", prefix)
+                .getResultList();
+        
+        // slots that are part in a group
+        List<Slot> glist = em.createQuery("SELECT DISTINCT s FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND a.slotGroup = s.cmGroup AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Slot.class)
+                .setParameter("prefix", prefix)
+                .getResultList();
+        
+        clist.addAll(glist); // the two slots cannot have anything in common
+        
+        for (Process proc: processes) {
+            LOGGER.log(Level.INFO, "checklist approved slots {0}", clist.size());
+            if (clist.isEmpty()) return 0L;
+            List<Slot> alist = em.createNamedQuery("Approval.ApprovedSlots", Slot.class).setParameter("process", proc).getResultList();
+            clist.retainAll(alist);
+        }
+        
+        return clist.size();
     }
     
     /**

@@ -169,9 +169,9 @@ public class AuthorizationManager implements Serializable {
         return authEJB.hasPermission(AuthResource.SLOT_GROUP, null, AuthOperation.MANAGE);
     }
     
-    private boolean canApproveDHR(List<Slot>  slots) {
+    private boolean canApproveDRR(List<Slot>  slots) {
         for(Slot slot: slots) {
-            if (! authEJB.hasPermission(AuthResource.SLOT, slot, AuthOperation.APPROVE_DHR)) {
+            if (! authEJB.hasPermission(AuthResource.SLOT, slot, AuthOperation.APPROVE_DRR)) {
                 return false;
             }
         }
@@ -194,8 +194,8 @@ public class AuthorizationManager implements Serializable {
     
     public boolean canApprove(String processName, List<Slot> slots) {
         switch (processName) {
-            case "DHR":
-                return canApproveDHR(slots);
+            case "DRR":
+                return canApproveDRR(slots);
             case "ARR":
                 return canApproveARR(slots);
             default:

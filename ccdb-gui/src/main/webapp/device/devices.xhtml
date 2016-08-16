@@ -63,10 +63,9 @@
                                 
                                 <p:column headerText="Installation Slot" sortBy="#{device.installedIn}" 
                                           filterBy="#{device.installedIn}" filterMatchMode="contains">
-                                    <h:outputLink rendered="#{!empty device.installedSlotId}" 
-                                                  value="#{request.contextPath}/?id=#{device.installedSlotId}">
-                                        <h:outputText value="#{device.installedIn}" style="text-decoration: underline;" />
-                                    </h:outputLink>
+                                    <p:link  value="#{device.installedIn}"  outcome="devices" target="_blank" rendered="#{!empty device.installedSlotId}">
+                                        <f:param name="name" value="#{device.installedIn}" />
+                                    </p:link>          
                                     <h:outputText value="-" rendered="#{empty device.installedSlotId}" />
                                 </p:column>
                                                              

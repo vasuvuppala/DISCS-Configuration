@@ -44,6 +44,7 @@ import org.openepics.discs.ccdb.model.Slot;
 @NamedQueries({
     @NamedQuery(name = "Approval.findAll", query = "SELECT d FROM Approval d"),
     @NamedQuery(name = "Approval.findBySlotProc", query = "SELECT d FROM Approval d WHERE d.slot = :slot AND d.process = :process"),
+    @NamedQuery(name = "Approval.ApprovedSlots", query = "SELECT DISTINCT d.slot FROM Approval d WHERE d.process = :process AND d.approved = TRUE"),
     @NamedQuery(name = "Approval.findBySlots", query = "SELECT d FROM Approval d WHERE d.slot IN :slots AND d.process = :process"),
     @NamedQuery(name = "Approval.findBySlot", query = "SELECT d FROM Approval d WHERE d.slot = :slot")
 })

@@ -12,6 +12,7 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
     xmlns:h="http://java.sun.com/jsf/html">              
 
     <ui:define name="content">
@@ -71,7 +72,12 @@
                     <p:column id="desc" headerText="Description"  filterBy="#{slot.description}">
                         <h:outputText value="#{slot.description}"/>
                     </p:column>
-
+                    
+                    <c:set var="device" value="#{slotViewManager.installedDevice(slot)}"/>
+                    <p:column id="idev" headerText="Device"  filterBy="#{device.serialNumber}">
+                        <h:outputText value="#{device.serialNumber}" title="#{device.description}"/>
+                    </p:column>
+                    
                     <p:columns var="prop" value="#{slotViewManager.selectedProperties}" styleClass="alignRight" >
                         <f:facet name="header">
                             <h:outputText value="#{prop.name}" title="#{prop.description}"/>

@@ -34,9 +34,11 @@ public class ChecklistReport implements Serializable {
         
     public static class SlotReportEntry {
         private Slot slot;
-        private Device installedDevice = null;      
-        private Long numOfInstallSlots = 0L;
+        // private Device installedDevice = null;      
+        private Long numOfSubSlots = 0L;
+        private Long numOfInstalledSlots = 0L;
         private Long numOfAssignedSlots = 0L;
+        private Long numOfChecklistApprovedSlots = 0L;
         private Long numOfApprovedSlots = 0L;
         private Long percentComplete = 0L;
         
@@ -49,7 +51,7 @@ public class ChecklistReport implements Serializable {
             
             sre.slot = slot;
             if (slot.getInstallationRecordList() != null &&  !slot.getInstallationRecordList().isEmpty()) {
-                sre.installedDevice = slot.getInstallationRecordList().get(0).getDevice();
+                // sre.installedDevice = slot.getInstallationRecordList().get(0).getDevice();
             }
             
             return sre;
@@ -62,12 +64,16 @@ public class ChecklistReport implements Serializable {
             return slot;
         }
 
-        public Device getInstalledDevice() {
-            return installedDevice;
+//        public Device getInstalledDevice() {
+//            return installedDevice;
+//        }
+
+        public Long getNumOfSubSlots() {
+            return numOfSubSlots;
         }
 
-        public Long getNumOfInstallSlots() {
-            return numOfInstallSlots;
+        public Long getNumOfInstalledSlots() {
+            return numOfInstalledSlots;
         }
 
         public Long getNumOfAssignedSlots() {
@@ -77,6 +83,10 @@ public class ChecklistReport implements Serializable {
         public Long getNumOfApprovedSlots() {
             return numOfApprovedSlots;
         }      
+
+        public Long getNumOfChecklistApprovedSlots() {
+            return numOfChecklistApprovedSlots;
+        }
 
         public Long getPercentComplete() {
             return percentComplete;
@@ -100,10 +110,12 @@ public class ChecklistReport implements Serializable {
     private void refresh(SlotReportEntry entry) {
         String prefix = "_ROOT".equals(entry.slot.getName()) ? "%" : entry.slot.getName() + "%";
 
-        entry.numOfInstallSlots = clEJB.numberOfHostingSlots(prefix);
+        entry.numOfSubSlots = clEJB.numberOfHostingSlots(prefix);
+        entry.numOfInstalledSlots = clEJB.numberOfInstalledSlots(prefix);
         entry.numOfAssignedSlots = clEJB.numberOfAssignedSlots(prefix);
         entry.numOfApprovedSlots = clEJB.numberOfApprovedSlots(prefix);
-        entry.percentComplete = entry.numOfAssignedSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfAssignedSlots;
+        entry.numOfChecklistApprovedSlots = clEJB.numberOfChecklistApprovedSlots(prefix);
+        entry.percentComplete = entry.numOfApprovedSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfSubSlots;
     }
     
 //    public void refresh(SlotReportEntry entry) {
