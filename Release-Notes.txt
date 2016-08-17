@@ -7,7 +7,7 @@ Release Notes: Proteus: CCDB
 Overview: Proteus is a tool for managing the configuration information of an Accelerator Facility. 
 
 
-Proteus: CCDB Version 2.0.3     Date: Aug 15, 2016
+Proteus: CCDB Version 2.0.3     Date: Aug 17, 2016
    Summary of Changes from Previous Version:
    - Replaced DHR with DRR in the user interface
    - Added checklistApprovedSlots field to Status Report API

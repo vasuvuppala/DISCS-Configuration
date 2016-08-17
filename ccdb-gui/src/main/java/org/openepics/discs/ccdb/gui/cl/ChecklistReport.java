@@ -16,7 +16,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.openepics.discs.ccdb.core.ejb.ChecklistEJB;
 import org.openepics.discs.ccdb.core.ejb.SlotEJB;
-import org.openepics.discs.ccdb.model.Device;
 import org.openepics.discs.ccdb.model.Slot;
 
 /**
@@ -40,7 +39,8 @@ public class ChecklistReport implements Serializable {
         private Long numOfAssignedSlots = 0L;
         private Long numOfChecklistApprovedSlots = 0L;
         private Long numOfApprovedSlots = 0L;
-        private Long percentComplete = 0L;
+        private Long percentApproved = 0L;
+        private Long percentInstalled = 0L;
         
         private SlotReportEntry() {
             
@@ -88,10 +88,21 @@ public class ChecklistReport implements Serializable {
             return numOfChecklistApprovedSlots;
         }
 
-        public Long getPercentComplete() {
-            return percentComplete;
+        public Long getPercentApproved() {
+            return percentApproved;
         }
-        
+
+        public void setPercentApproved(Long percentApproved) {
+            this.percentApproved = percentApproved;
+        }
+
+        public Long getPercentInstalled() {
+            return percentInstalled;
+        }
+
+        public void setPercentInstalled(Long percentInstalled) {
+            this.percentInstalled = percentInstalled;
+        }       
     }
     
     private List<Slot> slots;
@@ -115,29 +126,10 @@ public class ChecklistReport implements Serializable {
         entry.numOfAssignedSlots = clEJB.numberOfAssignedSlots(prefix);
         entry.numOfApprovedSlots = clEJB.numberOfApprovedSlots(prefix);
         entry.numOfChecklistApprovedSlots = clEJB.numberOfChecklistApprovedSlots(prefix);
-        entry.percentComplete = entry.numOfApprovedSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfSubSlots;
+        entry.percentApproved = entry.numOfSubSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfSubSlots;
+        entry.percentInstalled = entry.numOfSubSlots == 0L ? 0L : (100 * entry.numOfInstalledSlots) / entry.numOfSubSlots;
     }
     
-//    public void refresh(SlotReportEntry entry) {
-//        List<Assignment> assignments;
-//        if ("_ROOT".equals(entry.slot.getName())) {
-//            entry.numOfInstallSlots = clEJB.numberOfHostingSlots("%");
-//            assignments = clEJB.assignedSlots("%");
-//        } else {
-//            entry.numOfInstallSlots = clEJB.numberOfHostingSlots(entry.slot.getName() + "%");
-//            assignments = clEJB.assignedSlots(entry.slot.getName() + "%");
-//        }
-//        entry.numOfAssignedSlots = (long) assignments.size();
-//        entry.numOfApprovedSlots = 0L;       
-//        for (Assignment assignment : assignments) {
-//            for (ProcessStatus proc : assignment.getStatuses()) {
-//                if (proc.getGroupMember().getSummaryPhase() && proc.getStatus().getCompleted()) {
-//                    entry.numOfApprovedSlots++;
-//                }
-//            }
-//        }
-//        entry.percentComplete = entry.numOfAssignedSlots == 0? 0: (100 * entry.numOfApprovedSlots) / entry.numOfAssignedSlots;
-//    }
      
     @PostConstruct
     public void init() {

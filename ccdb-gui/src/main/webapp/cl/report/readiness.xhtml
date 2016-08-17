@@ -8,10 +8,11 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content"> 
-        
+
         <h:form id="crudForm" > 
             <p:panel>
-                <h:outputText value="DRR Readiness Report" styleClass="heading"/>
+                <h:outputText value="Readiness Report" styleClass="heading"/>
+                <p:separator/>
                 <p:dataTable id="reportTable" var="entry" 
                              value="#{checklistReport.entries}"
                              emptyMessage="No records found." 
@@ -21,53 +22,62 @@
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                              rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="ccdbDatatable">
 
-                    <p:column headerText="Name" sortBy="#{entry.slot.name}" filterBy="#{entry.slot.name}" filterMatchMode="contains">
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column rowspan="2" headerText="Name" sortBy="#{entry.slot.name}" filterBy="#{entry.slot.name}" filterMatchMode="contains" />
+                            <p:column rowspan="2" headerText="Description"  filterBy="#{entry.slot.description}" filterMatchMode="contains" />
+                            <p:column colspan="5" headerText="Slots" />
+                            <p:column colspan="2" headerText="Progress" />
+                        </p:row>
+
+                        <p:row>
+                            <p:column headerText="Sub" sortBy="#{entry.numOfSubSlots}" />
+                            <p:column headerText="Installed" sortBy="#{entry.numOfInstalledSlots}"/>
+                            <p:column headerText="Assigned" sortBy="#{entry.numOfAssignedSlots}" />
+                            <p:column headerText="CL Approved" sortBy="#{entry.numOfApprovedSlots}"/>
+                            <p:column headerText="Approved" sortBy="#{entry.numOfApprovedSlots}" />
+                            <p:column headerText="Installation" />
+                            <p:column headerText="Approval" />
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column >
                         <h:outputText value="#{entry.slot.name == '_ROOT'? 'FRIB': entry.slot.name}" />
                     </p:column>                                    
 
-                    <p:column headerText="Description" filterBy="#{entry.slot.description}" filterMatchMode="contains">
+                    <p:column >
                         <h:outputText value="#{entry.slot.description}" />
                     </p:column>
 
-                    <p:column headerText="Subslots" sortBy="#{entry.numOfSubSlots}" styleClass="alignRight"> 
+                    <p:column styleClass="alignRight" > 
                         <h:outputText value="#{entry.numOfSubSlots}" />
                     </p:column> 
-                    
-                    <p:column sortBy="#{entry.numOfInstalledSlots}" styleClass="alignRight"> 
-                        <f:facet name="header">
-                            <h:outputText value="Installed Slots" title="Slots with devices installed"/>
-                        </f:facet>
+
+                    <p:column  styleClass="alignRight"> 
                         <h:outputText value="#{entry.numOfInstalledSlots}" />
                     </p:column> 
-                    
-                    <p:column sortBy="#{entry.numOfAssignedSlots}" styleClass="alignRight">
-                        <f:facet name="header">
-                            <h:outputText value="Assigned Slots" title="Slots assigned with a checklist"/>
-                        </f:facet>
+
+                    <p:column styleClass="alignRight">
                         <h:outputText value="#{entry.numOfAssignedSlots}" />
                     </p:column> 
-                    
-                    <p:column sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
-                        <f:facet name="header">
-                            <h:outputText value="CLA Slots" title="Slots with approved checklist"/>
-                        </f:facet>
+
+                    <p:column  styleClass="alignRight">
                         <h:outputText value="#{entry.numOfChecklistApprovedSlots}" />
                     </p:column>
-                    
-                    <p:column sortBy="#{entry.numOfApprovedSlots}" styleClass="alignRight">
-                        <f:facet name="header">
-                            <h:outputText value="Approved Slots" title="Slots with approved checklist and reviews"/>
-                        </f:facet>
+
+                    <p:column styleClass="alignRight">
                         <h:outputText value="#{entry.numOfApprovedSlots}" />
                     </p:column>
-                    
-                     <p:column headerText="Progress">
-                         <p:progressBar value="#{entry.percentComplete}" labelTemplate="#{entry.percentComplete} %" displayOnly="true"/>                            
+
+                    <p:column >
+                        <p:progressBar value="#{entry.percentInstalled}" labelTemplate="#{entry.percentInstalled} %" displayOnly="true"/>                            
+                    </p:column>
+                    <p:column >
+                        <p:progressBar value="#{entry.percentApproved}" labelTemplate="#{entry.percentApproved} %" displayOnly="true"/>                            
                     </p:column>
                 </p:dataTable>
             </p:panel>
         </h:form>
 
-        
+
     </ui:define> 
 </ui:composition>
