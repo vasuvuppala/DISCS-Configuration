@@ -40,6 +40,7 @@ public class ChecklistReport implements Serializable {
         private Long numOfChecklistApprovedSlots = 0L;
         private Long numOfApprovedSlots = 0L;
         private Long percentApproved = 0L;
+        private Long percentClApproved = 0L;
         private Long percentInstalled = 0L;
         
         private SlotReportEntry() {
@@ -56,9 +57,7 @@ public class ChecklistReport implements Serializable {
             
             return sre;
         }
-        
-       
-        
+               
         // ----
         public Slot getSlot() {
             return slot;
@@ -100,6 +99,10 @@ public class ChecklistReport implements Serializable {
             return percentInstalled;
         }
 
+        public Long getPercentClApproved() {
+            return percentClApproved;
+        }
+
         public void setPercentInstalled(Long percentInstalled) {
             this.percentInstalled = percentInstalled;
         }       
@@ -127,6 +130,7 @@ public class ChecklistReport implements Serializable {
         entry.numOfApprovedSlots = clEJB.numberOfApprovedSlots(prefix);
         entry.numOfChecklistApprovedSlots = clEJB.numberOfChecklistApprovedSlots(prefix);
         entry.percentApproved = entry.numOfSubSlots == 0L ? 0L : (100 * entry.numOfApprovedSlots) / entry.numOfSubSlots;
+        entry.percentClApproved = entry.numOfSubSlots == 0L ? 0L : (100 * entry.numOfChecklistApprovedSlots) / entry.numOfSubSlots;
         entry.percentInstalled = entry.numOfSubSlots == 0L ? 0L : (100 * entry.numOfInstalledSlots) / entry.numOfSubSlots;
     }
     

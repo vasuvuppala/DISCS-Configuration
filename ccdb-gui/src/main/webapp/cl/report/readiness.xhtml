@@ -27,7 +27,7 @@
                             <p:column rowspan="2" headerText="Name" sortBy="#{entry.slot.name}" filterBy="#{entry.slot.name}" filterMatchMode="contains" />
                             <p:column rowspan="2" headerText="Description"  filterBy="#{entry.slot.description}" filterMatchMode="contains" />
                             <p:column colspan="5" headerText="Slots" />
-                            <p:column colspan="2" headerText="Progress" />
+                            <p:column colspan="3" headerText="Progress" />
                         </p:row>
 
                         <p:row>
@@ -37,6 +37,7 @@
                             <p:column headerText="CL Approved" sortBy="#{entry.numOfApprovedSlots}"/>
                             <p:column headerText="Approved" sortBy="#{entry.numOfApprovedSlots}" />
                             <p:column headerText="Installation" />
+                            <p:column headerText="CL Approval" />
                             <p:column headerText="Approval" />
                         </p:row>
                     </p:columnGroup>
@@ -70,6 +71,9 @@
 
                     <p:column >
                         <p:progressBar value="#{entry.percentInstalled}" labelTemplate="#{entry.percentInstalled} %" displayOnly="true"/>                            
+                    </p:column>
+                    <p:column >
+                        <p:progressBar value="#{entry.percentClApproved}" labelTemplate="#{entry.percentClApproved} %" displayOnly="true"/>                            
                     </p:column>
                     <p:column >
                         <p:progressBar value="#{entry.percentApproved}" labelTemplate="#{entry.percentApproved} %" displayOnly="true"/>                            
