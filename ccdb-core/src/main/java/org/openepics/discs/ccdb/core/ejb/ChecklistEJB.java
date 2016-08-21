@@ -361,7 +361,7 @@ public class ChecklistEJB {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
     public long  numberOfApprovedSlots(String prefix) {
         List<Process> processes = findApprovalProcesses(); 
-        LOGGER.log(Level.INFO, "review proceses {0}", processes.size());
+        LOGGER.log(Level.FINE, "review proceses {0}", processes.size());
         if (processes.size() < 1) return 0L;
         
 //        List<Slot> clist = em.createQuery("SELECT DISTINCT s FROM Slot s, Assignment a JOIN a.statuses p WHERE s.name LIKE :prefix AND (a.slot = s OR a.slotGroup = s.cmGroup) AND p.field.summaryProcess = TRUE AND p.status.completed = TRUE", Slot.class)
@@ -381,7 +381,7 @@ public class ChecklistEJB {
         clist.addAll(glist); // the two slots cannot have anything in common
         
         for (Process proc: processes) {
-            LOGGER.log(Level.INFO, "checklist approved slots {0}", clist.size());
+            LOGGER.log(Level.FINE, "checklist approved slots {0}", clist.size());
             if (clist.isEmpty()) return 0L;
             List<Slot> alist = em.createNamedQuery("Approval.ApprovedSlots", Slot.class).setParameter("process", proc).getResultList();
             clist.retainAll(alist);
@@ -532,7 +532,7 @@ public class ChecklistEJB {
      * @param checklist 
      */
     public <T> void assignChecklist(List<T> entities, Checklist checklist) {   
-        LOGGER.log(Level.INFO, "Creating checklist for {0} entities", entities.size());
+        LOGGER.log(Level.FINE, "Creating checklist for {0} entities", entities.size());
         AuthUser currentUser = authEJB.getCurrentUser();
         
         if (currentUser == null) {
@@ -560,7 +560,7 @@ public class ChecklistEJB {
             }
             assignment.setStatuses(statuses);
             em.persist(assignment);
-            LOGGER.log(Level.INFO, "Assigned checklist to {0}", entity.toString());
+            LOGGER.log(Level.FINE, "Assigned checklist to {0}", entity.toString());
         }
     }
 
@@ -621,7 +621,7 @@ public class ChecklistEJB {
      * @param checklist 
      */
     public <T> void unassignChecklist(ChecklistEntity type, List<T> entities, Checklist checklist) {   
-        LOGGER.log(Level.INFO, "Removing checklist for {0} entities", entities.size());
+        LOGGER.log(Level.FINE, "Removing checklist for {0} entities", entities.size());
         // ToDo: check authorization
         List<Assignment> assignments = Collections.EMPTY_LIST;
         
