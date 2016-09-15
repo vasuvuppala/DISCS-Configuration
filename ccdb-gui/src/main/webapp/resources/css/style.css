@@ -142,7 +142,7 @@ a {
     background-color: azure !important;
 }
 
-.rackPanel {
+.rackPanel, .rackPanel a  {
     font-size: x-small !important; 
 }
 

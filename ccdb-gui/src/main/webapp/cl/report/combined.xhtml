@@ -14,7 +14,7 @@
         <h:form id="form">  
             <p:panel>
                 <h:outputText value="All Assigned Slots Status Report" styleClass="heading"/>
-                
+                <p:separator/>
                 <p:dataTable id="statusTable" var="slot" value="#{statusReport.slots}" widgetVar="statusTableWid"
                              rowKey="#{slot.id}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"

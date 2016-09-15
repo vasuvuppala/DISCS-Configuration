@@ -15,7 +15,7 @@
         <h:form id="form">  
             <p:panel>
                 <h:outputText value="Group Status Report" styleClass="heading"/>
-
+                <p:separator/>
                 <p:dataTable id="groupTable" var="group" value="#{statusReport.slotGroups}" widgetVar="statusTableWid"
                              rowKey="#{group.id}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"

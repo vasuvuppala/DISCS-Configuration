@@ -14,7 +14,7 @@
         <h:form id="form">  
             <p:panel>
                 <h:outputText value="Device Status Report" styleClass="heading"/>
-
+                <p:separator/>
                 <p:dataTable id="statusDevTable" var="device" value="#{statusReport.devices}" 
                              rowKey="#{device.id}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"

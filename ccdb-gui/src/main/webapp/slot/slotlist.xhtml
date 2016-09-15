@@ -18,6 +18,7 @@
         <h:form id="clnav-form">
             <p:panel styleClass="noBorders">
                 <h:outputText value="Slot List" styleClass="heading"/>
+                <p:separator/>
                 <p:dataTable id="clnav-table" var="comp" value="#{slotListView.slots}"                     
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"

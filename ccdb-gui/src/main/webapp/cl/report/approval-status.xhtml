@@ -14,7 +14,7 @@
         <h:form id="form">  
             <p:panel>
                 <h:outputText value="Approval Status Report" styleClass="heading"/>
-                
+                <p:separator/>
                 <p:dataTable id="statusTable" var="entry" value="#{approvalReport.entries}" widgetVar="statusTableWid"
                              rowKey="#{entry.slot.id}" 
                              currentPageReportTemplate="Displaying {startRecord} - {endRecord} of {totalRecords}. Page: {currentPage}/{totalPages}"
